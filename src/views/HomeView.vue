@@ -23,20 +23,21 @@ onMounted(() => {
     <section class="row col-12 m-0 p-0">
       <figure class="m-0 p-0 my-hero d-flex align-items-center justify-content-center animated-2 shadowed-h" id="my-hero">
         <img class="w-100 text-center my-hero" src="@/assets/images/progenitus.jpg" alt="">
-        <h1 class="h1 fw-bold text-center outline-black position-absolute text-orange">
+        <h1 class="h1 fw-bold text-center outline-black position-absolute text-green">
           The Orc's Ranking
-          <br>
-          <span class="h2 text-orange outline-none m-0">
-            Season 1
-          </span>
         </h1>
       </figure>
     </section>
 
-    <section class="row col-12 m-0 p-0 justify-content-around align-items-center flex-column-reverse flex-lg-row bg-dark-grey text-orange">
-      <div class="col-12 m-0 p-0 d-flex justify-content-center fs-5">
-        <div class="col-12 col-md-3 text-center py-4 side-border-orange">
-          <h3 class="w-100 text-center text-orange">
+    <section class="row col-12 m-0 p-0 justify-content-around align-items-center flex-wrap bg-dark-grey text-green">
+      <div class="col-12 m-0 p-0 d-flex justify-content-center fs-5 flex-wrap">
+        <div class="col-12 text-center py-4 fs-3">
+          <select class="myInput px-4" id="season-select">
+            <option value="1" selected>Season 1</option>
+          </select>
+        </div>
+        <div class="col-12 col-md-3 text-center py-4 side-border-green">
+          <h3 class="w-100 text-center text-green">
             Jugadores
           </h3>
           <article class="row m-0 p-0 my-1">
@@ -65,8 +66,8 @@ onMounted(() => {
           </article>
         </div>
 
-        <div class="col-12 col-md-3 text-center py-4 side-border-orange ">
-          <h3 class="w-100 text-center text-orange">
+        <div class="col-12 col-md-3 text-center py-4 side-border-green ">
+          <h3 class="w-100 text-center text-green">
             Decks
           </h3>
           <article class="row m-0 p-0 my-1">
@@ -95,26 +96,10 @@ onMounted(() => {
           </article>
         </div>
 
-        <div class="col-12 col-md-3 text-center py-4 side-border-orange">
-          <h3 class="w-100 text-center text-orange">
+        <div class="col-12 col-md-3 text-center py-4 side-border-green">
+          <h3 class="w-100 text-center text-green">
             Colores
           </h3>
-          <article class="row m-0 p-0 my-1">
-            <span class="col-4 text-end">Azul</span>
-            <span class="col-8 text-start">
-              <div class="percent" style="width:75.06%;">
-                75%
-              </div>
-            </span>
-          </article>
-          <article class="row m-0 p-0 my-1">
-            <span class="col-4 text-end">Rojo</span>
-            <span class="col-8 text-start">
-              <div class="percent" style="width:55%;">
-                55%
-              </div>
-            </span>
-          </article>
           <article class="row m-0 p-0 my-1">
             <span class="col-4 text-end">Verde</span>
             <span class="col-8 text-start">
@@ -147,66 +132,153 @@ onMounted(() => {
               </div>
             </span>
           </article>
+          <article class="row m-0 p-0 my-1">
+            <span class="col-4 text-end">Azul</span>
+            <span class="col-8 text-start">
+              <div class="percent" style="width:0;">
+                0%
+              </div>
+            </span>
+          </article>
+          <article class="row m-0 p-0 my-1">
+            <span class="col-4 text-end">Rojo</span>
+            <span class="col-8 text-start">
+              <div class="percent" style="width:0%;">
+                0%
+              </div>
+            </span>
+          </article>
         </div>
       </div>
     </section>
 
 
-    <section class="row col-12 m-0 p-0 mt-5 justify-content-center align-items-center flex-column flex-lg-row lb-bg-terciary shadowed-n services-section bg-dark-grey">
+    <section class="row col-12 m-0 p-0 mt-5 justify-content-center align-items-center flex-column flex-lg-row shadowed-n services-section">
       <div class="row col-12 col-lg-7 m-0 p-0 d-flex justify-content-center text-white py-4">
         <div class="row m-0 p-0 col-6 justify-content-center">
-          <p class="h3 col-12 text-orange text-center">
+          <p class="h3 col-12 text-green text-center">
             Torneos totales
           </p>
           <figure class="col-5 text-center">
             <img class="col-6" src="@/assets/icons/sitemap.png" alt="bitemap">
           </figure>
-          <p class="col-12 h1 text-orange text-center">4</p>
+          <p class="col-12 h1 text-green text-center">4</p>
         </div>
         <div class="row m-0 p-0 col-6 justify-content-center">
-          <p class="h3 col-12 text-orange text-center">
+          <p class="h3 col-12 text-green text-center">
             Participantes
           </p>
           <figure class="col-5 text-center">
             <img class="col-6" src="@/assets/icons/user.png" alt="bitemap">
           </figure>
-          <p class="col-12 h1 text-orange text-center">12</p>
+          <p class="col-12 h1 text-green text-center">12</p>
         </div>
       </div>
     </section>
 
-    <section class="row col-12 m-0 p-0 justify-content-around align-items-center flex-column flex-lg-row my-5">
-      <div class="col-12 text-center">
-        <h2 class="h1 fw-bold text-black">¿De qué te sirve leer?</h2>  
+    <section class="row col-12 m-0 p-0 py-4 justify-content-center align-items-start my-5 bg-dark-grey text-green">
+      <div class="col-12 text-center my-3">
+        <h2 class="h1 text-green">Último torneo</h2>  
       </div>
-      <div class="col-12 col-lg-3 text-center">
-        <figure class="col-12">
-          <img class="w-100 hide-up shadowed-l rounded animated-1" alt="escritores">
-        </figure>
-      </div>
-      <div class="col-12 col-lg-5 text-center">
-        <p class="fs-5">
-          Leer regularmente no solo amplía
-          tus conocimientos y mejora las habilidades de comunicación, sino que también estimula la mente, fomenta la 
-          <strong>creatividad</strong>
-          y reduce el estrés. A través de la lectura, puedes viajar a mundos imaginarios, aprender de diferentes culturas y perspectivas, 
-          y desarrollar una comprensión más profunda de nosotros mismos y del mundo que nos rodea.
-          <br><br>
-          La lectura enriquece el vocabulario, mejora la concentración y la memoria, y puede incluso retrasar el deterioro cognitivo a medida que envejeces.
-        </p>
-      </div>
-      <div class="col-12 col-lg-3 text-center">
-        <figure class="col-12 ">
-          <img class="w-100 hide-up shadowed-l rounded animated-1" alt="mangakas">
-        </figure>
-      </div>
-    </section>
 
-    <section class="row col-12 m-0 p-0 mt-5 justify-content-center align-items-center flex-column flex-lg-row lb-bg-terciary shadowed-n pb-4">
-      <div class="col-12 text-center">
-        <h2 class="h1 fw-bold text-white services-title text-shadow">Preguntas frecuentes</h2>  
+      <div class="row m-0 p-0 col-12 text-center justify-content-center align-items-start px-4">
+        <div class="row m-0 p-0 col-12 col-lg-5 text-center justify-content-center px-4">
+          <table class="col-8 text-white fs-4">
+            <tr>
+              <td class="p-1 border-green">Fecha</td>
+              <td class="p-1 border-green">31/08/2024</td>
+            </tr>
+            <tr>
+              <td class="p-1 border-green">Formato</td>
+              <td class="p-1 border-green">Coliseo</td>
+            </tr>
+            <tr>
+              <td class="p-1 border-green">Participantes</td>
+              <td class="p-1 border-green">8</td>
+            </tr>
+            <tr>
+              <td class="p-1 border-green">Ganador</td>
+              <td class="p-1 border-green">Ra Watterson</td>
+            </tr>
+            <tr>
+              <td class="p-1 border-green">Presencia de colores</td>
+              <td class="p-1 border-green">
+                <ul class="w-100 list-unstyled m-0 p-0">
+                  <li><i class="fa fa-circle text-Azul"></i>&nbsp;45%</li>
+                  <li><i class="fa fa-circle text-Verde"></i>&nbsp;45%</li>
+                  <li><i class="fa fa-circle text-Blanco"></i>&nbsp;45%</li>
+                  <li><i class="fa fa-circle text-Rojo"></i>&nbsp;45%</li>
+                  <li><i class="fa fa-circle text-Negro"></i>&nbsp;45%</li>
+                  <li><i class="fa fa-circle text-Incoloro"></i>&nbsp;45%</li>
+                </ul>
+              </td>
+            </tr>
+          </table>
+        </div>
+  
+        <div class="row col-12 m-0 p-0 col-lg-7 text-center justify-content-center">
+          <table class="col-10">
+            <thead class="fs-4 text-white">
+              <tr>
+                <th class="border-green p-1 fw-normal">Posición</th>
+                <th class="border-green p-1 fw-normal">Jugador</th>
+                <th class="border-green p-1 fw-normal">Deck</th>
+                <th class="border-green p-1 fw-normal">Puntos/Victorias</th>
+              </tr>
+            </thead>
+            <tbody class="fs-5 text-white">
+              <tr>
+                <td class="border-green p-1 py-2">1</td>
+                <td class="border-green p-1">Ra Watterson</td>
+                <td class="border-green p-1">Teysa</td>
+                <td class="border-green p-1">8</td>
+              </tr>
+              <tr>
+                <td class="border-green p-1 py-2">2</td>
+                <td class="border-green p-1">Marcelo Olmo</td>
+                <td class="border-green p-1">Enmara</td>
+                <td class="border-green p-1">6</td>
+              </tr>
+              <tr>
+                <td class="border-green p-1 py-2">3</td>
+                <td class="border-green p-1">Otro</td>
+                <td class="border-green p-1">Otro</td>
+                <td class="border-green p-1">?</td>
+              </tr>
+              <tr>
+                <td class="border-green p-1 py-2">4</td>
+                <td class="border-green p-1">Otro</td>
+                <td class="border-green p-1">Otro</td>
+                <td class="border-green p-1">?</td>
+              </tr>
+              <tr>
+                <td class="border-green p-1 py-2">5</td>
+                <td class="border-green p-1">Otro</td>
+                <td class="border-green p-1">Otro</td>
+                <td class="border-green p-1">?</td>
+              </tr>
+              <tr>
+                <td class="border-green p-1 py-2">6</td>
+                <td class="border-green p-1">Otro</td>
+                <td class="border-green p-1">Otro</td>
+                <td class="border-green p-1">?</td>
+              </tr>
+              <tr>
+                <td class="border-green p-1 py-2">7</td>
+                <td class="border-green p-1">Otro</td>
+                <td class="border-green p-1">Otro</td>
+                <td class="border-green p-1">?</td>
+              </tr>
+              <tr>
+                <td class="border-green p-1 py-2">8</td>
+                <td class="border-green p-1">Otro</td>
+                <td class="border-green p-1">Otro</td>
+                <td class="border-green p-1">?</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
-      <FrequentQuestions/>
     </section>
   </main>
 </template>

@@ -148,15 +148,43 @@ $quartary: #E5BA71;
     color: black;
 }
 
-.text-orange{
+.text-green{
     color:rgb(87, 211, 97) !important;
+}
+
+.text-Azul{
+    color: rgb(129, 213, 255);
+}
+
+.text-Rojo{
+    color: rgb(255, 108, 108);
+}
+
+.text-Negro{
+    color: rgb(73, 73, 73);
+}
+
+.text-Blanco{
+    color: rgb(248, 245, 197);
+}
+
+.text-Verde{
+    color: rgb(124, 248, 165);
+}
+
+.text-Incoloro{
+    color: rgb(163, 163, 163);
 }
 
 .border-orange{
     border: inherit solid orange !important;
 }
 
-.side-border-orange{
+.border-green{
+    border: 1px solid rgb(87, 211, 97) !important;
+}
+
+.side-border-green{
     border-right: 1px solid rgb(87, 211, 97);
     border-left: 1px solid rgb(87, 211, 97);
 }

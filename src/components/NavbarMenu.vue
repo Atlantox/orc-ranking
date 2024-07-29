@@ -33,13 +33,13 @@ const CloseSession = (() => {
         <div class=" collapse navbar-collapse" id="navbarNavDropdown">
           <ul class="navbar-nav mx-auto fs-5">
             <li class="nav-item">
-              <rounter-link class="nav-link mx-2 text-orange" aria-current="page" :to="{name: 'home'}">Dashboard</rounter-link>
+              <rounter-link class="nav-link mx-2 text-green" aria-current="page" :to="{name: 'home'}">Dashboard</rounter-link>
             </li>
             <li class="nav-item">
-              <rounter-link class="nav-link mx-2 text-orange" aria-current="page" :to="{name: 'home'}">Jugadores</rounter-link>
+              <rounter-link class="nav-link mx-2 text-green" aria-current="page" :to="{name: 'home'}">Jugadores</rounter-link>
             </li>
             <li class="nav-item">
-              <rounter-link class="nav-link mx-2 text-orange" :to="{name: 'home'}">Mazos</rounter-link>
+              <rounter-link class="nav-link mx-2 text-green" :to="{name: 'home'}">Decks</rounter-link>
             </li>
 
             <li class="nav-item d-none d-lg-block">
@@ -49,13 +49,13 @@ const CloseSession = (() => {
             </li>
 
             <li class="nav-item">
-              <rounter-link class="nav-link mx-2 text-orange" :to="{name: 'home'}">Torneos</rounter-link>
+              <rounter-link class="nav-link mx-2 text-green" :to="{name: 'home'}">Torneos</rounter-link>
             </li>
             <li class="nav-item">
-              <rounter-link class="nav-link mx-2 text-orange" :to="{name: 'home'}">Acerca</rounter-link>
+              <rounter-link class="nav-link mx-2 text-green" :to="{name: 'home'}">Acerca</rounter-link>
             </li>
             <li class="nav-item dropdown">
-              <a class="nav-link mx-2 dropdown-toggle text-orange" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <a class="nav-link mx-2 dropdown-toggle text-green" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 USUARIO
               </a>
               <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
