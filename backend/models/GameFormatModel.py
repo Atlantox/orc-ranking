@@ -27,7 +27,6 @@ class GameFormatModel(BaseModel):
             self.connection.connection.commit()
         except:
             result = False
-
         return result
     
     def GetFormatByName(self, name):

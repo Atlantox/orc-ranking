@@ -1,9 +1,22 @@
 from .BaseModel import BaseModel
 
 class TournamentModel(BaseModel):
+
     def GetTournaments(self):
         cursor = self.connection.connection.cursor()
-        sql = "SELECT * FROM tournament"
+        sql = '''
+        SELECT
+        tournament.date,
+        tournament.season,
+        tournament.format,
+        player.name as winner
+        FROM
+        tournament
+        INNER JOIN tournament_result ON tournament_result.tournament = tournament.id
+        INNER JOIN player ON player.id = tournament_result.player
+        WHERE
+        tournament_result.winner = 1
+        '''
 
         try:
             cursor.execute(sql)
@@ -101,50 +114,56 @@ class TournamentModel(BaseModel):
         
         return result
 
-    def CreateReader(self, readerData):
+    def CreateTournament(self, tournamentData):
         cursor = self.connection.connection.cursor()
         result = True
+        tournamentDate = tournamentData['date']
+        targetFormat = tournamentData['format']
+        targetSeason = tournamentData['season']
+        sql= "INSERT INTO tournament (date, format, season) VALUES (%s, %s, %s)"
+        args = (tournamentDate, targetFormat, targetSeason)
 
-        sql = '''
-            INSERT INTO
-            reader
-            (
-                cedula,
-                names,
-                surnames,
-                gender,
-                birthdate,
-                phone,
-                is_teacher
-            )
-            VALUES
-            (
-                %s,
-                %s,
-                %s,
-                %s,
-                %s,
-                %s,
-                %s
-            )
-            '''
-        args = (
-            readerData['cedula'],
-            readerData['names'],
-            readerData['surnames'],
-            readerData['gender'],
-            readerData['birthdate'],
-            readerData['phone'],
-            readerData['is_teacher']
-        )
-                
         try:
             cursor.execute(sql, args)
             self.connection.connection.commit()
         except:
-            result = False
+            result = 'Hubo un error al crear el torneo'
+
+        if result == True:
+            sql = "SELECT MAX(id) as id FROM tournament"
+            try:
+                cursor.execute(sql)
+                targetTournament = cursor.fetchone()
+            except:
+                result = 'Hubo un error al encontrar el torneo creado'
+
+        
+        if result == True:
+            # Creating the tournaments results
+            result = self.CreateTournamentResults(targetTournament['id'], tournamentData['participants'])
 
         return result
+    
+    def CreateTournamentResults(self, tournamentId, participants):
+        cursor = self.connection.connection.cursor()
+        result = True
+
+        listArgs = []
+        sql = "INSERT INTO tournament_result (tournament, player, deck, wins, winner) VALUES "
+        for participant in participants:
+            sql += "(%s, %s, %s, %s, %s),"
+            listArgs += [tournamentId, participant['player'], participant['deck'], participant['wins'], participant['winner']]
+
+        args = tuple(listArgs)
+        sql = sql[0:-1]
+        try:
+            cursor.execute(sql, args)
+            self.connection.connection.commit()
+        except:
+            result = 'Hubo un error al crear los resultados del torneo'
+        
+        return result
+
     
     def GetReaderByCedula(self, cedula):
         cursor = self.connection.connection.cursor()
@@ -203,12 +222,12 @@ class TournamentModel(BaseModel):
         
         return result
     
-    def UpdateReader(self, readerId, readerData):
+    def UpdateReader(self, readerId, tournamentData):
         result = True
         cursor = self.connection.connection.cursor()
         arrayValues = []
         sql = "UPDATE reader SET "
-        for column, value in readerData.items():
+        for column, value in tournamentData.items():
             sql += "{0} = %s,".format(column)
             arrayValues.append(value)
         

@@ -7,12 +7,11 @@ from config import config
 # Controllers / Blueprints
 from controllers.BinnacleController import binnacleController
 from controllers.UserController import userController
-#from controllers.BookController import bookController
+from controllers.TournamentController import tournamentController
 from controllers.DeckController import deckController
 from controllers.PlayerController import playerController
-from controllers.SeasionController import seasonController
-#from controllers.ReaderController import readerController
-#from controllers.LoanController import loanController
+from controllers.SeasonController import seasonController
+from controllers.GameFormatController import gameFormatController
 
 app = Flask(__name__)
 app.config.from_object(config['development'])
@@ -22,12 +21,11 @@ connection = MySQL(app)
 CONTROLLERS = [
     binnacleController,
     userController,
-    #bookController,
     deckController,
     playerController,
     seasonController,
-    #readerController,
-    #loanController
+    gameFormatController,
+    tournamentController
 ]
 
 # Le pasamos la conexión de la base de datos a los blueprints / controladores

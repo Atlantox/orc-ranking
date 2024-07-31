@@ -3,7 +3,7 @@ from datetime import datetime
 from flask import Blueprint, request, jsonify
 
 from models.UserModel import UserModel
-from backend.models.TornamentModel import ReaderModel
+from models.TournamentModel import ReaderModel
 from models.LoanModel import LoanModel
 
 from helpers import *

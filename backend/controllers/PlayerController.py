@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 
 from models.UserModel import UserModel
 from models.PlayerModel import PlayerModel
-from models.TornamentModel import TournamentModel
+from models.TournamentModel import TournamentModel
 
 from helpers import *
 

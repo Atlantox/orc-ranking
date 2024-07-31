@@ -1,28 +1,28 @@
 from flask import Blueprint, request, jsonify
 
 from models.UserModel import UserModel
-from models.DeckModel import DeckModel
+from models.GameFormatModel import GameFormatModel
 from models.TournamentModel import TournamentModel
 
 from helpers import *
 
-DECK_LENGTH_CONFIG = {
-    'name': {'min': 1, 'max':100}
+GAME_FORMAT_LENGTH_CONFIG = {
+    'name': {'min': 1, 'max':50}
 }
 
-REQUIRED_FIELDS = ['name', 'colors']
+REQUIRED_FIELDS = ['name']
 
-deckController = Blueprint('deck', __name__)
+gameFormatController = Blueprint('format', __name__)
 
 def GetConnection():
-    connection = getattr(deckController, 'connection', None)
+    connection = getattr(gameFormatController, 'connection', None)
     if connection is None:
-        raise Exception('No se pudo obtener la conexión desde el Blueprint Deck')
+        raise Exception('No se pudo obtener la conexión desde el Blueprint Player')
     
     return connection
 
-@deckController.route('/decks', methods=['POST'])
-def CreateDeck():
+@gameFormatController.route('/formats', methods=['POST'])
+def CreateFormat():
     connection = GetConnection()
     userModel = UserModel(connection)
     
@@ -39,31 +39,31 @@ def CreateDeck():
             statusCode = 400
     
     if error == '':
-        cleanData = ValidateDeckData(recievedData)
+        cleanData = ValidateGameFormatData(recievedData)
         if type(cleanData) is str:
             error = cleanData
             statusCode = 400
 
     if error == '':
-        if userModel.UserHasPermisson(targetUser['id'], 'Mazos') is False:
+        if userModel.UserHasPermisson(targetUser['id'], 'Formatos') is False:
             error = 'Acción denegada'
             statusCode = 401  # Unauthorized
 
     if error == '':
-        deckModel = DeckModel(connection)
-        if deckModel.GetDeckByName(cleanData['name']) is not None:
-            error = 'El nombre del deck ya está registrado'
+        gameFormatModel = GameFormatModel(connection)
+        if gameFormatModel.GetFormatByName(cleanData['name']) is not None:
+            error = 'El formato ya está registrado'
             statusCode = 400
     
     if error == '':
-        created = deckModel.CreateDeck(cleanData)
+        created = gameFormatModel.CreateFormat(cleanData)
         if created is False:
-            error = "Hubo un error al crear el deck"
+            error = "Hubo un error al crear el formato"
             statusCode = 500
         else:
-            action = 'Creó el deck {0}'.format(cleanData['name'])
-            deckModel.CreateBinnacle(targetUser['id'], action, request.remote_addr)
-            message = 'Deck creado correctamente'
+            action = 'Creó el formato {0}'.format(cleanData['name'])
+            gameFormatModel.CreateBinnacle(targetUser['id'],action, request.remote_addr)
+            message = 'Formato creado correctamente'
 
     if error != '':
         message = error
@@ -72,48 +72,48 @@ def CreateDeck():
     return jsonify({'success': success, 'message': message}), statusCode
 
 
-@deckController.route('/decks', methods=['GET'])
-def GetDecks():
+@gameFormatController.route('/formats', methods=['GET'])
+def GetFormats():
     connection = GetConnection()
-    deckModel = DeckModel(connection)
+    gameFormatModel = GameFormatModel(connection)
     response = {}
     statusCode = 200
 
-    decks = deckModel.GetDecks()
+    formats = gameFormatModel.GetFormats()
     response = {
         'success': True,
-        'decks': decks
+        'formats': formats
     }
 
     return jsonify(response), statusCode
 
 
-@deckController.route('/decks/<int:deckId>', methods=['GET'])
-def GetDeckById(deckId):
+@gameFormatController.route('/formats/<int:formatId>', methods=['GET'])
+def GetGameFormatById(formatId):
     connection = GetConnection()
-    deckModel = DeckModel(connection)
+    gameFormatModel = GameFormatModel(connection)
     error = ''
     statusCode = 200
 
     if error == '':
-        targetDeck = deckModel.GetDeckById(deckId)
-        if targetDeck is None:
-            error = 'Deck no encontrado'
+        targetFormat = gameFormatModel.GetFormatById(formatId)
+        if targetFormat is None:
+            error = 'Formato no encontrado'
             statusCode = 404  # Not found
     
     success = error == ''
     response = {'success': success}
 
     if error == '':
-        response['deck'] = targetDeck
+        response['format'] = targetFormat
     else:
         response['message'] = error
 
     return jsonify(response), statusCode
 
 
-@deckController.route('/decks/<int:deckId>', methods=['PUT'])
-def UpdateDeck(deckId):
+@gameFormatController.route('/formats/<int:formatId>', methods=['PUT'])
+def UpdateFormat(formatId):
     connection = GetConnection()
     userModel = UserModel(connection)
     
@@ -130,37 +130,37 @@ def UpdateDeck(deckId):
             statusCode = 400
     
     if error == '':
-        cleanData = ValidateDeckData(recievedData, False)
+        cleanData = ValidateGameFormatData(recievedData)
         if type(cleanData) is str:
             error = cleanData
             statusCode = 400
 
     if error == '':
-        if userModel.UserHasPermisson(targetUser['id'], 'Mazos') is False:
+        if userModel.UserHasPermisson(targetUser['id'], 'Formatos') is False:
             error = 'Acción denegada'
             statusCode = 401  # Unauthorized
 
     if error == '':
-        deckModel = DeckModel(connection)
-        targetDeck = deckModel.GetDeckById(deckId)
-        if targetDeck is None:
-            error = 'Deck no encontrado'
+        gameFormatModel = GameFormatModel(connection)
+        targetFormat = gameFormatModel.GetFormatById(formatId)
+        if targetFormat is None:
+            error = 'Formato no encontrado'
             statusCode = 404  # Not found
 
     if error == '':
-        if deckModel.GetDeckByName(cleanData['name']) is not None:
-            error = 'Ya existe un deck con ese nombre'
+        if gameFormatModel.GetFormatByName(cleanData['name']) is not None:
+            error = 'Ya existe un formato con ese nombre'
             statusCode = 400
 
     if error == '':
-        updated = deckModel.UpdateDeck(deckId, cleanData)
+        updated = gameFormatModel.UpdateFormat(formatId, cleanData)
         if updated is False:
-            error = "Hubo un error al modificar el deck"
+            error = "Hubo un error al renombrar el formato"
             statusCode = 500
         else:
-            action = 'Modificó el deck "{0}"'.format(targetDeck['id'])
-            deckModel.CreateBinnacle(targetUser['id'], action, request.remote_addr)
-            message = 'Deck modificado correctamente'
+            action = 'Renombró el formato "{0}" por "{1}" '.format(targetFormat['name'], cleanData['name'])
+            gameFormatModel.CreateBinnacle(targetUser['id'],action, request.remote_addr)
+            message = 'Formato renombrado correctamente'
 
     if error != '':
         message = error
@@ -169,8 +169,8 @@ def UpdateDeck(deckId):
     return jsonify({'success': success, 'message': message}), statusCode
 
 
-@deckController.route('/decks/<int:deckId>', methods=['DELETE'])
-def DeleteDeck(deckId):
+@gameFormatController.route('/formats/<int:formatId>', methods=['DELETE'])
+def DeleteFormat(formatId):
     connection = GetConnection()
     userModel = UserModel(connection)
     error = ''
@@ -188,34 +188,34 @@ def DeleteDeck(deckId):
             statusCode = 400
 
     if error == '':
-        if userModel.UserHasPermisson(targetUser['id'], 'Mazos') is False:
+        if userModel.UserHasPermisson(targetUser['id'], 'Formatos') is False:
             error = 'Acción denegada'
             statusCode = 401  # Unauthorized
 
     if error == '':
-        deckModel = DeckModel(connection)
-        targetDeck = deckModel.GetDeckById(deckId)
-        if targetDeck is None:
-            error = 'Deck no encontrado'
+        gameFormatModel = GameFormatModel(connection)
+        targetFormat = gameFormatModel.GetFormatById(formatId)
+        if targetFormat is None:
+            error = 'Formato no encontrado'
             statusCode = 404  # Not found
 
     if error == '':
         tournamentModel = TournamentModel(connection)
-        deckTournaments = tournamentModel.GetTournamentsOfDeck(deckId)
-        if len(deckTournaments) > 0:
-            # The deck is registered in almost one tournament, then, it can't be deleted
-            error = 'No se pueden borrar decks que hayan participado en un torneo'
+        formatTournaments = tournamentModel.GetTournamentsOfFormat(formatId)
+        if len(formatTournaments) > 0:
+            # The format is registered in almost one tournament, then, it can't be deleted
+            error = 'No se pueden borrar formatos si se hizo al menos un torneo sobre este'
             statusCode = 400
 
     if error == '':
-        deleted = deckModel.DeleteDeck(deckId)
+        deleted = gameFormatModel.DeleteFormat(formatId)
         if deleted is False:
-            error = "Hubo un error al eliminar el deck"
+            error = "Hubo un error al eliminar el formato"
             statusCode = 500
         else:
-            action = 'Eliminó el deck "{0}"'.format(targetDeck['name'])
-            deckModel.CreateBinnacle(targetUser['id'], action, request.remote_addr)
-            message = 'Deck eliminado correctamente'
+            action = 'Eliminó el formato "{0}"'.format(targetFormat['name'])
+            gameFormatModel.CreateBinnacle(targetUser['id'],action, request.remote_addr)
+            message = 'Formato eliminado correctamente'
 
     if error != '':
         message = error
@@ -224,11 +224,7 @@ def DeleteDeck(deckId):
     return jsonify({'success': success, 'message': message}), statusCode
 
 
-def ValidateDeckData(recievedData, exactData = True):
-    ''' 
-    With exactData = True, the required fields will be obligatory
-    With exactData = False, only the existing data will be validated
-    '''
+def ValidateGameFormatData(recievedData, exactData = True):
     error = ''
 
     cleanData = HasEmptyFields(REQUIRED_FIELDS, recievedData, exactData)
@@ -236,7 +232,7 @@ def ValidateDeckData(recievedData, exactData = True):
         error = cleanData
 
     if error == '':
-        lengthOK = ValidateLength(DECK_LENGTH_CONFIG, cleanData)
+        lengthOK = ValidateLength(GAME_FORMAT_LENGTH_CONFIG, cleanData)
         if lengthOK is not True:
             error = lengthOK
     
