@@ -28,3 +28,8 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+
+backend/venv
+backend/__pycache__
+backend/controllers/__pycache__
+backend/models/__pycache__
