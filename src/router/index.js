@@ -20,7 +20,9 @@ import SearchBooksView from '../views/tables/SearchBooksView.vue'
 import SearchLoanView from '../views/tables/SearchLoanView.vue'
 import SearchReadersView from '../views/tables/SearchReadersView.vue'
 import SearchCategoryView from '@/views/tables/SearchCategoryView.vue'
-import SearchAuthorsView from '@/views/tables/SearchAuthorsView.vue'
+import SearchPlayersView from '@/views/tables/SearchPlayersView.vue'
+import SearchDecksView from '@/views/tables/SearchDecksView.vue'
+import SearchTournamentsView from '@/views/tables/SearchTournamentsView.vue'
 import SearchEditorialsView from '@/views/tables/SearchEditorialsView.vue'
 import SearchUsersView from '@/views/tables/SearchUsersView.vue'
 import SearchBinnacleView from '@/views/tables/SearchBinnacleView.vue'
@@ -87,17 +89,32 @@ const router = createRouter({
       meta:{ requireAuth: true, editorialPermisson: true }
     },
 
+    // PLAYERS
+    {
+      path: '/search_players',
+      name: 'players',
+      component: SearchPlayersView,
+    },
+
+    // DECKS
+    {
+      path: '/search_decks',
+      name: 'decks',
+      component: SearchDecksView,
+    },
+
+    // TOURNAMENTS
+    {
+      path: '/search_tournaments',
+      name: 'tournaments',
+      component: SearchTournamentsView,
+    },
+
     // AUTHORS
     {
       path: '/add_author/:id?',
       name: 'add_author',
       component: AuthorFormView,
-      meta:{ requireAuth: true, authorPermisson: true }
-    },
-    {
-      path: '/search_authors',
-      name: 'authors',
-      component: SearchAuthorsView,
       meta:{ requireAuth: true, authorPermisson: true }
     },
 

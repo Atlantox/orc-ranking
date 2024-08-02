@@ -11,7 +11,7 @@ $terciary-dark: #003b5e;
 $terciary-l:#add1e6;
 $terciary-ul: #dcf2ff;
 
-$quartary: #E5BA71;
+$my-green: rgb(87, 211, 97);
 
 @font-face {
     font-family: seagram;
@@ -55,10 +55,6 @@ $quartary: #E5BA71;
     background-color: $terciary-ul;
 }
 
-.lb-bg-quartary{
-    background-color: $quartary;
-}
-
 .lb-border-primary{
     border: $primary solid 2px;
 }
@@ -85,6 +81,14 @@ $quartary: #E5BA71;
 
 .bg-black{
     background:black;
+}
+
+.bg-light-grey{
+    background-color: #868686;
+}
+
+.bg-grey{
+    background-color: #494949;
 }
 
 .bg-dark-grey{
@@ -121,7 +125,7 @@ $quartary: #E5BA71;
 }
 
 .shadowed-l{
-    box-shadow: rgba(0, 0, 0, 0.3) 0px 0px 10px 1px;
+    box-shadow: rgba(255, 255, 255, 0.568) 0px 0px 10px 1px;
 }
 
 .shadow-top{
@@ -149,7 +153,7 @@ $quartary: #E5BA71;
 }
 
 .text-green{
-    color:rgb(87, 211, 97) !important;
+    color:$my-green !important;
 }
 
 .text-Azul{
@@ -161,11 +165,12 @@ $quartary: #E5BA71;
 }
 
 .text-Negro{
-    color: rgb(73, 73, 73);
+    color: rgb(0, 0, 0);
 }
 
 .text-Blanco{
     color: rgb(248, 245, 197);
+
 }
 
 .text-Verde{
@@ -176,17 +181,22 @@ $quartary: #E5BA71;
     color: rgb(163, 163, 163);
 }
 
+.text-Azul, .text-Negro, .text-Blanco, .text-Verde, .text-Rojo, .text-Incoloro{
+    -webkit-text-stroke-width: 0.2px;
+    -webkit-text-stroke-color: rgb(168, 168, 168);
+}
+
 .border-orange{
     border: inherit solid orange !important;
 }
 
 .border-green{
-    border: 1px solid rgb(87, 211, 97) !important;
+    border: 1px solid $my-green !important;
 }
 
 .side-border-green{
-    border-right: 1px solid rgb(87, 211, 97);
-    border-left: 1px solid rgb(87, 211, 97);
+    border-right: 1px solid $my-green;
+    border-left: 1px solid $my-green;
 }
 
 .text-grey{
@@ -208,6 +218,11 @@ $quartary: #E5BA71;
 .outline-black{
     -webkit-text-stroke-width: 2px;
     -webkit-text-stroke-color: black;
+}
+
+.outline-green{
+    -webkit-text-stroke-width: 2px;
+    -webkit-text-stroke-color: $my-green;
 }
 
 .outline-none{
@@ -263,19 +278,19 @@ $quartary: #E5BA71;
 }
 
 .datatable-navigation{
-    color:black !important;
+    color:$my-green !important;
 }
 
 .dt-paging-button{
     margin:0 8px;
-    box-shadow: rgba(0, 0, 0, 0.3) 0px 0px 10px 1px;
-    background:rgb(241, 241, 241) !important;
-    color: rgb(0, 0, 0) !important;
-    border-radius: 10px !important;
+    box-shadow: rgba(255, 255, 255, 0.3) 0px 0px 10px 1px;
+    background:black !important;
+    color: $my-green;
 }
 
 .dt-paging-button.current{
-    background: $terciary-ul !important;
+    background: #6fcc7b !important;
+    color: black !important;
     font-weight: bold;
 }
 
@@ -283,19 +298,7 @@ $quartary: #E5BA71;
     margin:15px;
 }
 
-.mydatatable{
-    th{
-        border:1px black solid;
-        text-align: center;
-    }
-}
-
-.dataTables_paginate{
-    color:white;
-}
-
 .dataTables_filter label input, .dataTables_length label select{
-    border-radius: 5px !important;
     border: 2px $terciary-l solid !important;
 }
 
@@ -309,7 +312,6 @@ $quartary: #E5BA71;
     background-color: $terciary !important;
     
     padding:8px 15px;
-    border-radius: 20px;
     font-size: 1em;
     transition: 0.3s;
     font-weight:bold;
@@ -520,25 +522,25 @@ input[type="file"] {
 }
 
 .odd{
-    background:rgba(255, 255, 255, 0.74) !important;
+    background:rgba(109, 109, 109, 0.74) !important;
 }
 
 .even{
-    background-color: #ecececb2 !important;
-}
-
-.dataTable{
-    border-bottom-left-radius: 20px !important;
-    border-bottom-right-radius: 20px !important;
-    overflow: hidden;
+    background-color: rgba(167, 167, 167, 0.74) !important;
 }
 
 .dt-scroll-headInner{
     .dataTable{
         border-radius:0 !important;
-        border-top-left-radius: 20px !important;
-        border-top-right-radius: 20px !important;
     }
+}
+
+.dt-input{
+    color:black !important;
+}
+
+.datatable-search{
+    color: white !important;
 }
 
 .single-button{

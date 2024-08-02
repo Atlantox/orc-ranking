@@ -5,7 +5,7 @@
   --dt-row-selected-link: 9, 10, 11;
   --dt-row-stripe: 0, 0, 0;
   --dt-row-hover: 0, 0, 0;
-  --dt-column-ordering: 0, 0, 0;
+  --dt-column-ordering: 87, 211, 97;
   --dt-html-background: white;
 }
 :root.dark {
@@ -74,6 +74,7 @@ table.dataTable thead > tr > td.dt-ordering-asc span.dt-column-order:before {
   bottom: 50%;
   content: "▲";
   content: "▲"/"";
+  color: rgb(87, 211, 97);
 }
 table.dataTable thead > tr > th.dt-orderable-desc span.dt-column-order:after, table.dataTable thead > tr > th.dt-ordering-desc span.dt-column-order:after,
 table.dataTable thead > tr > td.dt-orderable-desc span.dt-column-order:after,
@@ -83,6 +84,7 @@ table.dataTable thead > tr > td.dt-ordering-desc span.dt-column-order:after {
   top: 50%;
   content: "▼";
   content: "▼"/"";
+  color: rgb(87, 211, 97);
 }
 table.dataTable thead > tr > th.dt-orderable-asc, table.dataTable thead > tr > th.dt-orderable-desc, table.dataTable thead > tr > th.dt-ordering-asc, table.dataTable thead > tr > th.dt-ordering-desc,
 table.dataTable thead > tr > td.dt-orderable-asc,
@@ -576,7 +578,6 @@ div.dt-container .dt-paging .dt-paging-button {
   background: transparent;
 }
 div.dt-container .dt-paging .dt-paging-button.current, div.dt-container .dt-paging .dt-paging-button.current:hover {
-  color: inherit !important;
   border: 1px solid rgba(0, 0, 0, 0.3);
   background-color: rgba(0, 0, 0, 0.05);
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(230, 230, 230, 0.05)), color-stop(100%, rgba(0, 0, 0, 0.05))); /* Chrome,Safari4+ */

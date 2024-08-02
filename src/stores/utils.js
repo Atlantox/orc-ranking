@@ -41,7 +41,10 @@ const useUtilsStore = defineStore('utils', {
         'state',
         'categories',
         'editorial',
-        'author'
+        'author',
+        'players',
+        'decks',
+        'tournaments',
       ]
 
       select2Ids.forEach((id) => { 

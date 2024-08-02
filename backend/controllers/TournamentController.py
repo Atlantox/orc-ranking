@@ -123,6 +123,39 @@ def GetTournaments():
     return jsonify(response), statusCode
 
 
+@tournamentController.route('/tournaments/last', methods=['GET'])
+def GetLastTournament():
+    connection = GetConnection()
+    tournamentModel = TournamentModel(connection)
+    response = {}
+    statusCode = 200
+
+    tournament = tournamentModel.GetLastTournament()
+    response = {
+        'success': True,
+        'tournament': tournament
+    }
+
+    return jsonify(response), statusCode
+
+
+@tournamentController.route('/tournaments/counts', methods=['GET'])
+def GetTournamentAndParticipantsCount():
+    connection = GetConnection()
+    tournamentModel = TournamentModel(connection)
+    response = {}
+    statusCode = 200
+
+    counts = tournamentModel.GetTournamentsAndParticipantsCount()
+    response = {
+        'success': True,
+        'counts': counts
+    }
+
+    return jsonify(response), statusCode
+
+
+
 @tournamentController.route('/tournaments/<int:deckId>', methods=['GET'])
 def GetDeckById(deckId):
     connection = GetConnection()

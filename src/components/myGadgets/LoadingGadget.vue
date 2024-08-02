@@ -24,7 +24,7 @@
 .loader::after {    
   content:"";
   grid-area: 1/1;
-  --c:no-repeat radial-gradient(farthest-side,#71E580 92%,#0000);
+  --c:no-repeat radial-gradient(farthest-side,rgb(87, 211, 97) 92%,#0000);
   background: 
     var(--c) 50%  0, 
     var(--c) 50%  100%, 

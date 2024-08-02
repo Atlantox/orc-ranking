@@ -21,25 +21,25 @@ const CloseSession = (() => {
 
 <template>
     <!-- Designed by Atlantox https://atlantox.pythonanywhere.com/ -->
-    <nav class="navbar navbar-expand-lg navbar-dark p-0 bg-dark-grey" style="padding:0 !important" id="headerNav">
+    <nav class="navbar navbar-expand-lg navbar-dark p-0 bg-black" style="padding:0 !important" id="headerNav">
       <div class="container-fluid">
-        <rounter-link class="navbar-brand d-block d-lg-none" :to="{name: 'home'}">
+        <router-link class="navbar-brand d-block d-lg-none" :to="{name: 'home'}">
           <img src="@/assets/images/orc.png" height="80" />
-        </rounter-link>
+        </router-link>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
     
         <div class=" collapse navbar-collapse" id="navbarNavDropdown">
           <ul class="navbar-nav mx-auto fs-5">
-            <li class="nav-item">
-              <rounter-link class="nav-link mx-2 text-green" aria-current="page" :to="{name: 'home'}">Dashboard</rounter-link>
+            <li class="nav-item" v-if="sessionStore.authenticated">
+              <router-link class="nav-link mx-2 text-green cursor-pointer my-nav-link" aria-current="page" :to="{name: 'home'}">Dashboard</router-link>
             </li>
             <li class="nav-item">
-              <rounter-link class="nav-link mx-2 text-green" aria-current="page" :to="{name: 'home'}">Jugadores</rounter-link>
+              <router-link class="nav-link mx-2 text-green cursor-pointer my-nav-link" aria-current="page" :to="{name: 'players'}">Jugadores</router-link>
             </li>
             <li class="nav-item">
-              <rounter-link class="nav-link mx-2 text-green" :to="{name: 'home'}">Decks</rounter-link>
+              <router-link class="nav-link mx-2 text-green cursor-pointer my-nav-link" :to="{name: 'decks'}">Decks</router-link>
             </li>
 
             <li class="nav-item d-none d-lg-block">
@@ -49,18 +49,18 @@ const CloseSession = (() => {
             </li>
 
             <li class="nav-item">
-              <rounter-link class="nav-link mx-2 text-green" :to="{name: 'home'}">Torneos</rounter-link>
+              <router-link class="nav-link mx-2 text-green cursor-pointer my-nav-link" :to="{name: 'tournaments'}">Torneos</router-link>
             </li>
             <li class="nav-item">
-              <rounter-link class="nav-link mx-2 text-green" :to="{name: 'home'}">Acerca</rounter-link>
+              <router-link class="nav-link mx-2 text-green cursor-pointer my-nav-link" :to="{name: 'home'}">Acerca</router-link>
             </li>
-            <li class="nav-item dropdown">
-              <a class="nav-link mx-2 dropdown-toggle text-green" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                USUARIO
+            <li class="nav-item dropdown" v-if="sessionStore.authenticated">
+              <a class="nav-link mx-2 dropdown-toggle text-green cursor-pointer my-nav-link" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                {{ sessionStore.userData.nickname }}
               </a>
               <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                <li><rounter-link class="dropdown-item" :to="{name: 'home'}">Mi cuenta</rounter-link></li>
-                <li><rounter-link class="dropdown-item" :to="{name: 'home'}">Cerrar sesión</rounter-link></li>
+                <li><router-link class="dropdown-item" :to="{name: 'home'}">Mi cuenta</router-link></li>
+                <li><router-link class="dropdown-item" @click="CloseSession">Cerrar sesión</router-link></li>
               </ul>
             </li>
           </ul>
@@ -98,5 +98,13 @@ const CloseSession = (() => {
 
 .navbar{
     box-shadow:0 5px 5px rgba(112, 112, 112, 0.7) !important;
+}
+
+.my-nav-link{
+  transition: 0.1s;
+}
+
+.my-nav-link:hover{
+  border-bottom: 2px rgb(87, 211, 97) solid;
 }
 </style>

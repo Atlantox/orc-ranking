@@ -15,7 +15,7 @@ onMounted(() => {
 <template>
     <div class="row m-0 p-0 justify-content-center my-3">
         <div class="col-12 col-lg-8 m-0 p-0 my-2">
-            <h1 class="w-100 text-center hide-up fw-bold m-0 text-black outline-black">
+            <h1 class="w-100 text-center hide-up m-0 text-white outline-green mt-5">
                 {{ props.title }}
             </h1>
         </div>

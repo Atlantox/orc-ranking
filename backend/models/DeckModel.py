@@ -4,7 +4,27 @@ class DeckModel(BaseModel):
     def GetDecks(self):
         cursor = self.connection.connection.cursor()
         result = []
-        sql = "SELECT * FROM deck ORDER BY name"
+        sql = '''
+            SELECT
+            deck.id,
+            deck.name,
+            SUM(CASE WHEN tournament_result.winner = 1 THEN 1 ELSE 0 END) as wins,
+            COUNT(tournament_result.id) as participations
+            FROM 
+            deck 
+            LEFT JOIN tournament_result ON tournament_result.deck = deck.id
+            LEFT JOIN tournament ON tournament.id = tournament_result.tournament
+            WHERE
+            tournament.id IS NULL OR
+            (
+            tournament.season = (SELECT id FROM season WHERE active = 1) AND
+            tournament.active = 1
+            )
+            GROUP BY
+            deck.id
+            ORDER BY
+            deck.name
+            '''
 
         try:
             cursor.execute(sql)
@@ -51,11 +71,8 @@ class DeckModel(BaseModel):
         result = []
         for deck in decks:
             deckColors = self.GetColorsOfDeck(deck['id'])
-            toAdd = {
-                'id': deck['id'],
-                'name': deck['name'],
-                'colors': deckColors
-            }
+            toAdd = deck.copy()
+            toAdd['colors'] = deckColors
             result.append(toAdd)
         
         return result
@@ -63,7 +80,7 @@ class DeckModel(BaseModel):
     def GetColorsOfDeck(self, deckId):
         cursor = self.connection.connection.cursor()
         result = []
-        sql = "SELECT color FROM deck_color WHERE deck = %s"
+        sql = "SELECT color FROM deck_color WHERE deck = %s ORDER BY color"
         args = (deckId,)
         try:
             cursor.execute(sql, args)

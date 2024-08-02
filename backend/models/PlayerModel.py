@@ -4,7 +4,25 @@ class PlayerModel(BaseModel):
     def GetPlayers(self):
         cursor = self.connection.connection.cursor()
         result = []
-        sql = "SELECT * FROM player ORDER BY name"
+        sql = '''
+            SELECT 
+            player.id,
+            player.name,
+            COUNT(tournament.id) as tournaments,
+            SUM(tournament_result.wins) as points,
+            SUM(CASE WHEN tournament_result.winner = 1 THEN 1 ELSE 0 END) as wins
+            FROM 
+            player 
+            INNER JOIN tournament_result ON tournament_result.player = player.id
+            INNER JOIN tournament ON tournament.id = tournament_result.tournament
+            WHERE
+            tournament.active = 1 AND
+            tournament.season = (SELECT id FROM season WHERE active = 1)
+            GROUP BY
+            player.id
+            ORDER BY 
+            player.name
+            '''
 
         try:
             cursor.execute(sql)
