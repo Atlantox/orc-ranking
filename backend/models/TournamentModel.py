@@ -78,7 +78,42 @@ class TournamentModel(BaseModel):
     
     def GetLastTournament(self):
         cursor = self.connection.connection.cursor()
-        sql = "select MAX(id) as id, date, format, season, active from tournament WHERE active = 1"
+        sql = '''
+        SELECT
+            t.id,
+            CONCAT(YEAR(t.date), '-', LPAD(MONTH(t.date), 2, '0'), '-', LPAD(DAY(t.date), 2, '0')) AS date, 
+            t.format,
+            w.name AS winner,
+            p.participants
+        FROM
+            tournament t
+        INNER JOIN (
+            SELECT
+                tr.tournament,
+                COUNT(tr.id) AS participants
+            FROM
+                tournament_result tr
+            GROUP BY
+                tr.tournament
+        ) p ON t.id = p.tournament
+        INNER JOIN (
+            SELECT
+                tr.tournament,
+                CONCAT(pl.name, ' - ', dc.name) as name
+            FROM
+                tournament_result tr
+            INNER JOIN player pl ON tr.player = pl.id
+            INNER JOIN deck dc ON dc.id = tr.deck
+            WHERE
+                tr.winner = 1
+        ) w ON t.id = w.tournament
+        WHERE
+            t.season = (SELECT id FROM season WHERE active = 1) AND
+            t.active = 1
+        ORDER BY
+        t.date DESC
+        LIMIT 1
+        '''
         result = True
 
         try:
@@ -91,10 +126,51 @@ class TournamentModel(BaseModel):
             tournamentResults = self.GetTournamentResults(lastTournament['id'])
             if tournamentResults is False:
                 result = 'Ocurrió un error al obtener los resultados del torneo'
+
+        if result == True:
+            tournamentColors = self.GetTournamentsColorPresence(lastTournament['id'])
+            if tournamentColors is False:
+                result = 'Ocurrió un error al obtener la presencia de colores del torneo'
         
         if result == True:
             result = {
                 'data': lastTournament,
+                'colors': tournamentColors,
+                'results': tournamentResults
+            }
+        
+        return result
+    
+    def GetTournamentById(self, tournamentId):
+        cursor = self.connection.connection.cursor()
+        sql = "SELECT * FROM tournament WHERE id = %s"
+        args = (tournamentId,)
+        result = True
+
+        try:
+            cursor.execute(sql, args)
+            targetTournament = cursor.fetchone()
+        except:
+            result = 'Hubo un error al obtener el torneo solicitado'
+
+        if result == True:
+            if targetTournament is None:
+                result = 'No se encontró el torneo solicitado'
+
+        if result == True:
+            tournamentResults = self.GetTournamentResults(targetTournament['id'])
+            if tournamentResults is False:
+                result = 'Ocurrió un error al obtener los resultados del torneo'
+
+        if result == True:
+            tournamentColors = self.GetTournamentsColorPresence(targetTournament['id'])
+            if tournamentColors is False:
+                result = 'Ocurrió un error al obtener la presencia de colores del torneo'
+        
+        if result == True:
+            result = {
+                'data': targetTournament,
+                'colors': tournamentColors,
                 'results': tournamentResults
             }
         
@@ -125,7 +201,42 @@ class TournamentModel(BaseModel):
         except:
             result = False
 
-        return result       
+        return result  
+
+    def GetTournamentsColorPresence(self, tournamentId):
+        cursor = self.connection.connection.cursor()
+        sql = '''
+            SELECT 
+            color.name as color,
+            COUNT(color.name) as quantity
+            FROM
+            color
+            INNER JOIN deck_color ON deck_color.color = color.name
+            INNER JOIN deck ON deck.id = deck_color.deck
+            INNER JOIN tournament_result ON tournament_result.deck = deck.id
+            WHERE
+            tournament_result.tournament = %s
+            GROUP BY
+            color.name
+            ORDER BY quantity DESC'''
+        
+        try:
+            cursor.execute(sql, (tournamentId,))
+            colors = cursor.fetchall()
+
+            totalColors = 0
+            for color in colors:
+                totalColors += color['quantity']
+            
+            to_add = {}
+            for color in colors:
+                to_add = color
+                to_add['percent'] = color['quantity'] # SACAR PORCENTAJE
+
+        except:
+            result = False
+
+        return result  
     
     def GetTournamentsAndParticipantsCount(self):
         cursor = self.connection.connection.cursor()
@@ -169,6 +280,45 @@ class TournamentModel(BaseModel):
         
         return result
 
+    def GetTournamentsAndParticipantsCountOfSeason(self, seasonId):
+        cursor = self.connection.connection.cursor()
+        sql = '''
+            SELECT
+            COUNT(tournament.id) as count
+            FROM
+            tournament
+            WHERE
+            tournament.active = 1 AND
+            tournament.season = %s'''
+
+        try:
+            cursor.execute(sql, (seasonId,))
+            tournamentsCount = cursor.fetchone()['count']
+        except:
+            tournamentsCount = 0
+        
+        sql = '''
+            SELECT
+            COUNT(tournament_result.id) as count
+            FROM
+            tournament_result
+            INNER JOIN tournament ON tournament.id = tournament_result.tournament
+            WHERE
+            tournament.active = 1 AND
+            tournament.season = %s'''
+        
+        try:
+            cursor.execute(sql, (seasonId,))
+            participantCounts = cursor.fetchone()['count']
+        except:
+            participantCounts = 0
+
+        result = {
+            'tournaments': tournamentsCount,
+            'participants': participantCounts
+        }
+        
+        return result
     
     def GetTournamentsOfDeck(self, deckId):
         cursor = self.connection.connection.cursor()

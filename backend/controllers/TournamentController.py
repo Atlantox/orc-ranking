@@ -9,7 +9,7 @@ from models.SeasonModel import SeasonModel
 
 from helpers import *
 
-DECK_LENGTH_CONFIG = {
+TOURNAMENT_LENGTH_CONFIG = {
     'date': {'min':8, 'max':10}
 }
 
@@ -42,7 +42,7 @@ def CreateTournament():
             statusCode = 400
     
     if error == '':
-        cleanData = ValidateDeckData(recievedData)
+        cleanData = ValidateTournamentData(recievedData)
         if type(cleanData) is str:
             error = cleanData
             statusCode = 400
@@ -123,6 +123,22 @@ def GetTournaments():
     return jsonify(response), statusCode
 
 
+@tournamentController.route('/tournaments/season/<int:seasonId>', methods=['GET'])
+def GetTournamentsOfSeason(seasonId):
+    connection = GetConnection()
+    tournamentModel = TournamentModel(connection)
+    response = {}
+    statusCode = 200
+
+    tournaments = tournamentModel.GetTournamentsOfSeason(seasonId)
+    response = {
+        'success': True,
+        'tournaments': tournaments
+    }
+
+    return jsonify(response), statusCode
+
+
 @tournamentController.route('/tournaments/last', methods=['GET'])
 def GetLastTournament():
     connection = GetConnection()
@@ -155,90 +171,48 @@ def GetTournamentAndParticipantsCount():
     return jsonify(response), statusCode
 
 
+@tournamentController.route('/tournaments/counts/<int:seasonId>', methods=['GET'])
+def GetTournamentAndParticipantsCountOfSeason(seasonId):
+    connection = GetConnection()
+    tournamentModel = TournamentModel(connection)
+    response = {}
+    statusCode = 200
 
-@tournamentController.route('/tournaments/<int:deckId>', methods=['GET'])
-def GetDeckById(deckId):
+    counts = tournamentModel.GetTournamentsAndParticipantsCountOfSeason(seasonId)
+    response = {
+        'success': True,
+        'counts': counts
+    }
+
+    return jsonify(response), statusCode
+
+
+@tournamentController.route('/tournaments/<int:tournamentId>', methods=['GET'])
+def GetTournamentById(tournamentId):
     connection = GetConnection()
     tournamentModel = TournamentModel(connection)
     error = ''
     statusCode = 200
 
     if error == '':
-        targetDeck = tournamentModel.GetDeckById(deckId)
-        if targetDeck is None:
-            error = 'Deck no encontrado'
+        targetTournament = tournamentModel.GetTournamentById(tournamentId)
+        if type(targetTournament) is str:
+            error = targetTournament
             statusCode = 404  # Not found
     
     success = error == ''
     response = {'success': success}
 
     if error == '':
-        response['deck'] = targetDeck
+        response['tournament'] = targetTournament
     else:
         response['message'] = error
 
     return jsonify(response), statusCode
 
 
-@tournamentController.route('/tournaments/<int:deckId>', methods=['PUT'])
-def UpdateDeck(deckId):
-    connection = GetConnection()
-    userModel = UserModel(connection)
-    
-    recievedData, error, statusCode = JsonExists(request)
-    token = GetTokenOfRequest(request)
-    if token is None:
-        error = 'Acceso denegado. Autenticación requerida'
-        statusCode = 401
-
-    if error == '':
-        targetUser = userModel.GetUserByToken(token)
-        if type(targetUser) is str:
-            error = targetUser
-            statusCode = 400
-    
-    if error == '':
-        cleanData = ValidateDeckData(recievedData, False)
-        if type(cleanData) is str:
-            error = cleanData
-            statusCode = 400
-
-    if error == '':
-        if userModel.UserHasPermisson(targetUser['id'], 'Torneos') is False:
-            error = 'Acción denegada'
-            statusCode = 401  # Unauthorized
-
-    if error == '':
-        tournamentModel = TournamentModel(connection)
-        targetDeck = tournamentModel.GetDeckById(deckId)
-        if targetDeck is None:
-            error = 'Deck no encontrado'
-            statusCode = 404  # Not found
-
-    if error == '':
-        if tournamentModel.GetDeckByName(cleanData['name']) is not None:
-            error = 'Ya existe un deck con ese nombre'
-            statusCode = 400
-
-    if error == '':
-        updated = tournamentModel.UpdateDeck(deckId, cleanData)
-        if updated is False:
-            error = "Hubo un error al modificar el deck"
-            statusCode = 500
-        else:
-            action = 'Modificó el deck "{0}"'.format(targetDeck['id'])
-            tournamentModel.CreateBinnacle(targetUser['id'], action, request.remote_addr)
-            message = 'Deck modificado correctamente'
-
-    if error != '':
-        message = error
-        
-    success = error == ''
-    return jsonify({'success': success, 'message': message}), statusCode
-
-
-@tournamentController.route('/tournaments/<int:deckId>', methods=['DELETE'])
-def DeleteDeck(deckId):
+@tournamentController.route('/tournaments/<int:tournamentId>', methods=['DELETE'])
+def DeactivateTournament(tournamentId):
     connection = GetConnection()
     userModel = UserModel(connection)
     error = ''
@@ -262,28 +236,20 @@ def DeleteDeck(deckId):
 
     if error == '':
         tournamentModel = TournamentModel(connection)
-        targetDeck = tournamentModel.GetDeckById(deckId)
-        if targetDeck is None:
-            error = 'Deck no encontrado'
+        targetTournament = tournamentModel.GetTournamentById(tournamentId)
+        if targetTournament is None:
+            error = 'Torneo no encontrado'
             statusCode = 404  # Not found
 
     if error == '':
-        tournamentModel = TournamentModel(connection)
-        deckTournaments = tournamentModel.GetTournamentsOfDeck(deckId)
-        if len(deckTournaments) > 0:
-            # The deck is registered in almost one tournament, then, it can't be deleted
-            error = 'No se pueden borrar decks que hayan participado en un torneo'
-            statusCode = 400
-
-    if error == '':
-        deleted = tournamentModel.DeleteDeck(deckId)
+        deleted = tournamentModel.DeactivateTournament(tournamentId)
         if deleted is False:
-            error = "Hubo un error al eliminar el deck"
+            error = "Hubo un error al desactivar el torneo"
             statusCode = 500
         else:
-            action = 'Eliminó el deck "{0}"'.format(targetDeck['name'])
+            action = 'Desactivó el torneo de id "{0}"'.format(tournamentId)
             tournamentModel.CreateBinnacle(targetUser['id'], action, request.remote_addr)
-            message = 'Deck eliminado correctamente'
+            message = 'Tourneo desactivado correctamente'
 
     if error != '':
         message = error
@@ -292,7 +258,7 @@ def DeleteDeck(deckId):
     return jsonify({'success': success, 'message': message}), statusCode
 
 
-def ValidateDeckData(recievedData, exactData = True):
+def ValidateTournamentData(recievedData, exactData = True):
     ''' 
     With exactData = True, the required fields will be obligatory
     With exactData = False, only the existing data will be validated
@@ -304,7 +270,7 @@ def ValidateDeckData(recievedData, exactData = True):
         error = cleanData
 
     if error == '':
-        lengthOK = ValidateLength(DECK_LENGTH_CONFIG, cleanData)
+        lengthOK = ValidateLength(TOURNAMENT_LENGTH_CONFIG, cleanData)
         if lengthOK is not True:
             error = lengthOK
     
