@@ -4,15 +4,8 @@ import useSessionStore from '@/stores/session.js'
 const sessionStore = useSessionStore()
 const router = useRouter()
 
-const ToggleNavbar = (() => {
-    const collapser = document.getElementById('navbarCollapse')
-    if(collapser.classList.contains('show'))
-        collapser.classList.remove('show')
-    else
-        collapser.classList.add('show')
-})
-
 const CloseSession = (() => {
+  alert('AAAA')
     sessionStore.DestroySession()
     router.push({name: 'home'})
 })
@@ -33,7 +26,7 @@ const CloseSession = (() => {
         <div class=" collapse navbar-collapse" id="navbarNavDropdown">
           <ul class="navbar-nav mx-auto fs-5">
             <li class="nav-item" v-if="sessionStore.authenticated">
-              <router-link class="nav-link mx-2 text-green cursor-pointer my-nav-link" aria-current="page" :to="{name: 'home'}">Dashboard</router-link>
+              <router-link class="nav-link mx-2 text-green cursor-pointer my-nav-link" aria-current="page" :to="{name: 'dashboard'}">Dashboard</router-link>
             </li>
             <li class="nav-item">
               <router-link class="nav-link mx-2 text-green cursor-pointer my-nav-link" aria-current="page" :to="{name: 'players'}">Jugadores</router-link>
@@ -58,9 +51,9 @@ const CloseSession = (() => {
               <a class="nav-link mx-2 dropdown-toggle text-green cursor-pointer my-nav-link" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 {{ sessionStore.userData.nickname }}
               </a>
-              <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                <li><router-link class="dropdown-item" :to="{name: 'home'}">Mi cuenta</router-link></li>
-                <li><router-link class="dropdown-item" @click="CloseSession">Cerrar sesión</router-link></li>
+              <ul class="dropdown-menu bg-dark-grey" aria-labelledby="navbarDropdownMenuLink">
+                <li><router-link class="dropdown-item text-green hover-spacing" :to="{name: 'home'}">Mi cuenta</router-link></li>
+                <li class="dropdown-item text-green cursor-pointer hover-spacing" @click.prevent="CloseSession">Cerrar sesión</li>
               </ul>
             </li>
           </ul>
@@ -105,6 +98,10 @@ const CloseSession = (() => {
 }
 
 .my-nav-link:hover{
-  border-bottom: 2px rgb(87, 211, 97) solid;
+  border-bottom: 2px rgb(49, 49, 49) solid;
+}
+
+.dropdown-menu{
+  
 }
 </style>

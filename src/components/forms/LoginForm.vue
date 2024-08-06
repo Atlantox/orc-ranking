@@ -41,15 +41,15 @@ const ValidateForm = (async (e) => {
 </script>
 
 <template>
-    <div class="row m-0 p-0 justify-content-center">
-        <form class="col-12 col-lg-9 row m-0 p-2 fs-4 myForm shadowed-n rounded lb-bg-terciary-ul" @submit.prevent="ValidateForm">
+    <div class="row m-0 p-0 justify-content-center mt-5">
+        <form class="col-12 col-lg-9 row m-0 p-2 fs-4 mt-5 myForm shadowed-n rounded bg-grey text-green" @submit.prevent="ValidateForm">
             <PageTitleView :title="'Login administrativo'"/>
 
             <template v-if="waitingResponse">
                 <LoadingGadget/>
             </template>
             <template v-else>
-                <div class="row m-0 p-0 justify-content-center my-2">
+                <div class="row m-0 p-0 justify-content-center my-2 ">
                     <div class="row m-0 p-0 col-10 col-lg-3">
                         <label class="text-center text-lg-end" for="username">Usuario</label>
                     </div>
@@ -88,7 +88,7 @@ const ValidateForm = (async (e) => {
 
             <div class="row m-0 p-0 justify-content-center my-2 mt-5">
                 <div class="row m-0 p-0 col-12 justify-content-center">
-                    <button class="col-2 myBtn terciary-btn shadowed-l h3">
+                    <button class="col-2 myBtn green-btn shadowed-l h3">
                         Ingresar
                     </button>
                 </div>

@@ -199,6 +199,10 @@ $my-green: rgb(87, 211, 97);
     border-left: 1px solid $my-green;
 }
 
+.border-bottom-green{
+    border-bottom: 1px solid $my-green;
+}
+
 .text-grey{
     color:rgb(109, 109, 109);
 }
@@ -359,7 +363,6 @@ $my-green: rgb(87, 211, 97);
 
 /*  F O R M S  */
 .myInput{
-    border-radius: 5px;
     padding: 2px;
     align-self:center;
     border: $terciary-dark solid 1px;
@@ -378,6 +381,13 @@ $my-green: rgb(87, 211, 97);
     color:white !important;
 }
 
+.green-btn{
+    background-color: black;
+    border: 1px white solid;
+    border-radius: 15px;
+    color: $my-green !important;
+}
+
 .myInput:focus{    
     border: $terciary-l solid 1px;
 }
@@ -388,6 +398,10 @@ input[type="radio"] {
     place-content: center;
     width: 25px;
     height: 25px;
+}
+
+input[type="password"] {
+    font-family: 'papyrus'
 }
   
 input[type="radio"]::before {

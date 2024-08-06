@@ -8,78 +8,70 @@ import useLoanStore from '@/stores/loans';
 import LoadingGadget from '@/components/myGadgets/LoadingGadget.vue';
 import OnAppearAnimation from '@/utils/ElegantDisplayer';
 
-const articleStyle = 'col-12 my-4 rounded bg-white shadowed-l'
+const articleStyle = 'col-12 my-4 rounded bg-dark-grey shadowed-l'
 const articleWrappedStyle = 'row col-12 m-0 p-0 justify-content-start shadowed p-2 px-4'
-const h4Style = 'h4 col-12 border-bottom fw-bold'
+const h4Style = 'h4 col-12 border-bottom fw-bold text-green'
 const linkContainersStyle = 'd-flex col-12 flex-wrap mt-2'
 const linkElementStyle = 'col-12 col-lg-4 my-1'
 const routerLinkStyle = 'w-100 justify-content-start align-items-center p-1'
-const iconStyle = 'text-black col-1 panel-icon fs-5'
-const linkTextStyle = 'text-grey col-10 fs-5 w-auto hover-bold hover-spacing'
+const iconStyle = 'text-white col-1 panel-icon fs-5'
+const linkTextStyle = 'text-white col-10 fs-5 w-auto hover-bold hover-spacing'
 
 const sessionStore = useSessionStore()
 const loanStore = useLoanStore()
 
 onMounted( async () => {
-  await loanStore.FetchLatestLoans()
-  await loanStore.FetchLoansRecentCount()
+  // fetchings
   await new Promise(r => setTimeout(r, 50));
   OnAppearAnimation('hide-up')
 })
 </script>
 
 <template>
+  <span class="w-100 mt-5"></span>
   <PageTitle
   :title="'Panel de administrador'"
   />
-    <section class="row m-0 p-0 my-3 align-items-center align-items-lg-start justify-content-around flex-column-reverse flex-lg-row">
+    <section class="row m-0 p-0 my-3 align-items-center align-items-lg-start justify-content-around flex-column-reverse flex-lg-row text-green">
       <div class="row col-12 justify-content-center col-lg-8 p-3">
-        <div class="col-12 shadowed-l rounded lb-bg-terciary-ul">
+        <div class="col-12 rounded text-green">
 
-          <template v-if="sessionStore.userData.permissons.includes('Préstamos')">
+          <template v-if="sessionStore.userData.permissons.includes('Torneos')">
             <article :class="articleStyle">
               <div :class="articleWrappedStyle">
                 <h4 :class="h4Style">
-                    Préstamos
+                    Torneos
                 </h4>
                 <div :class="linkContainersStyle">
                   <div :class="linkElementStyle">
-                    <router-link :class="routerLinkStyle" :to="{name: 'add_loan'}">
-                      <i :class="'fa fa-plus text-success ' + iconStyle" ></i>
+                    <router-link :class="routerLinkStyle" :to="{name: 'home'}">
+                      <i :class="iconStyle + ' fa fa-plus text-green '" ></i>
                       <span :class="linkTextStyle">
-                        Nuevo préstamo
+                        Nuevo torneo
                       </span>
                     </router-link>
                   </div>
                   <div :class="linkElementStyle">
-                    <router-link :class="routerLinkStyle" :to="{name: 'loans', params:{filter: 'pending'}}">
-                      <i :class="'fa fa-file ' + iconStyle" ></i>
+                    <router-link :class="routerLinkStyle" :to="{name: 'home', params:{filter: 'pending'}}">
+                      <i :class="'fa fa-sitemap ' + iconStyle" ></i>
                       <span :class="linkTextStyle">
-                        Ver préstamos pendientes
+                        Ver torneos actuales
                       </span>
                     </router-link>
                   </div>
                   <div :class="linkElementStyle">
-                    <router-link :class="routerLinkStyle" :to="{name: 'loans', params:{filter: 'returned'}}">
-                      <i :class="'fa fa-rotate-right ' + iconStyle" ></i>
-                      <span :class="linkTextStyle">
-                        Ver préstamos devueltos
-                      </span>
-                    </router-link>
-                  </div>
-                  <div :class="linkElementStyle">
-                    <router-link :class="routerLinkStyle" :to="{name: 'loans', params:{filter: 'active'}}">
-                      <i :class="'fa fa-check ' + iconStyle" ></i>
-                      <span :class="linkTextStyle">
-                        Ver préstamos activos
-                      </span>
-                    </router-link>
-                  </div>
-                  <div :class="linkElementStyle">
-                    <router-link :class="routerLinkStyle" :to="{name: 'loans', params:{filter: 'inactive'}}">
+                    <router-link :class="routerLinkStyle" :to="{name: 'home', params:{filter: 'returned'}}">
                       <i :class="'fa fa-close ' + iconStyle" ></i>
                       <span :class="linkTextStyle">
-                        Ver préstamos inactivos
+                        Ver torneos borrados
+                      </span>
+                    </router-link>
+                  </div>
+                  <div :class="linkElementStyle">
+                    <router-link :class="routerLinkStyle" :to="{name: 'home', params:{filter: 'active'}}">
+                      <i :class="'fa fa-list ' + iconStyle" ></i>
+                      <span :class="linkTextStyle">
+                        Ver todos los torneos
                       </span>
                     </router-link>
                   </div>
@@ -88,34 +80,26 @@ onMounted( async () => {
             </article>
           </template>
 
-          <template v-if="sessionStore.userData.permissons.includes('Libros')">
+          <template v-if="sessionStore.userData.permissons.includes('Jugadores')">
             <article :class="articleStyle">
               <div :class="articleWrappedStyle">
                 <h4 :class="h4Style">
-                    Libros
+                    Jugadores
                 </h4>
                 <div :class="linkContainersStyle">
                   <div :class="linkElementStyle">
-                    <router-link :class="routerLinkStyle" :to="{name: 'add_book'}">
-                      <i :class="'fa fa-plus text-success ' + iconStyle" ></i>
+                    <router-link :class="routerLinkStyle" :to="{name: 'home'}">
+                      <i :class="iconStyle + ' fa fa-plus text-green '" ></i>
                       <span :class="linkTextStyle">
-                        Nuevo libro
+                        Nuevo jugador
                       </span>
                     </router-link>
                   </div>
                   <div :class="linkElementStyle">
-                    <router-link :class="routerLinkStyle" :to="{name: 'books'}">
-                      <i :class="'fa fa-book ' + iconStyle" ></i>
+                    <router-link :class="routerLinkStyle" :to="{name: 'home'}">
+                      <i :class="iconStyle + ' fa fa-users '" ></i>
                       <span :class="linkTextStyle">
-                        Ver libros
-                      </span>
-                    </router-link>
-                  </div>
-                  <div :class="linkElementStyle">
-                    <router-link :class="routerLinkStyle" :to="{name: 'add_book_excel'}">
-                      <i :class="'fa fa-table ' + iconStyle" ></i>
-                      <span :class="linkTextStyle">
-                        Añadir libros por Excel
+                        Ver jugadores
                       </span>
                     </router-link>
                   </div>
@@ -124,26 +108,54 @@ onMounted( async () => {
             </article>
           </template>
 
-          <template v-if="sessionStore.userData.permissons.includes('Categorías')">
+          <template v-if="sessionStore.userData.permissons.includes('Mazos')">
             <article :class="articleStyle">
               <div :class="articleWrappedStyle">
                 <h4 :class="h4Style">
-                    Categorías
+                    Decks
                 </h4>
                 <div :class="linkContainersStyle">
                   <div :class="linkElementStyle">
-                    <router-link :class="routerLinkStyle" :to="{name: 'add_category'}">
-                      <i :class="'fa fa-plus text-success ' + iconStyle" ></i>
+                    <router-link :class="routerLinkStyle" :to="{name: 'home'}">
+                      <i :class="iconStyle + ' fa fa-plus text-green '" ></i>
                       <span :class="linkTextStyle">
-                        Nueva categoría
+                        Nuevo deck
                       </span>
                     </router-link>
                   </div>
                   <div :class="linkElementStyle">
-                    <router-link :class="routerLinkStyle" :to="{name: 'categories'}">
+                    <router-link :class="routerLinkStyle" :to="{name: 'home'}">
+                      <i :class="'fa fa-diamond ' + iconStyle" ></i>
+                      <span :class="linkTextStyle">
+                        Ver decks
+                      </span>
+                    </router-link>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </template>
+
+          <template v-if="sessionStore.userData.permissons.includes('Formatos')">
+            <article :class="articleStyle">
+              <div :class="articleWrappedStyle">
+                <h4 :class="h4Style">
+                    Formatos
+                </h4>
+                <div :class="linkContainersStyle">
+                  <div :class="linkElementStyle">
+                    <router-link :class="routerLinkStyle" :to="{name: 'home'}">
+                      <i :class="iconStyle + ' fa fa-plus text-green '" ></i>
+                      <span :class="linkTextStyle">
+                        Nuevo formato
+                      </span>
+                    </router-link>
+                  </div>
+                  <div :class="linkElementStyle">
+                    <router-link :class="routerLinkStyle" :to="{name: 'home'}">
                       <i :class="'fa fa-tag ' + iconStyle" ></i>
                       <span :class="linkTextStyle">
-                        Ver categorías
+                        Ver formatos
                       </span>
                     </router-link>
                   </div>
@@ -152,82 +164,26 @@ onMounted( async () => {
             </article>
           </template>
 
-          <template v-if="sessionStore.userData.permissons.includes('Autores')">
+          <template v-if="sessionStore.userData.permissons.includes('Temporadas')">
             <article :class="articleStyle">
               <div :class="articleWrappedStyle">
                 <h4 :class="h4Style">
-                    Autores
+                    Temporadas
                 </h4>
                 <div :class="linkContainersStyle">
                   <div :class="linkElementStyle">
-                    <router-link :class="routerLinkStyle" :to="{name: 'add_author'}">
-                      <i :class="'fa fa-plus text-success ' + iconStyle" ></i>
+                    <router-link :class="routerLinkStyle" :to="{name: 'home'}">
+                      <i :class="iconStyle + ' fa fa-plus text-green '" ></i>
                       <span :class="linkTextStyle">
-                        Nuevo autor
+                        Nueva temporada
                       </span>
                     </router-link>
                   </div>
                   <div :class="linkElementStyle">
-                    <router-link :class="routerLinkStyle" :to="{name: 'authors'}">
-                      <i :class="'fa fa-pencil ' + iconStyle" ></i>
+                    <router-link :class="routerLinkStyle" :to="{name: 'home'}">
+                      <i :class="iconStyle + ' fa fa-map'" ></i>
                       <span :class="linkTextStyle">
-                        Ver autores
-                      </span>
-                    </router-link>
-                  </div>
-                </div>
-              </div>
-            </article>
-          </template>
-
-          <template v-if="sessionStore.userData.permissons.includes('Editoriales')">
-            <article :class="articleStyle">
-              <div :class="articleWrappedStyle">
-                <h4 :class="h4Style">
-                    Editoriales
-                </h4>
-                <div :class="linkContainersStyle">
-                  <div :class="linkElementStyle">
-                    <router-link :class="routerLinkStyle" :to="{name: 'add_editorial'}">
-                      <i :class="'fa fa-plus text-success ' + iconStyle" ></i>
-                      <span :class="linkTextStyle">
-                        Nueva editorial
-                      </span>
-                    </router-link>
-                  </div>
-                  <div :class="linkElementStyle">
-                    <router-link :class="routerLinkStyle" :to="{name: 'editorials'}">
-                      <i :class="'fa fa-building ' + iconStyle" ></i>
-                      <span :class="linkTextStyle">
-                        Ver editoriales
-                      </span>
-                    </router-link>
-                  </div>
-                </div>
-              </div>
-            </article>
-          </template>
-
-          <template v-if="sessionStore.userData.permissons.includes('Lectores')">
-            <article :class="articleStyle">
-              <div :class="articleWrappedStyle">
-                <h4 :class="h4Style">
-                  Ver lectores
-                </h4>
-                <div :class="linkContainersStyle">
-                  <div :class="linkElementStyle">
-                    <router-link :class="routerLinkStyle" :to="{name: 'add_reader'}">
-                      <i :class="'fa fa-plus text-success ' + iconStyle" ></i>
-                      <span :class="linkTextStyle">
-                        Nuevo lector
-                      </span>
-                    </router-link>
-                  </div>
-                  <div :class="linkElementStyle">
-                    <router-link :class="routerLinkStyle" :to="{name: 'readers'}">
-                      <i :class="'fa fa-eye ' + iconStyle" ></i>
-                      <span :class="linkTextStyle">
-                        Ver lectores
+                        Ver temporadas
                       </span>
                     </router-link>
                   </div>
@@ -245,7 +201,7 @@ onMounted( async () => {
                 <div :class="linkContainersStyle">
                   <div :class="linkElementStyle">
                     <router-link :class="routerLinkStyle" :to="{name: 'add_user'}">
-                      <i :class="'fa fa-plus text-success ' + iconStyle" ></i>
+                      <i :class="iconStyle + ' fa fa-plus text-green '" ></i>
                       <span :class="linkTextStyle">
                         Nuevo usuario
                       </span>
@@ -256,26 +212,6 @@ onMounted( async () => {
                       <i :class="'fa fa-user ' + iconStyle" ></i>
                       <span :class="linkTextStyle">
                         Ver usuarios
-                      </span>
-                    </router-link>
-                  </div>
-                </div>
-              </div>
-            </article>
-          </template>
-
-          <template v-if="sessionStore.userData.permissons.includes('Estadísticas')">
-            <article :class="articleStyle">
-              <div :class="articleWrappedStyle">
-                <h4 :class="h4Style">
-                    Estadísticas
-                </h4>
-                <div :class="linkContainersStyle">
-                  <div :class="linkElementStyle">
-                    <router-link :class="routerLinkStyle" :to="{name: 'statistics'}">
-                      <i :class="'fa fa-star ' + iconStyle" ></i>
-                      <span :class="linkTextStyle">
-                        Ver estadísticas
                       </span>
                     </router-link>
                   </div>
@@ -309,71 +245,53 @@ onMounted( async () => {
 
 
       <div class="row col-12 justify-content-center col-lg-4 p-3">
-        <div class="row w-100 m-0 p-0 justify-content-around h-100 py-3 shadowed-l rounded lb-bg-terciary-ul my-3">
-          <h3 class="fw-bold col-12 text-center">Los últimos 30 días se realizaron...</h3>
-          <template v-if="loanStore.counts === undefined">
+        <div class="row w-100 m-0 p-0 justify-content-around h-100 py-3 shadowed-l rounded bg-grey my-3 ">
+          <h3 class="col-12 text-center text-green">Registros actuales</h3>
+          <template v-if="false">
             <LoadingGadget/>
           </template>
           <template v-else>
             <div class="row col-12 m-0 p-0 justify-content-center hide-up animated-1">
               <article class="col-12 col-lg-6 row m-0 p-0 align-middle p-3 px-lg-2 my-1">
-                  <div class="col-12 d-flex align-items-center bg-white rounded shadowed-l">
-                      <h4 class="h4 m-0 text-center w-100 p-2">
-                        <strong>{{ loanStore.counts['delivered'] }}</strong>
-                        Préstamo{{ loanStore.counts['delivered'] > 1 ? 's' : '' }}
+                  <div class="col-12 d-flex align-items-center bg-dark-grey rounded shadowed-l">
+                      <h4 class="h4 m-0 text-center w-100 p-2 text-green">
+                        Jugadores: {{ 17 }}
                       </h4>
                   </div>
               </article>
     
               <article class="col-12 col-lg-6 row m-0 p-0 align-middle p-3 px-lg-2 my-1">
-                  <div class="col-12 d-flex align-items-center bg-white rounded shadowed-l">
-                      <h4 class="h4 m-0 text-center w-100 p-2">
-                        <strong>{{ loanStore.counts['returned'] }}</strong>
-                          {{ loanStore.counts['returned'] > 1 ? 'Devoluciones' : 'Devolución' }}
+                  <div class="col-12 d-flex align-items-center bg-dark-grey rounded shadowed-l">
+                      <h4 class="h4 m-0 text-center w-100 p-2 text-green">
+                        Decks: {{ 8 }}
+                      </h4>
+                  </div>
+              </article>
+
+              <article class="col-12 col-lg-6 row m-0 p-0 align-middle p-3 px-lg-2 my-1">
+                  <div class="col-12 d-flex align-items-center bg-dark-grey rounded shadowed-l">
+                      <h4 class="h4 m-0 text-center w-100 p-2 text-green">
+                        Torneos: {{ 2 }}
+                      </h4>
+                  </div>
+              </article>
+
+              <article class="col-12 col-lg-6 row m-0 p-0 align-middle p-3 px-lg-2 my-1">
+                  <div class="col-12 d-flex align-items-center bg-dark-grey rounded shadowed-l">
+                      <h4 class="h4 m-0 text-center w-100 p-2 text-green">
+                        Temporadas: {{ 2 }}
                       </h4>
                   </div>
               </article>
             </div>
-          </template>
-        </div>
 
-        <div class="row w-100 m-0 p-0 justify-content-around h-100 py-3 shadowed-l rounded lb-bg-terciary-ul my-3">
-          <h3 class="fw-bold col-12 text-center">Préstamos recientes</h3>
-          <template v-if="loanStore.loans === undefined">
-            <LoadingGadget/>
-          </template>
-          <template v-else>
-            <table class="col-10 text-center hide-up animated-1">
-              <thead>
-                <tr class="border-bottom">
-                  <th>Lector</th>
-                  <th>Libro</th>
-                  <th>Fecha</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr 
-                v-for="loan in loanStore.loans"
-                :key="loan.id"
-                >
-                  <td>
-                    <router-link class="text-black" :to="{name:'add_reader', params: {id: loan.reader_id}}">
-                      {{ loan.fullname }}
-                    </router-link>
-                  </td>
-                  <td>
-                    <router-link class="text-black" :to="{name:'see_book', params: {id: loan.book_id}}">
-                      {{ loan.title }}
-                    </router-link>
-                  </td>
-                  <td>
-                    <router-link class="text-black" :to="{name:'add_loan', params: {id: loan.loan_id}}">
-                      {{ new Date(loan.full_deliver_date).toLocaleDateString('es-VE', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Caracas'}) }}
-                    </router-link>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+            <div class="row col-12 m-0 p-0 justify-content-center hide-up animated-1">
+              <h2 class="w-100 text-center">
+                <router-link :to="{name: 'home'}">
+                  Ver torneo más reciente
+                </router-link>
+              </h2>
+            </div>
           </template>
         </div>
       </div>

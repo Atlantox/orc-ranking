@@ -81,7 +81,7 @@ const FetchSeasonDependantData = ( async(seasonId) => {
     <section class="row col-12 m-0 p-0">
       <figure class="m-0 p-0 my-hero d-flex align-items-center justify-content-center animated-2 shadowed-h" id="my-hero">
         <img class="w-100 text-center my-hero" src="@/assets/images/progenitus.jpg" alt="">
-        <h1 class="h1 fw-bold text-center outline-black position-absolute text-green">
+        <h1 class="h1 fw-bold text-center outline-black position-absolute text-green hide-up animated-1">
           The Orc's Ranking
         </h1>
       </figure>

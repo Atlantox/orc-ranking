@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 28-07-2024 a las 03:41:18
+-- Tiempo de generación: 06-08-2024 a las 22:26:23
 -- Versión del servidor: 10.4.18-MariaDB
 -- Versión de PHP: 8.0.3
 
@@ -76,6 +76,7 @@ INSERT INTO `deck` (`id`, `name`) VALUES
 (2, 'Ertai Resurrected'),
 (5, 'Horde of Notions'),
 (3, 'Purphoros, Bronze-Blooded'),
+(6, 'Sliver Overlord'),
 (4, 'Thalia and The Gitrog Monster'),
 (1, 'Umbris, fear manifest');
 
@@ -91,6 +92,30 @@ CREATE TABLE `deck_color` (
   `color` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Volcado de datos para la tabla `deck_color`
+--
+
+INSERT INTO `deck_color` (`id`, `deck`, `color`) VALUES
+(1, 1, 'Azul'),
+(2, 1, 'Negro'),
+(3, 2, 'Azul'),
+(5, 2, 'Negro'),
+(6, 5, 'Azul'),
+(7, 5, 'Blanco'),
+(8, 5, 'Negro'),
+(9, 5, 'Rojo'),
+(10, 5, 'Verde'),
+(16, 6, 'Blanco'),
+(17, 6, 'Verde'),
+(18, 6, 'Azul'),
+(19, 6, 'Rojo'),
+(20, 6, 'Negro'),
+(26, 3, 'Rojo'),
+(27, 4, 'Blanco'),
+(28, 4, 'Negro'),
+(29, 4, 'Verde');
+
 -- --------------------------------------------------------
 
 --
@@ -98,8 +123,18 @@ CREATE TABLE `deck_color` (
 --
 
 CREATE TABLE `game_format` (
+  `id` int(11) NOT NULL,
   `name` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `game_format`
+--
+
+INSERT INTO `game_format` (`id`, `name`) VALUES
+(3, 'Coliseo'),
+(2, 'EDH'),
+(1, 'Pauper');
 
 -- --------------------------------------------------------
 
@@ -136,7 +171,9 @@ INSERT INTO `permisson` (`id`, `name`, `level`) VALUES
 (44, 'Mazos', 'Editor'),
 (45, 'Jugadores', 'Editor'),
 (46, 'Estadísticas', 'Editor'),
-(47, 'Formatos', 'Editor');
+(47, 'Formatos', 'Editor'),
+(48, 'Bitácora', 'Super'),
+(49, 'Bitácora', 'Admin');
 
 -- --------------------------------------------------------
 
@@ -167,7 +204,7 @@ INSERT INTO `player` (`id`, `name`) VALUES
 
 CREATE TABLE `season` (
   `id` int(11) NOT NULL,
-  `name` varchar(50) NOT NULL,
+  `name` varchar(10) NOT NULL,
   `date` date NOT NULL,
   `active` tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -177,7 +214,8 @@ CREATE TABLE `season` (
 --
 
 INSERT INTO `season` (`id`, `name`, `date`, `active`) VALUES
-(1, '1', '2024-07-27', 1);
+(1, '1', '2024-07-27', 0),
+(2, '2', '2024-07-31', 1);
 
 -- --------------------------------------------------------
 
@@ -189,8 +227,17 @@ CREATE TABLE `tournament` (
   `id` int(11) NOT NULL,
   `date` date NOT NULL,
   `format` varchar(50) NOT NULL,
-  `season` int(11) NOT NULL
+  `season` int(11) NOT NULL,
+  `active` tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `tournament`
+--
+
+INSERT INTO `tournament` (`id`, `date`, `format`, `season`, `active`) VALUES
+(6, '2024-07-31', 'Pauper', 2, 1),
+(7, '2024-07-31', 'Pauper', 2, 1);
 
 -- --------------------------------------------------------
 
@@ -206,6 +253,20 @@ CREATE TABLE `tournament_result` (
   `wins` tinyint(4) NOT NULL,
   `winner` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `tournament_result`
+--
+
+INSERT INTO `tournament_result` (`id`, `tournament`, `player`, `deck`, `wins`, `winner`) VALUES
+(1, 6, 1, 1, 2, 0),
+(2, 6, 2, 2, 4, 1),
+(3, 6, 3, 3, 1, 0),
+(4, 6, 4, 4, 2, 0),
+(5, 7, 1, 1, 1, 0),
+(6, 7, 2, 2, 2, 0),
+(7, 7, 3, 3, 3, 0),
+(8, 7, 4, 4, 5, 1);
 
 -- --------------------------------------------------------
 
@@ -297,7 +358,8 @@ ALTER TABLE `deck_color`
 -- Indices de la tabla `game_format`
 --
 ALTER TABLE `game_format`
-  ADD PRIMARY KEY (`name`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `name` (`name`);
 
 --
 -- Indices de la tabla `permisson`
@@ -331,7 +393,10 @@ ALTER TABLE `tournament`
 -- Indices de la tabla `tournament_result`
 --
 ALTER TABLE `tournament_result`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `tournament_result_player` (`player`),
+  ADD KEY `tournament_result_deck` (`deck`),
+  ADD KEY `tournament_result_tournament` (`tournament`);
 
 --
 -- Indices de la tabla `user`
@@ -363,43 +428,49 @@ ALTER TABLE `binnacle`
 -- AUTO_INCREMENT de la tabla `deck`
 --
 ALTER TABLE `deck`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `deck_color`
 --
 ALTER TABLE `deck_color`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+
+--
+-- AUTO_INCREMENT de la tabla `game_format`
+--
+ALTER TABLE `game_format`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `permisson`
 --
 ALTER TABLE `permisson`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT de la tabla `player`
 --
 ALTER TABLE `player`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `season`
 --
 ALTER TABLE `season`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `tournament`
 --
 ALTER TABLE `tournament`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `tournament_result`
 --
 ALTER TABLE `tournament_result`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `user`
@@ -436,6 +507,14 @@ ALTER TABLE `permisson`
 ALTER TABLE `tournament`
   ADD CONSTRAINT `tournament_format` FOREIGN KEY (`format`) REFERENCES `game_format` (`name`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `tournament_season` FOREIGN KEY (`season`) REFERENCES `season` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `tournament_result`
+--
+ALTER TABLE `tournament_result`
+  ADD CONSTRAINT `tournament_result_deck` FOREIGN KEY (`deck`) REFERENCES `deck` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `tournament_result_player` FOREIGN KEY (`player`) REFERENCES `player` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `tournament_result_tournament` FOREIGN KEY (`tournament`) REFERENCES `tournament` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `user`
