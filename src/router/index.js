@@ -4,6 +4,7 @@ import useSessionStore from '@/stores/session.js'
 
 import HomeView from '../views/HomeView.vue'
 import DashboardView from '../views/DashboardView.vue'
+import AboutView from '@/views/AboutView.vue'
 
 import LoginFormView from '../views/forms/LoginFormView.vue'
 import BookFormView from '../views/forms/BookFormView.vue'
@@ -37,6 +38,11 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView
+    },
+    {
+      path: '/about',
+      name: 'about',
+      component: AboutView
     },
     {
       path: '/admin_login',

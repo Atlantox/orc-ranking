@@ -1,22 +1,24 @@
-// Creates an observer with the specified class, when the element is viewed in the navigator, the specified class is removed
-
-const OnAppearAnimation = (animationClass) => {
+// Creates an observer with the specified class, when the element is viewed in the navigator, the number will increase by 0 to the element innerHTML number
+const NumberAnimated = (async (animationClass) => {
     const htmlElements = document.getElementsByClassName(animationClass)
     
     for(let i = 0; i < htmlElements.length; i++){
         const element = htmlElements[i]
         
         const myObserver = new IntersectionObserver(entries => {
-            entries.forEach(entry => {
+            entries.forEach(async entry => {
                 // If the element is visible
                 if (entry.isIntersecting) {
                     // Add the animation class
-                    element.classList.remove(animationClass);
+                    await IncreaseNumberValue(element)
                 }
             });
         })
         myObserver.observe(element);
     }    
-}
+})
 
-export default OnAppearAnimation
+async function IncreaseNumberValue(htmlElement){
+    //htmlElement
+}
+export default NumberAnimated

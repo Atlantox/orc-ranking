@@ -28,8 +28,9 @@ class SeasonModel(BaseModel):
 
         if result == True:
             seasonDate = seasonData['date']
-            sql = "INSERT INTO season (date) VALUES (%s)"
-            args = (seasonDate,)
+            seasonName = seasonData['name']
+            sql = "INSERT INTO season (name, date) VALUES (%s, %s)"
+            args = (seasonName, seasonDate,)
 
             try:
                 cursor.execute(sql, args)
@@ -59,6 +60,19 @@ class SeasonModel(BaseModel):
         try:
             cursor.execute(sql)
             result = cursor.fetchone()
+        except:
+            result = False
+        
+        return result
+    
+    def RenameSeason(self, id, name):
+        cursor = self.connection.connection.cursor()
+        sql = "UPDATE season SET name = %s WHERE id = %s"
+        args = (name, id,)
+
+        try:
+            cursor.execute(sql, args)
+            result = self.connection.connection.commit()
         except:
             result = False
         

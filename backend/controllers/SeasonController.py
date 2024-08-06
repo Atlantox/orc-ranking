@@ -7,10 +7,11 @@ from models.TournamentModel import TournamentModel
 from helpers import *
 
 SEASON_LENGTH_CONFIG = {
-    'date': {'min':8, 'max':10}
+    'date': {'min':8, 'max':10},
+    'name': {'min':1, 'max':10},
 }
 
-REQUIRED_FIELDS = ['date']
+REQUIRED_FIELDS = ['name', 'date']
 
 seasonController = Blueprint('season', __name__)
 
@@ -138,6 +139,58 @@ def GetCurrentSeason():
         response['message'] = error
 
     return jsonify(response), statusCode
+
+
+@seasonController.route('/seasons/<int:seasonId>', methods=['PUT'])
+def RenameSeason(seasonId):
+    connection = GetConnection()
+    userModel = UserModel(connection)
+    seasonModel = SeasonModel(connection)
+    
+    recievedData, error, statusCode = JsonExists(request)
+    token = GetTokenOfRequest(request)
+    if token is None:
+        error = 'Acceso denegado. Autenticación requerida'
+        statusCode = 401
+
+    if error == '':
+        targetUser = userModel.GetUserByToken(token)
+        if type(targetUser) is str:
+            error = targetUser
+            statusCode = 400
+    
+    if error == '':
+        cleanData = ValidateSeasonData(recievedData, False)
+        if type(cleanData) is str:
+            error = cleanData
+            statusCode = 400
+
+    if error == '':
+        if userModel.UserHasPermisson(targetUser['id'], 'Temporadas') is False:
+            error = 'Acción denegada'
+            statusCode = 401  # Unauthorized
+
+    if error == '':
+        targetSeason = seasonModel.GetSeasonById(seasonId)
+        if targetSeason is None:
+            error = 'Temporada no encontrada'
+            statusCode = 404
+    
+    if error == '':
+        renamed = seasonModel.RenameSeason(cleanData['name'])
+        if renamed is False:
+            error = 'Ocurrió un error al renombrar la temporada'
+            statusCode = 500
+        else:
+            action = 'Renombró la temporada de id {0}'.format(cleanData['date'])
+            seasonModel.CreateBinnacle(targetUser['id'],action, request.remote_addr)
+            message = 'Temporada renombrada correctamente'
+
+    if error != '':
+        message = error
+        
+    success = error == ''
+    return jsonify({'success': success, 'message': message}), statusCode
 
 
 def ValidateSeasonData(recievedData, exactData = True):

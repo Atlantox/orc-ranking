@@ -17,13 +17,63 @@ const tournamentsRanking = ref(undefined)
 
 onMounted( async () => {
   currentSeason.value = await seasonStore.GetCurrentSeason()
-  await tournamentStore.FetchTournamentsOfSeason(currentSeason.value['id'])
   await seasonStore.FetchSeasons()
-  tournamentsCounts.value = await tournamentStore.FetchTournamentsCountsOfSeason(currentSeason.value['id'])
+  await FetchSeasonDependantData(currentSeason.value['id'])
+
   lastTournament.value = await tournamentStore.GetLastTournament()
-  fetchReady.value = true
+  fetchReady.value = await true
   OnAppearAnimation('hide-up')
+
+  const tournamentsNumber = document.getElementById('tournaments-number')
+  const participantsNumber = document.getElementById('participants-number')
+
+  const tournamentNumberObserver = new IntersectionObserver(entries => {
+      entries.forEach(async entry => {
+          // If the element is visible
+          if (entry.isIntersecting) {
+              // Change the number value
+              var realTournaments = tournamentsCounts.value.tournaments
+              tournamentsCounts.value.tournaments = -1
+              for(let i = 0; i <= realTournaments; i++){
+                console.log(i)
+                tournamentsCounts.value.tournaments = i
+                await new Promise(r => setTimeout(r, 50 + (i * 50)));
+              }
+          }
+      });
+  })
+
+  const participantNumberObserver = new IntersectionObserver(entries => {
+      entries.forEach(async entry => {
+          // If the element is visible
+          if (entry.isIntersecting) {
+              // Change the number value
+              var realParticipants = tournamentsCounts.value.participants
+              tournamentsCounts.value.participants = -1
+              for(let i = 0; i <= realParticipants; i++){
+                tournamentsCounts.value.participants = i
+                await new Promise(r => setTimeout(r, 50 + (i * 50)));
+              }
+          }
+      });
+  })
+
+
+  tournamentNumberObserver.observe(tournamentsNumber);
+  participantNumberObserver.observe(tournamentsNumber);
 })
+
+const FetchSeasonDependantData = ( async(seasonId) => {
+  if(typeof seasonId !== 'number')
+    var mySeasonId = seasonId.target.value
+  else
+    var mySeasonId = seasonId
+    
+  await tournamentStore.FetchTournamentsOfSeason(mySeasonId)
+  tournamentsCounts.value = await tournamentStore.FetchTournamentsCountsOfSeason(mySeasonId)
+  tournamentsRanking.value = await tournamentStore.GetTournamentsRankingOfSeason(mySeasonId)
+})
+
 </script>
 
 <template>
@@ -38,135 +88,87 @@ onMounted( async () => {
     </section>
 
     <section class="row col-12 m-0 p-0 justify-content-around align-items-center flex-wrap bg-dark-grey text-green">
-      <template v-if="tournamentsRanking === undefined">
-        <LoadingGadget />
-      </template>
-      <template v-else>
+      
         <div class="col-12 m-0 p-0 d-flex justify-content-center fs-5 flex-wrap">
-          <div class="col-12 text-center py-4 fs-3">
-            <select class="myInput px-4" id="season-select">
-              <option 
-              v-for="season in seasonStore.seasons"
-              :key="season.id">
-                Season {{ season.id }}
-              </option>
-            </select>
-          </div>
-          <div class="col-12 col-md-3 text-center py-4 side-border-green">
-            <h3 class="w-100 text-center text-green">
-              Jugadores
-            </h3>
-            <article class="row m-0 p-0 my-1">
-              <span class="col-4 text-end">Jugador1</span>
-              <span class="col-8 text-start">
-                <div class="percent" style="width:75.06%;">
-                  75%
-                </div>
-              </span>
-            </article>
-            <article class="row m-0 p-0 my-1">
-              <span class="col-4 text-end">Jugador2</span>
-              <span class="col-8 text-start">
-                <div class="percent" style="width:55%;">
-                  55%
-                </div>
-              </span>
-            </article>
-            <article class="row m-0 p-0 my-1">
-              <span class="col-4 text-end">Jugador3</span>
-              <span class="col-8 text-start">
-                <div class="percent" style="width:12%;">
-                  12%
-                </div>
-              </span>
-            </article>
-          </div>
-  
-          <div class="col-12 col-md-3 text-center py-4 side-border-green ">
-            <h3 class="w-100 text-center text-green">
-              Decks
-            </h3>
-            <article class="row m-0 p-0 my-1">
-              <span class="col-4 text-end">Deck1</span>
-              <span class="col-8 text-start">
-                <div class="percent" style="width:75.06%;">
-                  75%
-                </div>
-              </span>
-            </article>
-            <article class="row m-0 p-0 my-1">
-              <span class="col-4 text-end">Deck2</span>
-              <span class="col-8 text-start">
-                <div class="percent" style="width:55%;">
-                  55%
-                </div>
-              </span>
-            </article>
-            <article class="row m-0 p-0 my-1">
-              <span class="col-4 text-end">Deck3</span>
-              <span class="col-8 text-start">
-                <div class="percent" style="width:12%;">
-                  12%
-                </div>
-              </span>
-            </article>
-          </div>
-  
-          <div class="col-12 col-md-3 text-center py-4 side-border-green">
-            <h3 class="w-100 text-center text-green">
-              Colores
-            </h3>
-            <article class="row m-0 p-0 my-1">
-              <span class="col-4 text-end">Verde</span>
-              <span class="col-8 text-start">
-                <div class="percent" style="width:12%;">
-                  12%
-                </div>
-              </span>
-            </article>
-            <article class="row m-0 p-0 my-1">
-              <span class="col-4 text-end">Negro</span>
-              <span class="col-8 text-start">
-                <div class="percent" style="width:12%;">
-                  12%
-                </div>
-              </span>
-            </article>
-            <article class="row m-0 p-0 my-1">
-              <span class="col-4 text-end">Blanco</span>
-              <span class="col-8 text-start">
-                <div class="percent" style="width:12%;">
-                  12%
-                </div>
-              </span>
-            </article>
-            <article class="row m-0 p-0 my-1">
-              <span class="col-4 text-end">Incoloro</span>
-              <span class="col-8 text-start">
-                <div class="percent" style="width:12%;">
-                  12%
-                </div>
-              </span>
-            </article>
-            <article class="row m-0 p-0 my-1">
-              <span class="col-4 text-end">Azul</span>
-              <span class="col-8 text-start">
-                <div class="percent" style="width:0;">
-                  0%
-                </div>
-              </span>
-            </article>
-            <article class="row m-0 p-0 my-1">
-              <span class="col-4 text-end">Rojo</span>
-              <span class="col-8 text-start">
-                <div class="percent" style="width:0%;">
-                  0%
-                </div>
-              </span>
-            </article>
-          </div>
+          <template v-if="seasonStore.seasons === undefined">
+            <LoadingGadget />
+          </template>
+          <template v-else>
+            <div class="col-12 text-center py-4 fs-3 hide-up animated-1">
+              <select class="myInput px-4" id="season-select" @change="FetchSeasonDependantData">
+                <option 
+                v-for="season in seasonStore.seasons"
+                :key="season.id"
+                :value="season.id"
+                :selected="season.active === 1"
+                >
+                  Season {{ season.name }}
+                </option>
+              </select>
+            </div>
+          </template>
+
+          <template v-if="tournamentsRanking === undefined">
+            <LoadingGadget />
+          </template>
+          <template v-else>
+            <div class="row col-12 m-0 p-0 justify-content-center hide-up animated-1">
+              <div class="col-12 col-md-3 text-center py-4 side-border-green">
+                <h3 class="w-100 text-center text-green">
+                  Jugadores
+                </h3>
+                <article 
+                class="row m-0 p-0 my-1"
+                v-for="player, index in tournamentsRanking.players"
+                :key="index"
+                >
+                  <span class="col-4 text-end">{{ player.name }}</span>
+                  <span class="col-8 text-start">
+                    <div class="percent" :style="'width:' + player.percent + '%'">
+                      {{ player.percent }}%
+                    </div>
+                  </span>
+                </article>
+              </div>
+      
+              <div class="col-12 col-md-5 text-center py-4 side-border-green ">
+                <h3 class="w-100 text-center text-green">
+                  Decks
+                </h3>
+                <article 
+                class="row m-0 p-0 my-1"
+                v-for="deck, index in tournamentsRanking.decks"
+                :key="index"
+                >
+                  <span class="col-6 text-end">{{ deck.name }}</span>
+                  <span class="col-6 text-start">
+                    <div class="percent" :style="'width:' + deck.percent + '%'">
+                      {{ deck.percent }}%
+                    </div>
+                  </span>
+                </article>
+              </div>
+      
+              <div class="col-12 col-md-3 text-center py-4 side-border-green">
+                <h3 class="w-100 text-center text-green">
+                  Colores
+                </h3>
+                <article 
+                class="row m-0 p-0 my-1"
+                v-for="color, index in tournamentsRanking.colors"
+                :key="index"
+                >
+                  <span class="col-4 text-end">{{ color.color }}</span>
+                  <span class="col-8 text-start">
+                    <div class="percent" :style="'width:' + color.percent + '%'">
+                      {{ color.percent }}%
+                    </div>
+                  </span>
+                </article>
+              </div>
+            </div>
+          </template>
         </div>
-      </template>
     </section>
 
 
@@ -175,7 +177,7 @@ onMounted( async () => {
         <LoadingGadget />
       </template>
       <template v-else>
-        <div class="row col-12 col-lg-7 m-0 p-0 d-flex justify-content-center text-white py-4">
+        <div class="row col-12 col-lg-7 m-0 p-0 d-flex justify-content-center text-white py-4  hide-up animated-1">
           <div class="row m-0 p-0 col-6 justify-content-center">
             <p class="h3 col-12 text-green text-center">
               Torneos totales
@@ -183,7 +185,7 @@ onMounted( async () => {
             <figure class="col-5 text-center">
               <img class="col-6" src="@/assets/icons/sitemap.png" alt="bitemap">
             </figure>
-            <p class="col-12 h1 text-green text-center">{{ tournamentsCounts.tournaments }}</p>
+            <p class="col-12 h1 text-green text-center" id="tournaments-number">{{ tournamentsCounts.tournaments }}</p>
           </div>
           <div class="row m-0 p-0 col-6 justify-content-center">
             <p class="h3 col-12 text-green text-center">
@@ -192,7 +194,7 @@ onMounted( async () => {
             <figure class="col-5 text-center">
               <img class="col-6" src="@/assets/icons/user.png" alt="bitemap">
             </figure>
-            <p class="col-12 h1 text-green text-center">{{ tournamentsCounts.participants }}</p>
+            <p class="col-12 h1 text-green text-center" id="participants-number">{{ tournamentsCounts.participants }}</p>
           </div>
         </div>
       </template>
@@ -207,7 +209,7 @@ onMounted( async () => {
         <LoadingGadget />
       </template>
       <template v-else>
-        <div class="row m-0 p-0 col-12 text-center justify-content-center align-items-start px-4">
+        <div class="row m-0 p-0 col-12 text-center justify-content-center align-items-start px-4 hide-up animated-1">
           <div class="row m-0 p-0 col-12 col-lg-5 text-center justify-content-center px-4">
             <table class="col-10 text-white fs-4">
               <tr>
@@ -233,8 +235,9 @@ onMounted( async () => {
                     <li 
                     v-for="color in lastTournament.colors"
                     :key="color.name"
+                    class=""
                     >
-                      <i :class="'fa fa-circle text-' + color.color"></i>&nbsp;{{ color.quantity }}
+                      <i :class="'fa fa-circle text-' + color.color"></i>&nbsp;{{ color.percent }}% ({{ color.quantity }})
                     </li>
                   </ul>
                 </td>

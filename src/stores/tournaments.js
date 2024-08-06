@@ -217,6 +217,41 @@ const useTournamentStore = defineStore('tournaments', {
             return tournamentsCount
         },
 
+        async GetTournamentsRankingOfSeason(season){
+            var ranking = false
+            const sessionStore = useSessionStore()
+            const utilsStore = useUtilsStore()
+            try{
+                let url = apiConfig.base_url + '/tournaments/ranking/' + season
+                var fetchHeaders = {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                }
+
+                if (sessionStore.authenticated === true)
+                    fetchHeaders['Authorization'] = 'Bearer ' + sessionStore.token
+
+                let fetchConfig = {
+                    method: 'GET',
+                    headers: fetchHeaders
+                }
+
+                let response = await fetch(url, fetchConfig)
+                let json = await response.json()
+                let result = await json
+                
+                if(result.success){
+                    ranking = result.ranking                    
+                }
+                else
+                    utilsStore.ShowModal('Error', result.message, 'error')
+            }
+            catch(error){
+                utilsStore.ShowModal('Error', 'Ocurrió un error inesperado al cargar el ranking de la temporada: ' + error.message, 'error')
+            }
+
+            return ranking
+        },
 
         async FetchTournamentsCountsOfSeason(season){
             var tournamentsCount = false

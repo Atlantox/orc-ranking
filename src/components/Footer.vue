@@ -11,5 +11,8 @@
                 <img style="width:40px;" src="@/assets/icons/atlantox-icon.png" alt="">
             </a>
         </div>
+        <span class="text-black text-center">
+            AZUL HASTA LA MUERTE
+        </span>
     </div>
 </template>

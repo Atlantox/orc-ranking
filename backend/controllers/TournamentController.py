@@ -211,6 +211,36 @@ def GetTournamentById(tournamentId):
     return jsonify(response), statusCode
 
 
+@tournamentController.route('/tournaments/ranking/<int:seasonId>', methods=['GET'])
+def GetTournamentsRankingOfSeason(seasonId):
+    connection = GetConnection()
+    tournamentModel = TournamentModel(connection)
+    response = {}
+    statusCode = 200
+    error = ''
+
+    seasonModel = SeasonModel(connection)
+    targetSeason = seasonModel.GetSeasonById(seasonId)
+    if targetSeason is None:
+        error = 'Temporada no encontrada'
+        statusCode = 404
+
+    if error == '':
+        ranking = tournamentModel.GetTournamentsRankingOfSeason(seasonId)
+        if type(ranking) is str:
+            error = ranking
+            statusCode = 500
+
+    response['success'] = error == ''
+
+    if error == '':
+        response['ranking'] = ranking
+    else:
+        response['message'] = error
+
+    return jsonify(response), statusCode
+
+
 @tournamentController.route('/tournaments/<int:tournamentId>', methods=['DELETE'])
 def DeactivateTournament(tournamentId):
     connection = GetConnection()

@@ -205,6 +205,7 @@ class TournamentModel(BaseModel):
 
     def GetTournamentsColorPresence(self, tournamentId):
         cursor = self.connection.connection.cursor()
+        result = []
         sql = '''
             SELECT 
             color.name as color,
@@ -231,7 +232,9 @@ class TournamentModel(BaseModel):
             to_add = {}
             for color in colors:
                 to_add = color
-                to_add['percent'] = color['quantity'] # SACAR PORCENTAJE
+                percent = (color['quantity'] * 100) / totalColors
+                to_add['percent'] = round(percent, 2)
+                result.append(to_add)
 
         except:
             result = False
@@ -320,6 +323,113 @@ class TournamentModel(BaseModel):
         
         return result
     
+    def GetTournamentsRankingOfSeason(self, seasonId):
+        cursor = self.connection.connection.cursor()
+        error = ''
+        # Getting the total points in tournaments of the season
+        sql = '''
+            SELECT
+            SUM(tournament_result.wins) as total_wins
+            FROM
+            tournament_result
+            INNER JOIN tournament ON tournament.id = tournament_result.tournament
+            WHERE
+            tournament.season = %s
+        '''
+        args = (seasonId,)
+
+        try:
+            cursor.execute(sql, args)
+            totalWins = cursor.fetchone()['total_wins']
+        except:
+            error = 'Ocurrió un error al traer la suma total de puntos'
+
+        if error == '':
+            sql = '''
+            SELECT
+            player.name,
+            ROUND((SUM(tournament_result.wins) * 100) / %s, 2) as percent
+            FROM
+            tournament_result
+            INNER JOIN tournament ON tournament.id = tournament_result.tournament
+            INNER JOIN player ON player.id = tournament_result.player
+            WHERE
+            tournament.season = %s
+            GROUP BY
+            tournament_result.player
+            ORDER BY 
+            percent DESC
+            '''
+        args = (totalWins, seasonId,)
+
+        try:
+            cursor.execute(sql, args)
+            playerPoints = cursor.fetchall()
+        except:
+            error = 'Ocurrió un error al traer los puntos de cada jugador'
+
+        if error == '':
+            sql = '''
+            SELECT
+            deck.name,
+            ROUND((SUM(tournament_result.wins) * 100) / %s, 2) as percent
+            FROM
+            tournament_result
+            INNER JOIN tournament ON tournament.id = tournament_result.tournament
+            INNER JOIN deck ON deck.id = tournament_result.deck
+            WHERE
+            tournament.season = %s
+            GROUP BY
+            tournament_result.deck
+            ORDER BY 
+            percent DESC
+            '''
+        args = (totalWins, seasonId,)
+        
+        try:
+            cursor.execute(sql, args)
+            deckPoints = cursor.fetchall()
+        except:
+            error = 'Ocurrió un error al traer los puntos de cada mazo'
+
+
+        if error == '':
+            sql = '''
+            SELECT
+            deck_color.color,
+            ROUND((SUM(tournament_result.wins) * 100) / %s, 2) as percent
+            FROM
+            tournament_result
+            INNER JOIN tournament ON tournament.id = tournament_result.tournament
+            INNER JOIN deck ON deck.id = tournament_result.deck
+            INNER JOIN deck_color ON deck_color.deck = deck.id
+            WHERE
+            tournament.season = %s
+            GROUP BY
+            deck_color.color
+            ORDER BY 
+            percent DESC
+            '''
+        args = (totalWins, seasonId,)
+        
+        try:
+            cursor.execute(sql, args)
+            colorPoints = cursor.fetchall()
+        except:
+            error = 'Ocurrió un error al traer los puntos de cada mazo'
+
+
+        if error == '':
+            result = {
+                'players': playerPoints,
+                'decks': deckPoints,
+                'colors': colorPoints
+            }
+        else:
+            result = error
+
+        return result    
+
     def GetTournamentsOfDeck(self, deckId):
         cursor = self.connection.connection.cursor()
 

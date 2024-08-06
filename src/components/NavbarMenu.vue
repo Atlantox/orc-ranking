@@ -52,7 +52,7 @@ const CloseSession = (() => {
               <router-link class="nav-link mx-2 text-green cursor-pointer my-nav-link" :to="{name: 'tournaments'}">Torneos</router-link>
             </li>
             <li class="nav-item">
-              <router-link class="nav-link mx-2 text-green cursor-pointer my-nav-link" :to="{name: 'home'}">Acerca</router-link>
+              <router-link class="nav-link mx-2 text-green cursor-pointer my-nav-link" :to="{name: 'about'}">Acerca</router-link>
             </li>
             <li class="nav-item dropdown" v-if="sessionStore.authenticated">
               <a class="nav-link mx-2 dropdown-toggle text-green cursor-pointer my-nav-link" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
