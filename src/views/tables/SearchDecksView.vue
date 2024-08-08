@@ -21,7 +21,7 @@ onMounted(async ()  => {
 </script>
 
 <template>
-  <div class="row w-100 m-0 p-0 px-5 bg-dark-grey">
+  <div class="row w-100 m-0 p-0 px-5 bg-dark-grey mt-5 pt-5">
     <div class="row m-0 p-0 justify-content-center justify-content-lg-start">
       <div class="col-4 col-lg-2 col-xl-1 ps-0 ps-lg-5">
         <BackButtonGadget :back_to="sessionStore.authenticated ? 'dashboard' : 'home'"/>
@@ -34,7 +34,7 @@ onMounted(async ()  => {
       <template v-if="sessionStore.authenticated">
         <AddButtonGadget
         v-if = "sessionStore.userData.permissons.includes('Mazos')"
-        :url = "'add_author'"
+        :url = "''"
         :title = "'Registrar nuevo mazo'"
         />
       </template>

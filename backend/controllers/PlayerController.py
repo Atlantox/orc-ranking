@@ -169,6 +169,22 @@ def UpdatePlayer(playerId):
     return jsonify({'success': success, 'message': message}), statusCode
 
 
+@playerController.route('/players/count', methods=['GET'])
+def GetPlayerCount():
+    connection = GetConnection()
+    playerModel = PlayerModel(connection)
+    response = {}
+    statusCode = 200
+
+    count = playerModel.GetPlayerCount()
+    response = {
+        'success': True,
+        'count': count
+    }
+
+    return jsonify(response), statusCode
+
+
 @playerController.route('/players/<int:playerId>', methods=['DELETE'])
 def DeletePlayer(playerId):
     connection = GetConnection()

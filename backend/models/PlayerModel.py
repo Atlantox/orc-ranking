@@ -4,25 +4,34 @@ class PlayerModel(BaseModel):
     def GetPlayers(self):
         cursor = self.connection.connection.cursor()
         result = []
+
         sql = '''
-            SELECT 
-            player.id,
-            player.name,
-            COUNT(tournament.id) as tournaments,
-            SUM(tournament_result.wins) as points,
-            SUM(CASE WHEN tournament_result.winner = 1 THEN 1 ELSE 0 END) as wins
-            FROM 
-            player 
-            INNER JOIN tournament_result ON tournament_result.player = player.id
-            INNER JOIN tournament ON tournament.id = tournament_result.tournament
-            WHERE
-            tournament.active = 1 AND
-            tournament.season = (SELECT id FROM season WHERE active = 1)
-            GROUP BY
-            player.id
-            ORDER BY 
-            player.name
-            '''
+            SELECT
+            play.id,
+            play.name,
+            t_result.tournaments,
+            t_result.points,
+            t_result.wins
+            FROM
+            player play
+            LEFT JOIN(
+                SELECT
+                tournament_result.player as player,
+                COUNT(tournament_result.tournament) as tournaments,
+                SUM(tournament_result.wins) as points,
+                SUM(CASE WHEN tournament_result.winner = 1 THEN 1 ELSE 0 END) as wins
+                FROM
+                tournament_result
+                INNER JOIN tournament ON tournament.id = tournament_result.tournament
+                WHERE
+                tournament.active = 1 AND
+                tournament.season = (SELECT id FROM season WHERE active = 1)
+                GROUP BY
+                tournament_result.player
+            ) t_result ON t_result.player = play.id
+            ORDER BY
+            play.name
+        '''
 
         try:
             cursor.execute(sql)
@@ -75,6 +84,18 @@ class PlayerModel(BaseModel):
             result = None
         
         return result
+    
+    def GetPlayerCount(self):
+        cursor = self.connection.connection.cursor()
+        sql = '''SELECT COUNT(id) as count FROM player'''
+
+        try:
+            cursor.execute(sql)
+            playerCount = cursor.fetchone()['count']
+        except:
+            playerCount = 0
+
+        return playerCount
     
     def UpdatePlayer(self, playerId, playerData):
         newName = playerData['name']

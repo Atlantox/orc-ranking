@@ -383,7 +383,7 @@ $my-green: rgb(87, 211, 97);
 
 .green-btn{
     background-color: black;
-    border: 1px white solid;
+    border: 1px $primary solid;
     border-radius: 15px;
     color: $my-green !important;
 }
@@ -446,7 +446,31 @@ input[type="checkbox"]::before {
     transition: 120ms transform ease-in-out;
     box-shadow: inset 1em 1em $terciary;
 }
-  
+
+#Negro::before{
+    box-shadow: inset 1em 1em rgb(0, 0, 0);
+}
+
+#Azul::before{
+    box-shadow: inset 1em 1em rgb(129, 213, 255);
+}
+
+#Rojo::before{
+    box-shadow: inset 1em 1em rgb(255, 108, 108);
+}
+
+#Blanco::before{
+    box-shadow: inset 1em 1em rgb(238, 233, 163)
+}
+
+#Verde::before{
+    box-shadow: inset 1em 1em rgb(124, 248, 165);
+}
+
+#Incoloro::before{
+    box-shadow: inset 1em 1em rgb(163, 163, 163);
+}
+
 input[type="checkbox"]:checked::before {
     transform: scale(1);
 }

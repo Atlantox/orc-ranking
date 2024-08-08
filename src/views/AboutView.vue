@@ -1,8 +1,13 @@
 <script setup>
-import { onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import OnAppearAnimation from '@/utils/ElegantDisplayer';
 
-onMounted(() => {
+import usePlayerStore from '@/stores/players';
+
+const playerStore = usePlayerStore()
+const playerCount = ref(0)
+onMounted( async() => {
+  playerCount.value = await playerStore.GetPlayerCount()
   OnAppearAnimation('hide-up')
 })
 </script>
@@ -26,7 +31,7 @@ onMounted(() => {
           Gracias a este proyecto, es posible crear y ver estadísticas certeras que ayuden a analizar el panorama competitivo local,
           y por supuesto, sana competición entre los jugadores.
           <br><br>
-          Cabe destacar que, todos los jugadores registrados (actualmente 17) en esta página forman parte de la comunidad local y 
+          Cabe destacar que, todos los jugadores registrados (actualmente {{ playerCount }}) en esta página forman parte de la comunidad local y 
           están unidos por la férrea pasión del Magic.
           <br><br>
           Puedes descubrir más sobre la comunidad en el canal de Youtube <a href="https://www.youtube.com/@ComandMancos" target="_blank">ComandMancos</a> y en [Inserte más redes sociales]
@@ -59,11 +64,8 @@ onMounted(() => {
 
       <div class="row col-12 justify-content-center m-0 p-0 mt-3">
         <ul class="col-12 list-unstyled text-center">
-          <li class="my-1"><a href="" target="_blank">Baneos de coliseo en todas sus formas</a> </li>
-          <li class="my-1"><a href="" target="_blank">Duel (1vs1) como comandante</a></li>
-          <li class="my-1"><a href="" target="_blank">Duel (1vs1) entre las 99</a></li>
-          <li class="my-1"><a href="" target="_blank">Multi (vs4) como comandante</a></li>
-          <li class="my-1"><a href="" target="_blank">Multi (vs4) como entre las 99</a></li>
+          <li class="my-1"><a href="https://manabox.app/decks/rg-uh4KUSY6EwM4Pp-vwgw " target="_blank">Baneos de coliseo en todas sus formas</a> </li>
+          <li class="my-1"><a href="https://manabox.app/decks/93ZwKsK8SaWY85X27xWeOQ" target="_blank">Baneados como comandante</a></li>
         </ul>
       </div>
      </div>

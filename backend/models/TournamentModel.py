@@ -285,17 +285,19 @@ class TournamentModel(BaseModel):
 
     def GetTournamentsAndParticipantsCountOfSeason(self, seasonId):
         cursor = self.connection.connection.cursor()
-        sql = '''
-            SELECT
-            COUNT(tournament.id) as count
-            FROM
-            tournament
-            WHERE
-            tournament.active = 1 AND
-            tournament.season = %s'''
+        sql = ''' SELECT COUNT(tournament.id) as count FROM tournament WHERE tournament.active = 1 '''
+        seasonFilter = seasonId is not None
+
+        if seasonFilter:
+            sql += ' AND tournament.season = %s'
+            args = (seasonId,)
 
         try:
-            cursor.execute(sql, (seasonId,))
+            if seasonFilter:
+                cursor.execute(sql, args)
+            else:
+                cursor.execute(sql)
+
             tournamentsCount = cursor.fetchone()['count']
         except:
             tournamentsCount = 0
@@ -307,11 +309,16 @@ class TournamentModel(BaseModel):
             tournament_result
             INNER JOIN tournament ON tournament.id = tournament_result.tournament
             WHERE
-            tournament.active = 1 AND
-            tournament.season = %s'''
-        
+            tournament.active = 1'''
+            
+        if seasonFilter:
+            sql += ' AND tournament.season = %s '
+
         try:
-            cursor.execute(sql, (seasonId,))
+            if seasonFilter:
+                cursor.execute(sql, args)
+            else:
+                cursor.execute(sql)
             participantCounts = cursor.fetchone()['count']
         except:
             participantCounts = 0

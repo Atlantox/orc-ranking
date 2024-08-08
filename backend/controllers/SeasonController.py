@@ -193,6 +193,22 @@ def RenameSeason(seasonId):
     return jsonify({'success': success, 'message': message}), statusCode
 
 
+@seasonController.route('/seasons/count', methods=['GET'])
+def GetSeasonCount():
+    connection = GetConnection()
+    seasonModel = SeasonModel(connection)
+    response = {}
+    statusCode = 200
+
+    count = seasonModel.GetSeasonCount()
+    response = {
+        'success': True,
+        'count': count
+    }
+
+    return jsonify(response), statusCode
+
+
 def ValidateSeasonData(recievedData, exactData = True):
     error = ''
 

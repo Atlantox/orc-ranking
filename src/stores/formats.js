@@ -6,18 +6,18 @@ import useSessionStore from '@/stores/session.js'
 
 const apiConfig = new ApiConfig()
 
-const useSeasonStore = defineStore('seasons', {
+const useFormatStore = defineStore('formats', {
     state: () => {
         return {
-            seasons: undefined,
+            formats: undefined,
         }
     },
     actions:{
-        async CreateSeason(seasonData){
+        async CreateFormat(formatData){
             const sessionStore = useSessionStore()
             let result = {}
             try{
-                let url = apiConfig.base_url + '/seasons'
+                let url = apiConfig.base_url + '/formats'
                 var fetchHeaders = {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
@@ -29,7 +29,7 @@ const useSeasonStore = defineStore('seasons', {
                 let fetchConfig = {
                     method: 'POST',
                     headers: fetchHeaders,
-                    body: JSON.stringify(seasonData)
+                    body: JSON.stringify(formatData)
                 }
 
                 let response = await fetch(url, fetchConfig)
@@ -37,18 +37,18 @@ const useSeasonStore = defineStore('seasons', {
                 result = await json                
             }
             catch(error){
-                result = {success: false, message: 'Ocurrió un error inesperado al crear la temporada: ' + error.message}
+                result = {success: false, message: 'Ocurrió un error inesperado al crear el formato: ' + error.message}
             }
 
             return result
         },
 
-        async GetSeasonById(id){
-            var targetSeason = false
+        async FetchFormatById(id){
+            var targetFormat = false
             const sessionStore = useSessionStore()
             const utilsStore = useUtilsStore()
             try{
-                let url = apiConfig.base_url + '/seasons/' + id
+                let url = apiConfig.base_url + '/formats/' + id
                 var fetchHeaders = {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
@@ -67,60 +67,24 @@ const useSeasonStore = defineStore('seasons', {
                 let result = await json
                 
                 if(result.success){
-                    targetSeason = result.season                    
+                    targetFormat = result.format                    
                 }
                 else
                     utilsStore.ShowModal('Error', result.message, 'error')
             }
             catch(error){
-                utilsStore.ShowModal('Error', 'Ocurrió un error inesperado al cargar la temporada solicitada: ' + error.message, 'error')
+                utilsStore.ShowModal('Error', 'Ocurrió un error inesperado al cargar el formato solicitado: ' + error.message, 'error')
             }
 
-            return targetSeason
+            return targetFormat
         },
 
-        async GetCurrentSeason(){
-            var targetSeason = false
+        async FetchFormats(){
+            this.formats = undefined
             const sessionStore = useSessionStore()
             const utilsStore = useUtilsStore()
             try{
-                let url = apiConfig.base_url + '/seasons/current'
-                var fetchHeaders = {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                }
-
-                if (sessionStore.authenticated === true)
-                    fetchHeaders['Authorization'] = 'Bearer ' + sessionStore.token
-
-                let fetchConfig = {
-                    method: 'GET',
-                    headers: fetchHeaders
-                }
-
-                let response = await fetch(url, fetchConfig)
-                let json = await response.json()
-                let result = await json
-                
-                if(result.success){
-                    targetSeason = result.season                    
-                }
-                else
-                    utilsStore.ShowModal('Error', result.message, 'error')
-            }
-            catch(error){
-                utilsStore.ShowModal('Error', 'Ocurrió un error inesperado al cargar la temporada actual: ' + error.message, 'error')
-            }
-
-            return targetSeason
-        },
-
-        async FetchSeasons(){
-            this.seasons = undefined
-            const sessionStore = useSessionStore()
-            const utilsStore = useUtilsStore()
-            try{
-                let url = apiConfig.base_url + '/seasons'
+                let url = apiConfig.base_url + '/formats'
                 var fetchHeaders = {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
@@ -138,22 +102,21 @@ const useSeasonStore = defineStore('seasons', {
                 let json = await response.json()
                 let result = await json
                 if(result.success){
-                    this.seasons = result.seasons
+                    this.formats = result.formats
                 }
                 else
                     utilsStore.ShowModal('Error', result.message, 'error')
             }
             catch(error){
-                utilsStore.ShowModal('Error', 'Ocurrió un error inesperado al cargar las temporadas: ' + error.message, 'error')
+                utilsStore.ShowModal('Error', 'Ocurrió un error inesperado al cargar los formatos: ' + error.message, 'error')
             }
         },
 
-        async GetSeasonCount(){
-            var seasonCount = false
+        async UpdateFormat(formatId, formatData){
             const sessionStore = useSessionStore()
-            const utilsStore = useUtilsStore()
+            let result = {}
             try{
-                let url = apiConfig.base_url + '/seasons/count'
+                let url = apiConfig.base_url + '/formats/' + formatId
                 var fetchHeaders = {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
@@ -163,27 +126,22 @@ const useSeasonStore = defineStore('seasons', {
                     fetchHeaders['Authorization'] = 'Bearer ' + sessionStore.token
 
                 let fetchConfig = {
-                    method: 'GET',
-                    headers: fetchHeaders
+                    method: 'PUT',
+                    headers: fetchHeaders,
+                    body: JSON.stringify(formatData)
                 }
 
                 let response = await fetch(url, fetchConfig)
                 let json = await response.json()
-                let result = await json
-                
-                if(result.success){
-                    seasonCount = result.count                    
-                }
-                else
-                    utilsStore.ShowModal('Error', result.message, 'error')
+                result = await json                
             }
             catch(error){
-                utilsStore.ShowModal('Error', 'Ocurrió un error inesperado al cargar el número de temporadas: ' + error.message, 'error')
+                result = {success: false, message: 'Ocurrió un error inesperado al intentar actualizar el formato: ' + error.message}
             }
 
-            return seasonCount
+            return result
         },
     }
 })
 
-export default useSeasonStore
+export default useFormatStore

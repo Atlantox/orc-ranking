@@ -155,33 +155,19 @@ def GetLastTournament():
     return jsonify(response), statusCode
 
 
-@tournamentController.route('/tournaments/counts', methods=['GET'])
-def GetTournamentAndParticipantsCount():
-    connection = GetConnection()
-    tournamentModel = TournamentModel(connection)
-    response = {}
-    statusCode = 200
-
-    counts = tournamentModel.GetTournamentsAndParticipantsCount()
-    response = {
-        'success': True,
-        'counts': counts
-    }
-
-    return jsonify(response), statusCode
-
-
-@tournamentController.route('/tournaments/counts/<int:seasonId>', methods=['GET'])
+@tournamentController.route('/tournaments/count', defaults={'seasonId': None}, methods=['GET'])
+@tournamentController.route('/tournaments/count/<int:seasonId>', methods=['GET'])
 def GetTournamentAndParticipantsCountOfSeason(seasonId):
+    ''' If the seasonId is none, returns all tournaments and participants '''
     connection = GetConnection()
     tournamentModel = TournamentModel(connection)
     response = {}
     statusCode = 200
 
-    counts = tournamentModel.GetTournamentsAndParticipantsCountOfSeason(seasonId)
+    count = tournamentModel.GetTournamentsAndParticipantsCountOfSeason(seasonId)
     response = {
         'success': True,
-        'counts': counts
+        'count': count
     }
 
     return jsonify(response), statusCode

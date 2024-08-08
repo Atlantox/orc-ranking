@@ -13,9 +13,11 @@ import LoanFormView from '../views/forms/LoanFormView.vue'
 import ReaderFormView from '../views/forms/ReaderFormView.vue'
 import CategoryFormView from '@/views/forms/CategoryFormView.vue'
 import EditorialFormView from '../views/forms/EditorialFormView.vue'
-import AuthorFormView from '@/views/forms/AuthorFormView.vue'
+import PlayerFormView from '@/views/forms/PlayerFormView.vue'
 import UserFormView from '@/views/forms/UserFormView.vue'
 import MyAccountFormView from '@/views/forms/MyAccountFormView.vue'
+import FormatFormView from '@/views/forms/FormatFormView.vue'
+import DeckFormView from '@/views/forms/DeckFormView.vue'
 
 import SearchBooksView from '../views/tables/SearchBooksView.vue'
 import SearchLoanView from '../views/tables/SearchLoanView.vue'
@@ -27,9 +29,11 @@ import SearchTournamentsView from '@/views/tables/SearchTournamentsView.vue'
 import SearchEditorialsView from '@/views/tables/SearchEditorialsView.vue'
 import SearchUsersView from '@/views/tables/SearchUsersView.vue'
 import SearchBinnacleView from '@/views/tables/SearchBinnacleView.vue'
+import SearchFormatsView from '@/views/tables/SearchFormatsView.vue'
 
 import WatchBookView from '../views/watchers/WatchBookView.vue'
 import WatchStatisticsView from '../views/watchers/WatchStatisticsView.vue'
+import DeckForm from '@/components/forms/DeckForm.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -101,12 +105,24 @@ const router = createRouter({
       name: 'players',
       component: SearchPlayersView,
     },
+    {
+      path: '/add_player/:id?',
+      name: 'add_player',
+      component: PlayerFormView,
+      meta:{ requireAuth: true, playerPermisson: true }
+    },
 
     // DECKS
     {
       path: '/search_decks',
       name: 'decks',
       component: SearchDecksView,
+    },
+    {
+      path: '/add_deck/:id?',
+      name: 'add_deck',
+      component: DeckFormView,
+      meta:{ requireAuth: true, deckPermisson: true }
     },
 
     // TOURNAMENTS
@@ -116,12 +132,17 @@ const router = createRouter({
       component: SearchTournamentsView,
     },
 
-    // AUTHORS
+    // FORMATS
     {
-      path: '/add_author/:id?',
-      name: 'add_author',
-      component: AuthorFormView,
-      meta:{ requireAuth: true, authorPermisson: true }
+      path: '/search_formats',
+      name: 'formats',
+      component: SearchFormatsView,
+    },
+    {
+      path: '/add_format/:id?',
+      name: 'add_format',
+      component: FormatFormView,
+      meta:{ requireAuth: true, formatPermisson: true }
     },
 
     // CATEGORIES
@@ -239,35 +260,27 @@ router.beforeEach(async (to, from, next) => {
     else{
       
 
-      if(to.meta.bookPermisson && !(sessionStore.userData.permissons.includes('Libros'))){
+      if(to.meta.playerPermisson && !(sessionStore.userData.permissons.includes('Jugadores'))){
         routeOk = false
       }
 
-      if(to.meta.loanPermisson && !(sessionStore.userData.permissons.includes('Préstamos'))){
+      if(to.meta.deckPermisson && !(sessionStore.userData.permissons.includes('Mazos'))){
         routeOk = false
       }
 
-      if(to.meta.readerPermisson && !(sessionStore.userData.permissons.includes('Lectores'))){
+      if(to.meta.tournamentPermisson && !(sessionStore.userData.permissons.includes('Torneos'))){
         routeOk = false
       }
 
-      if(to.meta.editorialPermisson && !(sessionStore.userData.permissons.includes('Editoriales'))){
+      if(to.meta.seasonPermisson && !(sessionStore.userData.permissons.includes('Temporadas'))){
         routeOk = false
       }
 
-      if(to.meta.authorPermisson && !(sessionStore.userData.permissons.includes('Autores'))){
-        routeOk = false
-      }
-
-      if(to.meta.categoryPermisson && !(sessionStore.userData.permissons.includes('Categorías'))){
+      if(to.meta.formatPermisson && !(sessionStore.userData.permissons.includes('Formatos'))){
         routeOk = false
       }
 
       if(to.meta.editorPermisson && !(sessionStore.userData.permissons.includes('Editor'))){
-        routeOk = false
-      }
-
-      if(to.meta.statisticsPermisson && !(sessionStore.userData.permissons.includes('Estadísticas'))){
         routeOk = false
       }
 

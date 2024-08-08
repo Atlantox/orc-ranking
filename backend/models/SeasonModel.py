@@ -65,6 +65,18 @@ class SeasonModel(BaseModel):
         
         return result
     
+    def GetSeasonCount(self):
+        cursor = self.connection.connection.cursor()
+        sql = '''SELECT COUNT(id) as count FROM season'''
+
+        try:
+            cursor.execute(sql)
+            seasonCount = cursor.fetchone()['count']
+        except:
+            seasonCount = 0
+
+        return seasonCount
+    
     def RenameSeason(self, id, name):
         cursor = self.connection.connection.cursor()
         sql = "UPDATE season SET name = %s WHERE id = %s"

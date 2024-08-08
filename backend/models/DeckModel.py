@@ -91,6 +91,19 @@ class DeckModel(BaseModel):
 
         return result
     
+    def GetColors(self):
+        cursor = self.connection.connection.cursor()
+        sql = 'SELECT * FROM color'
+        result = []
+        try:
+            cursor.execute(sql)
+            colors = cursor.fetchall()
+            result = [color['name'] for color in colors]
+        except:
+            pass
+        
+        return result
+    
     def AssignColorsToDeck(self, deckId, colors):
         cursor = self.connection.connection.cursor()
         result = True
@@ -154,6 +167,18 @@ class DeckModel(BaseModel):
             result = None
         
         return result
+    
+    def GetDeckCount(self):
+        cursor = self.connection.connection.cursor()
+        sql = '''SELECT COUNT(id) as count FROM deck'''
+
+        try:
+            cursor.execute(sql)
+            deckCount = cursor.fetchone()['count']
+        except:
+            deckCount = 0
+
+        return deckCount
     
     def UpdateDeck(self, deckId, deckData):
         cursor = self.connection.connection.cursor()

@@ -36,7 +36,7 @@ onMounted(() => {
                         <div class="row m-0 p-0 text-center justify-content-center">
                             <div class="row col-12 m-0 p-1 col-3 fs-2">
                                 <div class="w-100 hover-bigger text-center m-0 p-0">
-                                    <router-link :to="{name:'add_author', params: {id: author.id}}">
+                                    <router-link :to="{name:'', params: {id: author.id}}">
                                         <i class="text-black bi bi-pencil text-center m-0 p-0"></i>
                                     </router-link>
                                 </div>

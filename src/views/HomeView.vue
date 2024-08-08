@@ -70,7 +70,7 @@ const FetchSeasonDependantData = ( async(seasonId) => {
     var mySeasonId = seasonId
     
   await tournamentStore.FetchTournamentsOfSeason(mySeasonId)
-  tournamentsCounts.value = await tournamentStore.FetchTournamentsCountsOfSeason(mySeasonId)
+  tournamentsCounts.value = await tournamentStore.GetTournamentCount(mySeasonId)
   tournamentsRanking.value = await tournamentStore.GetTournamentsRankingOfSeason(mySeasonId)
 })
 

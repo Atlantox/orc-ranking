@@ -14,16 +14,12 @@ import router from './router'
 
 const app = createApp(App)
 
-const sweetalertOptions = {
-    confirmButtonColor: '#71E580',
-    cancelButtonColor: '#ff7674',
-    background: 'black'
-}
+
 const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
 app.use(pinia)
 app.use(router)
-app.use(VueSweetalert2, sweetalertOptions)
+app.use(VueSweetalert2)
 
 
 app.mount('#app')

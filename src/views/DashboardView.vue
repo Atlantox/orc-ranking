@@ -1,9 +1,12 @@
 <script setup>
-import { onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import PageTitle from '@/components/PageTitle.vue';
 
 import useSessionStore from '@/stores/session';
-import useLoanStore from '@/stores/loans';
+import useTournamentStore from '@/stores/tournaments';
+import usePlayerStore from '@/stores/players';
+import useDeckStore from '@/stores/decks';
+import useSeasonStore from '@/stores/seasons';
 
 import LoadingGadget from '@/components/myGadgets/LoadingGadget.vue';
 import OnAppearAnimation from '@/utils/ElegantDisplayer';
@@ -18,10 +21,29 @@ const iconStyle = 'text-white col-1 panel-icon fs-5'
 const linkTextStyle = 'text-white col-10 fs-5 w-auto hover-bold hover-spacing'
 
 const sessionStore = useSessionStore()
-const loanStore = useLoanStore()
+const tournamentStore = useTournamentStore()
+const playerStore = usePlayerStore()
+const deckStore =  useDeckStore()
+const seasonStore = useSeasonStore()
+
+const playerCount = ref(undefined)
+const deckCount = ref(undefined)
+const allTournamentCount = ref(undefined)
+const seasonTournamentCount = ref(undefined)
+const seasonCount = ref(undefined)
+const currentSeason = ref(undefined)
+const fetchReady = ref(false)
 
 onMounted( async () => {
   // fetchings
+  currentSeason.value = await seasonStore.GetCurrentSeason()
+  playerCount.value = await playerStore.GetPlayerCount()
+  deckCount.value = await deckStore.GetDeckCount()
+  allTournamentCount.value = await tournamentStore.GetTournamentCount(null)
+  console.log(allTournamentCount.value)
+  seasonTournamentCount.value = await tournamentStore.GetTournamentCount(currentSeason.value['id'])
+  seasonCount.value = await seasonStore.GetSeasonCount()
+  fetchReady.value = true
   await new Promise(r => setTimeout(r, 50));
   OnAppearAnimation('hide-up')
 })
@@ -88,7 +110,7 @@ onMounted( async () => {
                 </h4>
                 <div :class="linkContainersStyle">
                   <div :class="linkElementStyle">
-                    <router-link :class="routerLinkStyle" :to="{name: 'home'}">
+                    <router-link :class="routerLinkStyle" :to="{name: 'add_player'}">
                       <i :class="iconStyle + ' fa fa-plus text-green '" ></i>
                       <span :class="linkTextStyle">
                         Nuevo jugador
@@ -96,7 +118,7 @@ onMounted( async () => {
                     </router-link>
                   </div>
                   <div :class="linkElementStyle">
-                    <router-link :class="routerLinkStyle" :to="{name: 'home'}">
+                    <router-link :class="routerLinkStyle" :to="{name: 'players'}">
                       <i :class="iconStyle + ' fa fa-users '" ></i>
                       <span :class="linkTextStyle">
                         Ver jugadores
@@ -116,7 +138,7 @@ onMounted( async () => {
                 </h4>
                 <div :class="linkContainersStyle">
                   <div :class="linkElementStyle">
-                    <router-link :class="routerLinkStyle" :to="{name: 'home'}">
+                    <router-link :class="routerLinkStyle" :to="{name: 'add_deck'}">
                       <i :class="iconStyle + ' fa fa-plus text-green '" ></i>
                       <span :class="linkTextStyle">
                         Nuevo deck
@@ -124,7 +146,7 @@ onMounted( async () => {
                     </router-link>
                   </div>
                   <div :class="linkElementStyle">
-                    <router-link :class="routerLinkStyle" :to="{name: 'home'}">
+                    <router-link :class="routerLinkStyle" :to="{name: 'decks'}">
                       <i :class="'fa fa-diamond ' + iconStyle" ></i>
                       <span :class="linkTextStyle">
                         Ver decks
@@ -144,7 +166,7 @@ onMounted( async () => {
                 </h4>
                 <div :class="linkContainersStyle">
                   <div :class="linkElementStyle">
-                    <router-link :class="routerLinkStyle" :to="{name: 'home'}">
+                    <router-link :class="routerLinkStyle" :to="{name: 'add_format'}">
                       <i :class="iconStyle + ' fa fa-plus text-green '" ></i>
                       <span :class="linkTextStyle">
                         Nuevo formato
@@ -152,7 +174,7 @@ onMounted( async () => {
                     </router-link>
                   </div>
                   <div :class="linkElementStyle">
-                    <router-link :class="routerLinkStyle" :to="{name: 'home'}">
+                    <router-link :class="routerLinkStyle" :to="{name: 'formats'}">
                       <i :class="'fa fa-tag ' + iconStyle" ></i>
                       <span :class="linkTextStyle">
                         Ver formatos
@@ -239,23 +261,21 @@ onMounted( async () => {
               </div>
             </article>
           </template>
-
         </div>
       </div>
 
-
       <div class="row col-12 justify-content-center col-lg-4 p-3">
-        <div class="row w-100 m-0 p-0 justify-content-around h-100 py-3 shadowed-l rounded bg-grey my-3 ">
-          <h3 class="col-12 text-center text-green">Registros actuales</h3>
-          <template v-if="false">
+        <template v-if="fetchReady === false">
             <LoadingGadget/>
-          </template>
-          <template v-else>
+        </template>
+        <template v-else>
+          <div class="row w-100 m-0 p-0 justify-content-around h-100 py-3 shadowed-l rounded bg-grey my-3 ">
+            <h3 class="col-12 text-center text-green">Registros totales</h3>
             <div class="row col-12 m-0 p-0 justify-content-center hide-up animated-1">
               <article class="col-12 col-lg-6 row m-0 p-0 align-middle p-3 px-lg-2 my-1">
                   <div class="col-12 d-flex align-items-center bg-dark-grey rounded shadowed-l">
                       <h4 class="h4 m-0 text-center w-100 p-2 text-green">
-                        Jugadores: {{ 17 }}
+                        Jugadores: {{ playerCount }}
                       </h4>
                   </div>
               </article>
@@ -263,7 +283,7 @@ onMounted( async () => {
               <article class="col-12 col-lg-6 row m-0 p-0 align-middle p-3 px-lg-2 my-1">
                   <div class="col-12 d-flex align-items-center bg-dark-grey rounded shadowed-l">
                       <h4 class="h4 m-0 text-center w-100 p-2 text-green">
-                        Decks: {{ 8 }}
+                        Decks: {{ deckCount }}
                       </h4>
                   </div>
               </article>
@@ -271,7 +291,7 @@ onMounted( async () => {
               <article class="col-12 col-lg-6 row m-0 p-0 align-middle p-3 px-lg-2 my-1">
                   <div class="col-12 d-flex align-items-center bg-dark-grey rounded shadowed-l">
                       <h4 class="h4 m-0 text-center w-100 p-2 text-green">
-                        Torneos: {{ 2 }}
+                        Torneos: {{ allTournamentCount.tournaments }}
                       </h4>
                   </div>
               </article>
@@ -279,7 +299,44 @@ onMounted( async () => {
               <article class="col-12 col-lg-6 row m-0 p-0 align-middle p-3 px-lg-2 my-1">
                   <div class="col-12 d-flex align-items-center bg-dark-grey rounded shadowed-l">
                       <h4 class="h4 m-0 text-center w-100 p-2 text-green">
-                        Temporadas: {{ 2 }}
+                        Participantes: {{ allTournamentCount.participants }}
+                      </h4>
+                  </div>
+              </article>
+
+              <article class="col-12 col-lg-6 row m-0 p-0 align-middle p-3 px-lg-2 my-1">
+                  <div class="col-12 d-flex align-items-center bg-dark-grey rounded shadowed-l">
+                      <h4 class="h4 m-0 text-center w-100 p-2 text-green">
+                        Temporadas: {{ seasonCount }}
+                      </h4>
+                  </div>
+              </article>
+            </div>
+          </div>
+
+          <div class="row w-100 m-0 p-0 justify-content-around h-100 py-3 shadowed-l rounded bg-grey my-3 ">
+            <h3 class="col-12 text-center text-green">Registros de esta temporada</h3>
+            <div class="row col-12 m-0 p-0 justify-content-center hide-up animated-1">
+              <article class="col-12 col-lg-6 row m-0 p-0 align-middle p-3 px-lg-2 my-1">
+                  <div class="col-12 d-flex align-items-center bg-dark-grey rounded shadowed-l">
+                      <h4 class="h4 m-0 text-center w-100 p-2 text-green">
+                        Torneos: {{ seasonTournamentCount.tournaments }}
+                      </h4>
+                  </div>
+              </article>
+
+              <article class="col-12 col-lg-6 row m-0 p-0 align-middle p-3 px-lg-2 my-1">
+                  <div class="col-12 d-flex align-items-center bg-dark-grey rounded shadowed-l">
+                      <h4 class="h4 m-0 text-center w-100 p-2 text-green">
+                        Participantes: {{ seasonTournamentCount.participants }}
+                      </h4>
+                  </div>
+              </article>
+
+              <article class="col-12 col-lg-6 row m-0 p-0 align-middle p-3 px-lg-2 my-1">
+                  <div class="col-12 d-flex align-items-center bg-dark-grey rounded shadowed-l">
+                      <h4 class="h4 m-0 text-center w-100 p-2 text-green">
+                        Temporada actual: {{ currentSeason['name'] }}
                       </h4>
                   </div>
               </article>
@@ -292,18 +349,8 @@ onMounted( async () => {
                 </router-link>
               </h2>
             </div>
-          </template>
-        </div>
+          </div>
+        </template>
       </div>
   </section>
 </template>
-
-<style scoped>
-  td{
-    padding-top:10px;
-  }
-
-  thead tr{
-    border-color:black !important;
-  }
-</style>

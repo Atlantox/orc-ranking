@@ -15,7 +15,9 @@ const useUtilsStore = defineStore('utils', {
         html: content,
         icon: type,
         confirmButtonColor: '#71E580',
-        cancelButtonColor: '#71E580'
+        cancelButtonColor: '#71E580',
+        background: '#262626',
+        color:'rgb(87, 211, 97)',
       })
     },
 
@@ -26,6 +28,8 @@ const useUtilsStore = defineStore('utils', {
         text: content,
         icon: type,
         showCancelButton: true,
+        background: '#262626',
+        color:'rgb(87, 211, 97)',
         confirmButtonText: 'Sí',
         cancelButtonText: 'No',
       }).then((result) => { confirmed = result.isConfirmed; })

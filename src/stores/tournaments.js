@@ -181,12 +181,13 @@ const useTournamentStore = defineStore('tournaments', {
             }
         },
 
-        async GetTournamentsCounts(){
+        async GetTournamentCount(seasonId){
             var tournamentsCount = false
             const sessionStore = useSessionStore()
             const utilsStore = useUtilsStore()
             try{
-                let url = apiConfig.base_url + '/tournaments/counts'
+                let url = apiConfig.base_url + '/tournaments/count'
+                if (seasonId !== null) url += '/' + seasonId
                 var fetchHeaders = {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
@@ -205,7 +206,7 @@ const useTournamentStore = defineStore('tournaments', {
                 let result = await json
                 
                 if(result.success){
-                    tournamentsCount = result.counts                    
+                    tournamentsCount = result.count                   
                 }
                 else
                     utilsStore.ShowModal('Error', result.message, 'error')
@@ -258,7 +259,7 @@ const useTournamentStore = defineStore('tournaments', {
             const sessionStore = useSessionStore()
             const utilsStore = useUtilsStore()
             try{
-                let url = apiConfig.base_url + '/tournaments/counts/' + season
+                let url = apiConfig.base_url + '/tournaments/count/' + season
                 var fetchHeaders = {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',

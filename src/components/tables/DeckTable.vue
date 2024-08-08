@@ -49,7 +49,7 @@ onMounted(() => {
                         <div class="row m-0 p-0 text-center justify-content-center">
                             <div class="row col-6 m-0 p-1 col-3 fs-2">
                                 <div class="w-100 hover-bigger text-center m-0 p-0">
-                                    <router-link :to="{name:'add_author', params: {id: deck.id}}">
+                                    <router-link :to="{name:'', params: {id: deck.id}}">
                                         <i class="text-white bi bi-eye text-center m-0 p-0"></i>
                                     </router-link>
                                 </div>
@@ -58,7 +58,7 @@ onMounted(() => {
                             <template v-if="sessionStore.authenticated">
                                 <div class="row col-6 m-0 p-1 col-3 fs-2" v-if="sessionStore.userData.permissons.includes('Mazos')">
                                     <div class="w-100 hover-bigger text-center m-0 p-0">
-                                        <router-link :to="{name:'add_author', params: {id: player.id}}">
+                                        <router-link :to="{name:'add_deck', params: {id: deck.id}}">
                                             <i class="text-white bi bi-pencil text-center m-0 p-0"></i>
                                         </router-link>
                                         

@@ -88,6 +88,22 @@ def GetDecks():
     return jsonify(response), statusCode
 
 
+@deckController.route('/colors', methods=['GET'])
+def GetColors():
+    connection = GetConnection()
+    deckModel = DeckModel(connection)
+    response = {}
+    statusCode = 200
+
+    colors = deckModel.GetColors()
+    response = {
+        'success': True,
+        'colors': colors
+    }
+
+    return jsonify(response), statusCode
+
+
 @deckController.route('/decks/<int:deckId>', methods=['GET'])
 def GetDeckById(deckId):
     connection = GetConnection()
@@ -108,6 +124,22 @@ def GetDeckById(deckId):
         response['deck'] = targetDeck
     else:
         response['message'] = error
+
+    return jsonify(response), statusCode
+
+
+@deckController.route('/decks/count', methods=['GET'])
+def GetDeckCount():
+    connection = GetConnection()
+    deckModel = DeckModel(connection)
+    response = {}
+    statusCode = 200
+
+    count = deckModel.GetDeckCount()
+    response = {
+        'success': True,
+        'count': count
+    }
 
     return jsonify(response), statusCode
 
