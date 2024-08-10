@@ -27,6 +27,7 @@ onMounted(() => {
                 <tr class="text-white fs-3">
                     <th class="text-center fw-normal bg-black border-green">Fecha</th>
                     <th class="text-center fw-normal bg-black border-green">Formato</th>
+                    <th class="text-center fw-normal bg-black border-green">Observación</th>
                     <th class="text-center fw-normal bg-black border-green">Participantes</th>
                     <th class="text-center fw-normal bg-black border-green">Ganador</th>
                     <th class="text-center fw-normal bg-black border-green">Ver</th>
@@ -39,6 +40,7 @@ onMounted(() => {
                 :key="tournament.id">
                     <td class="border-green text-center">{{ tournament.date }}</td>
                     <td class="border-green text-center">{{ tournament.format }}</td>
+                    <td class="border-green text-center">{{ tournament.observation }}</td>
                     <td class="border-green text-center">{{ tournament.participants }}</td>
                     <td class="border-green text-center">{{ tournament.winner }}</td>
                     <td class="border-green">
@@ -55,7 +57,7 @@ onMounted(() => {
                             <template v-if="sessionStore.authenticated">
                                 <div class="row col-6 m-0 p-1 col-3 fs-2" v-if="sessionStore.userData.permissons.includes('Jugadores')">
                                     <div class="w-100 hover-bigger text-center m-0 p-0">
-                                        <router-link :to="{name:'', params: {id: player.id}}">
+                                        <router-link :to="{name:'', params: {id: tournament.id}}">
                                             <i class="text-white bi bi-pencil text-center m-0 p-0"></i>
                                         </router-link>
                                         

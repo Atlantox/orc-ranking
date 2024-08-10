@@ -7,7 +7,7 @@ from models.TournamentModel import TournamentModel
 from helpers import *
 
 DECK_LENGTH_CONFIG = {
-    'name': {'min': 1, 'max':100}
+    'name': {'min': 1, 'max':100},
 }
 
 REQUIRED_FIELDS = ['name', 'colors']
@@ -179,7 +179,7 @@ def UpdateDeck(deckId):
             error = 'Deck no encontrado'
             statusCode = 404  # Not found
 
-    if error == '':
+    if error == '' and 'name' in cleanData:
         if deckModel.GetDeckByName(cleanData['name']) is not None:
             error = 'Ya existe un deck con ese nombre'
             statusCode = 400

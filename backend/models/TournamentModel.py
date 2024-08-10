@@ -8,8 +8,9 @@ class TournamentModel(BaseModel):
         tournamentDate = tournamentData['date']
         targetFormat = tournamentData['format']
         targetSeason = tournamentData['season']
-        sql= "INSERT INTO tournament (date, format, season) VALUES (%s, %s, %s)"
-        args = (tournamentDate, targetFormat, targetSeason)
+        tournamentObservation = tournamentData['observation']
+        sql= "INSERT INTO tournament (date, format, observation, season) VALUES (%s, %s, %s, %s)"
+        args = (tournamentDate, targetFormat, tournamentObservation, targetSeason)
 
         try:
             cursor.execute(sql, args)
@@ -39,6 +40,7 @@ class TournamentModel(BaseModel):
             t.id,
             CONCAT(YEAR(t.date), '-', LPAD(MONTH(t.date), 2, '0'), '-', LPAD(DAY(t.date), 2, '0')) AS date, 
             t.format,
+            t.observation,
             w.name AS winner,
             p.participants
         FROM
@@ -240,48 +242,6 @@ class TournamentModel(BaseModel):
             result = False
 
         return result  
-    
-    def GetTournamentsAndParticipantsCount(self):
-        cursor = self.connection.connection.cursor()
-        sql = '''
-            SELECT
-            COUNT(tournament.id) as count
-            FROM
-            tournament
-            INNER JOIN season ON season.id = tournament.season
-            WHERE
-            tournament.active = 1 AND
-            season.active = 1'''
-
-        try:
-            cursor.execute(sql)
-            tournamentsCount = cursor.fetchone()['count']
-        except:
-            tournamentsCount = 0
-        
-        sql = '''
-            SELECT
-            COUNT(tournament_result.id) as count
-            FROM
-            tournament_result
-            INNER JOIN tournament ON tournament.id = tournament_result.tournament
-            INNER JOIN season ON season.id = tournament.season
-            WHERE
-            tournament.active = 1 AND
-            season.active = 1'''
-        
-        try:
-            cursor.execute(sql)
-            participantCounts = cursor.fetchone()['count']
-        except:
-            participantCounts = 0
-
-        result = {
-            'tournaments': tournamentsCount,
-            'participants': participantCounts
-        }
-        
-        return result
 
     def GetTournamentsAndParticipantsCountOfSeason(self, seasonId):
         cursor = self.connection.connection.cursor()

@@ -65,7 +65,7 @@ async function ValidateForm() {
 
     if(formErrors.value.length === 0){        
         if(Object.keys(props.targetPlayer).length === 0){
-            // Creating the author
+            // Creating the player
             const confirmAction = await utilsStore.ConfirmModal('¿Desea registrar este nuevo jugador?', 'question')
             if(confirmAction === false)
                 return
@@ -84,7 +84,7 @@ async function ValidateForm() {
                 utilsStore.ShowModal('Error', created.message, 'error')
         }
         else{
-            // Updating the author
+            // Updating the player
             const confirmAction = await utilsStore.ConfirmModal('¿Desea renombrar este jugador?', 'question')
             if(confirmAction === false)
                 return
@@ -123,7 +123,7 @@ async function ValidateForm() {
                         </div>
                         <div :class="inputContainerStyle">
                             <div class="row col-12 col-lg-8">
-                                <input type="text" class="myInput" maxlength="150" id="name" autofocus v-model="playerName">
+                                <input type="text" class="myInput" maxlength="50" id="name" autofocus v-model="playerName">
                             </div>
                         </div>
                     </div>

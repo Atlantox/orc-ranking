@@ -40,9 +40,9 @@ onMounted( async () => {
   playerCount.value = await playerStore.GetPlayerCount()
   deckCount.value = await deckStore.GetDeckCount()
   allTournamentCount.value = await tournamentStore.GetTournamentCount(null)
-  console.log(allTournamentCount.value)
   seasonTournamentCount.value = await tournamentStore.GetTournamentCount(currentSeason.value['id'])
   seasonCount.value = await seasonStore.GetSeasonCount()
+  
   fetchReady.value = true
   await new Promise(r => setTimeout(r, 50));
   OnAppearAnimation('hide-up')
@@ -66,7 +66,7 @@ onMounted( async () => {
                 </h4>
                 <div :class="linkContainersStyle">
                   <div :class="linkElementStyle">
-                    <router-link :class="routerLinkStyle" :to="{name: 'home'}">
+                    <router-link :class="routerLinkStyle" :to="{name: 'add_tournament'}">
                       <i :class="iconStyle + ' fa fa-plus text-green '" ></i>
                       <span :class="linkTextStyle">
                         Nuevo torneo
@@ -74,7 +74,7 @@ onMounted( async () => {
                     </router-link>
                   </div>
                   <div :class="linkElementStyle">
-                    <router-link :class="routerLinkStyle" :to="{name: 'home', params:{filter: 'pending'}}">
+                    <router-link :class="routerLinkStyle" :to="{name: 'tournaments', params:{filter: 'pending'}}">
                       <i :class="'fa fa-sitemap ' + iconStyle" ></i>
                       <span :class="linkTextStyle">
                         Ver torneos actuales

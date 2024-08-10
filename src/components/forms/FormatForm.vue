@@ -65,7 +65,7 @@ async function ValidateForm() {
 
     if(formErrors.value.length === 0){        
         if(Object.keys(props.targetFormat).length === 0){
-            // Creating the author
+            // Creating the format
             const confirmAction = await utilsStore.ConfirmModal('¿Desea registrar este nuevo formato?', 'question')
             if(confirmAction === false)
                 return
@@ -84,7 +84,7 @@ async function ValidateForm() {
                 utilsStore.ShowModal('Error', created.message, 'error')
         }
         else{
-            // Updating the author
+            // Updating the format
             const confirmAction = await utilsStore.ConfirmModal('¿Desea renombrar este formato?', 'question')
             if(confirmAction === false)
                 return
@@ -123,7 +123,7 @@ async function ValidateForm() {
                         </div>
                         <div :class="inputContainerStyle">
                             <div class="row col-12 col-lg-8">
-                                <input type="text" class="myInput" maxlength="150" id="name" autofocus v-model="formatName">
+                                <input type="text" class="myInput" maxlength="50" id="name" autofocus v-model="formatName">
                             </div>
                         </div>
                     </div>

@@ -37,12 +37,14 @@ const props = defineProps({
 })
 
 onMounted(async () => {
-    OnAppearAnimation('hide-up')
-    
+    OnAppearAnimation('hide-up')    
 
-    if(props.targetDeck !== undefined){
+    if(Object.keys(props.targetDeck).length !== 0){
         deckName.value = props.targetDeck['name']       
         deckColors.value = props.targetDeck['colors']  
+    }
+    else{
+        deckColors.value = []
     }
     
     mounted.value = true    
@@ -70,35 +72,41 @@ async function ValidateForm() {
     if (lengthOK !== true)
         formErrors.value = formErrors.value.concat(lengthOK)
 
+    if(deckColors.value.length === 0)
+        formErrors.value.push('Seleccione al menos un color')
+
     if(formErrors.value.length === 0){        
         if(Object.keys(props.targetDeck).length === 0){
-            // Creating the author
+            // Creating the deck
             const confirmAction = await utilsStore.ConfirmModal('¿Desea registrar este nuevo deck?', 'question')
             if(confirmAction === false)
                 return
             
             const cleanData = {
                 'name': validationStructure['name']['value'],
+                'colors': deckColors.value
             }
 
             const created = await deckStore.CreateDeck(cleanData)            
             if(created.success){
                 utilsStore.ShowModal('Success', created.message, 'success')
                 deckName.value = ''
+                deckColors.value = []
                 emits('formOk')
             }
             else
                 utilsStore.ShowModal('Error', created.message, 'error')
         }
         else{
-            // Updating the author
-            const confirmAction = await utilsStore.ConfirmModal('¿Desea renombrar este deck?', 'question')
+            // Updating the deck
+            const confirmAction = await utilsStore.ConfirmModal('¿Desea modificar este deck?', 'question')
             if(confirmAction === false)
                 return
 
             let cleanData = {}
 
             if(props.targetDeck['name'] !== deckName.value) cleanData['name'] = deckName.value
+            if(props.targetDeck['colors'] !== deckColors.value) cleanData['colors'] = deckColors.value
 
             if(Object.keys(cleanData).length === 0)
                 utilsStore.ShowModal('Info', 'No se realizaron cambios', 'info')
@@ -130,33 +138,35 @@ async function ValidateForm() {
                         </div>
                         <div :class="inputContainerStyle">
                             <div class="row col-12 col-lg-8">
-                                <input type="text" class="myInput" maxlength="150" id="name" autofocus v-model="deckName">
+                                <input type="text" class="myInput" maxlength="100" id="name" autofocus v-model="deckName">
                             </div>
                         </div>
-                    </div>
+                    </div>                  
 
-                    <div :class="formRowStyle">
-                        <div :class="labelContainerStyle">
-                            <label :class="labelStyle"><strong>Colores</strong></label>
-                        </div>
-                        {{ deckColors }}
-                        <div :class="inputContainerStyle">
-                            <div class="row col-12">
-                                <div 
-                                class="row col-12 col-lg-5 m-0 p-0 my-1"
-                                v-for="color in props.colors"
-                                :key="color">
-                                    <label :class="'col-4 text-' + color " :for="color">{{ color }}</label>
-                                    <input 
-                                    :id="color" 
-                                    :value="color"
-                                    type="checkbox" 
-                                    v-model="deckColors"
-                                    class="col-1 mx-auto mx-lg-0"/>
+                    
+                        <div :class="formRowStyle">
+                            <div :class="labelContainerStyle">
+                                <label :class="labelStyle"><strong>Colores</strong></label>
+                            </div>
+                            
+                            <div :class="inputContainerStyle">
+                                <div class="row col-12">
+                                    <div 
+                                    class="row col-12 col-lg-5 m-0 p-0 my-1"
+                                    v-for="color in props.colors"
+                                    :key="color">
+                                        <label :class="'col-4 text-' + color " :for="color">{{ color }}</label>
+                                        <input 
+                                        :id="color" 
+                                        :value="color"
+                                        type="checkbox" 
+                                        v-model="deckColors"
+                                        class="col-1 mx-auto mx-lg-0"/>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>  
+                        </div>  
+                   
         
                     <div class="row m-0 p-0 justify-content-center my-2 mt-5">
                         <div class="row m-0 p-0 col-12 justify-content-center">

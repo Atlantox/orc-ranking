@@ -18,6 +18,7 @@ import UserFormView from '@/views/forms/UserFormView.vue'
 import MyAccountFormView from '@/views/forms/MyAccountFormView.vue'
 import FormatFormView from '@/views/forms/FormatFormView.vue'
 import DeckFormView from '@/views/forms/DeckFormView.vue'
+import TournamentFormView from '@/views/forms/TournamentFormView.vue'
 
 import SearchBooksView from '../views/tables/SearchBooksView.vue'
 import SearchLoanView from '../views/tables/SearchLoanView.vue'
@@ -33,7 +34,6 @@ import SearchFormatsView from '@/views/tables/SearchFormatsView.vue'
 
 import WatchBookView from '../views/watchers/WatchBookView.vue'
 import WatchStatisticsView from '../views/watchers/WatchStatisticsView.vue'
-import DeckForm from '@/components/forms/DeckForm.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -131,6 +131,12 @@ const router = createRouter({
       name: 'tournaments',
       component: SearchTournamentsView,
     },
+    {
+      path: '/add_tournament/:id?',
+      name: 'add_tournament',
+      component: TournamentFormView,
+      meta:{ requireAuth: true, tournamentPermisson: true }
+    },    
 
     // FORMATS
     {

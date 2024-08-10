@@ -10,10 +10,11 @@ from models.SeasonModel import SeasonModel
 from helpers import *
 
 TOURNAMENT_LENGTH_CONFIG = {
-    'date': {'min':8, 'max':10}
+    'date': {'min':8, 'max':10},
+    'observation': {'min': 0, 'max': 200}
 }
 
-REQUIRED_FIELDS = ['date', 'format', 'participants']
+REQUIRED_FIELDS = ['date', 'format', 'participants', 'observation']
 
 tournamentController = Blueprint('tournament', __name__)
 
