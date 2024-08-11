@@ -34,7 +34,7 @@ onMounted(async ()  => {
       <template v-if="sessionStore.authenticated">
         <AddButtonGadget
         v-if = "sessionStore.userData.permissons.includes('Formatos')"
-        :url = "''"
+        :url = "'add_format'"
         :title = "'Registrar nuevo formato'"
         />
       </template>

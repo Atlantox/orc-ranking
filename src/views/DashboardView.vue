@@ -74,7 +74,7 @@ onMounted( async () => {
                     </router-link>
                   </div>
                   <div :class="linkElementStyle">
-                    <router-link :class="routerLinkStyle" :to="{name: 'tournaments', params:{filter: 'pending'}}">
+                    <router-link :class="routerLinkStyle" :to="{name: 'tournaments', params:{filter: 'current'}}">
                       <i :class="'fa fa-sitemap ' + iconStyle" ></i>
                       <span :class="linkTextStyle">
                         Ver torneos actuales
@@ -82,7 +82,15 @@ onMounted( async () => {
                     </router-link>
                   </div>
                   <div :class="linkElementStyle">
-                    <router-link :class="routerLinkStyle" :to="{name: 'home', params:{filter: 'returned'}}">
+                    <router-link :class="routerLinkStyle" :to="{name: 'tournaments', params:{filter: 'all'}}">
+                      <i :class="'fa fa-list ' + iconStyle" ></i>
+                      <span :class="linkTextStyle">
+                        Ver todos los torneos
+                      </span>
+                    </router-link>
+                  </div>
+                  <div :class="linkElementStyle">
+                    <router-link :class="routerLinkStyle" :to="{name: 'tournaments', params:{filter: 'inactive'}}">
                       <i :class="'fa fa-close ' + iconStyle" ></i>
                       <span :class="linkTextStyle">
                         Ver torneos borrados
@@ -90,13 +98,13 @@ onMounted( async () => {
                     </router-link>
                   </div>
                   <div :class="linkElementStyle">
-                    <router-link :class="routerLinkStyle" :to="{name: 'home', params:{filter: 'active'}}">
-                      <i :class="'fa fa-list ' + iconStyle" ></i>
+                    <router-link :class="routerLinkStyle" :to="{name: 'tournaments', params:{filter: 'active'}}">
+                      <i :class="'fa fa-check ' + iconStyle" ></i>
                       <span :class="linkTextStyle">
-                        Ver todos los torneos
+                        Ver torneos ativos
                       </span>
                     </router-link>
-                  </div>
+                  </div>                  
                 </div>
               </div>
             </article>

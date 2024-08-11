@@ -39,13 +39,7 @@ const useUtilsStore = defineStore('utils', {
 
     InitializeSelect2(){
       const select2Ids = [
-        'books',
         'select2',
-        'readers',
-        'state',
-        'categories',
-        'editorial',
-        'author',
         'players',
         'decks',
         'tournaments',

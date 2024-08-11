@@ -115,7 +115,7 @@ const useTournamentStore = defineStore('tournaments', {
             return targetTournament
         },
 
-        async FetchTournaments(){
+        async FetchCurrentTournaments(){
             this.tournaments = undefined
             const sessionStore = useSessionStore()
             const utilsStore = useUtilsStore()
@@ -145,6 +145,105 @@ const useTournamentStore = defineStore('tournaments', {
             }
             catch(error){
                 utilsStore.ShowModal('Error', 'Ocurrió un error inesperado al cargar los torneos: ' + error.message, 'error')
+            }
+        },
+
+        async FetchActiveTournaments(){
+            this.tournaments = undefined
+            const sessionStore = useSessionStore()
+            const utilsStore = useUtilsStore()
+            try{
+                let url = apiConfig.base_url + '/tournaments/active'
+                var fetchHeaders = {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                }
+
+                if (sessionStore.authenticated === true)
+                    fetchHeaders['Authorization'] = 'Bearer ' + sessionStore.token
+
+                let fetchConfig = {
+                    method: 'GET',
+                    headers: fetchHeaders,
+                }
+
+                let response = await fetch(url, fetchConfig)
+                let json = await response.json()
+                let result = await json
+                if(result.success){
+                    this.tournaments = result.tournaments
+                }
+                else
+                    utilsStore.ShowModal('Error', result.message, 'error')
+            }
+            catch(error){
+                utilsStore.ShowModal('Error', 'Ocurrió un error inesperado al cargar los torneos activos: ' + error.message, 'error')
+            }
+        },
+
+        async FetchInactiveTournaments(){
+            this.tournaments = undefined
+            const sessionStore = useSessionStore()
+            const utilsStore = useUtilsStore()
+            try{
+                let url = apiConfig.base_url + '/tournaments/inactive'
+                var fetchHeaders = {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                }
+
+                if (sessionStore.authenticated === true)
+                    fetchHeaders['Authorization'] = 'Bearer ' + sessionStore.token
+
+                let fetchConfig = {
+                    method: 'GET',
+                    headers: fetchHeaders,
+                }
+
+                let response = await fetch(url, fetchConfig)
+                let json = await response.json()
+                let result = await json
+                if(result.success){
+                    this.tournaments = result.tournaments
+                }
+                else
+                    utilsStore.ShowModal('Error', result.message, 'error')
+            }
+            catch(error){
+                utilsStore.ShowModal('Error', 'Ocurrió un error inesperado al cargar los torneos inactivos: ' + error.message, 'error')
+            }
+        },
+
+        async FetchAllTournaments(){
+            this.tournaments = undefined
+            const sessionStore = useSessionStore()
+            const utilsStore = useUtilsStore()
+            try{
+                let url = apiConfig.base_url + '/tournaments/all'
+                var fetchHeaders = {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                }
+
+                if (sessionStore.authenticated === true)
+                    fetchHeaders['Authorization'] = 'Bearer ' + sessionStore.token
+
+                let fetchConfig = {
+                    method: 'GET',
+                    headers: fetchHeaders,
+                }
+
+                let response = await fetch(url, fetchConfig)
+                let json = await response.json()
+                let result = await json
+                if(result.success){
+                    this.tournaments = result.tournaments
+                }
+                else
+                    utilsStore.ShowModal('Error', result.message, 'error')
+            }
+            catch(error){
+                utilsStore.ShowModal('Error', 'Ocurrió un error inesperado al cargar todos los torneos: ' + error.message, 'error')
             }
         },
 
@@ -291,6 +390,7 @@ const useTournamentStore = defineStore('tournaments', {
         },
 
         async DeactivateTournament(tournamentId){
+            var result = null;
             const sessionStore = useSessionStore()
             try{
                 let url = apiConfig.base_url + '/tournaments/' + tournamentId

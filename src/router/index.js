@@ -127,7 +127,7 @@ const router = createRouter({
 
     // TOURNAMENTS
     {
-      path: '/search_tournaments',
+      path: '/search_tournaments/:filter?',
       name: 'tournaments',
       component: SearchTournamentsView,
     },

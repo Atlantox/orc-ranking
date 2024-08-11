@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 06-08-2024 a las 22:26:23
+-- Tiempo de generación: 11-08-2024 a las 23:29:50
 -- Versión del servidor: 10.4.18-MariaDB
 -- Versión de PHP: 8.0.3
 
@@ -75,6 +75,7 @@ CREATE TABLE `deck` (
 INSERT INTO `deck` (`id`, `name`) VALUES
 (2, 'Ertai Resurrected'),
 (5, 'Horde of Notions'),
+(8, 'Octavia, Living thesis'),
 (3, 'Purphoros, Bronze-Blooded'),
 (6, 'Sliver Overlord'),
 (4, 'Thalia and The Gitrog Monster'),
@@ -114,7 +115,8 @@ INSERT INTO `deck_color` (`id`, `deck`, `color`) VALUES
 (26, 3, 'Rojo'),
 (27, 4, 'Blanco'),
 (28, 4, 'Negro'),
-(29, 4, 'Verde');
+(29, 4, 'Verde'),
+(33, 8, 'Azul');
 
 -- --------------------------------------------------------
 
@@ -134,7 +136,8 @@ CREATE TABLE `game_format` (
 INSERT INTO `game_format` (`id`, `name`) VALUES
 (3, 'Coliseo'),
 (2, 'EDH'),
-(1, 'Pauper');
+(1, 'Pauper'),
+(4, 'Prelease');
 
 -- --------------------------------------------------------
 
@@ -191,6 +194,7 @@ CREATE TABLE `player` (
 --
 
 INSERT INTO `player` (`id`, `name`) VALUES
+(6, 'Antoanel'),
 (3, 'Boros'),
 (2, 'Roberto'),
 (1, 'Yanez'),
@@ -227,6 +231,7 @@ CREATE TABLE `tournament` (
   `id` int(11) NOT NULL,
   `date` date NOT NULL,
   `format` varchar(50) NOT NULL,
+  `observation` varchar(200) NOT NULL,
   `season` int(11) NOT NULL,
   `active` tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -235,9 +240,10 @@ CREATE TABLE `tournament` (
 -- Volcado de datos para la tabla `tournament`
 --
 
-INSERT INTO `tournament` (`id`, `date`, `format`, `season`, `active`) VALUES
-(6, '2024-07-31', 'Pauper', 2, 1),
-(7, '2024-07-31', 'Pauper', 2, 1);
+INSERT INTO `tournament` (`id`, `date`, `format`, `observation`, `season`, `active`) VALUES
+(18, '2024-08-10', 'Prelease', 'Bloomburrow prelease', 2, 1),
+(19, '2024-08-10', 'Coliseo', 'El ganador se lleva un beso negro', 2, 0),
+(20, '2024-08-10', 'Prelease', '', 2, 0);
 
 -- --------------------------------------------------------
 
@@ -250,7 +256,7 @@ CREATE TABLE `tournament_result` (
   `tournament` int(11) NOT NULL,
   `player` int(11) NOT NULL,
   `deck` int(11) NOT NULL,
-  `wins` tinyint(4) NOT NULL,
+  `wins` decimal(4,2) NOT NULL,
   `winner` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -259,14 +265,18 @@ CREATE TABLE `tournament_result` (
 --
 
 INSERT INTO `tournament_result` (`id`, `tournament`, `player`, `deck`, `wins`, `winner`) VALUES
-(1, 6, 1, 1, 2, 0),
-(2, 6, 2, 2, 4, 1),
-(3, 6, 3, 3, 1, 0),
-(4, 6, 4, 4, 2, 0),
-(5, 7, 1, 1, 1, 0),
-(6, 7, 2, 2, 2, 0),
-(7, 7, 3, 3, 3, 0),
-(8, 7, 4, 4, 5, 1);
+(51, 18, 1, 1, '3.50', 0),
+(52, 18, 2, 2, '2.10', 0),
+(53, 18, 3, 3, '2.00', 0),
+(54, 18, 4, 4, '4.80', 1),
+(55, 19, 3, 3, '5.40', 1),
+(56, 19, 2, 4, '3.00', 0),
+(57, 19, 1, 2, '2.50', 0),
+(58, 19, 4, 5, '0.80', 0),
+(59, 20, 1, 1, '3.50', 0),
+(60, 20, 2, 2, '2.10', 0),
+(61, 20, 3, 3, '2.00', 0),
+(62, 20, 4, 4, '4.80', 1);
 
 -- --------------------------------------------------------
 
@@ -428,19 +438,19 @@ ALTER TABLE `binnacle`
 -- AUTO_INCREMENT de la tabla `deck`
 --
 ALTER TABLE `deck`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `deck_color`
 --
 ALTER TABLE `deck_color`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT de la tabla `game_format`
 --
 ALTER TABLE `game_format`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `permisson`
@@ -452,7 +462,7 @@ ALTER TABLE `permisson`
 -- AUTO_INCREMENT de la tabla `player`
 --
 ALTER TABLE `player`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `season`
@@ -464,13 +474,13 @@ ALTER TABLE `season`
 -- AUTO_INCREMENT de la tabla `tournament`
 --
 ALTER TABLE `tournament`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT de la tabla `tournament_result`
 --
 ALTER TABLE `tournament_result`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
 
 --
 -- AUTO_INCREMENT de la tabla `user`

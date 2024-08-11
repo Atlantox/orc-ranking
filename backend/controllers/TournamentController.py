@@ -109,13 +109,61 @@ def CreateTournament():
 
 
 @tournamentController.route('/tournaments', methods=['GET'])
-def GetTournaments():
+def GetCurrentTournaments():
     connection = GetConnection()
     tournamentModel = TournamentModel(connection)
     response = {}
     statusCode = 200
 
-    tournaments = tournamentModel.GetTournaments()
+    tournaments = tournamentModel.GetCurrentTournaments()
+    response = {
+        'success': True,
+        'tournaments': tournaments
+    }
+
+    return jsonify(response), statusCode
+
+
+@tournamentController.route('/tournaments/all', methods=['GET'])
+def GetAllTournaments():
+    connection = GetConnection()
+    tournamentModel = TournamentModel(connection)
+    response = {}
+    statusCode = 200
+
+    tournaments = tournamentModel.GetAllTournaments()
+    response = {
+        'success': True,
+        'tournaments': tournaments
+    }
+
+    return jsonify(response), statusCode
+
+
+@tournamentController.route('/tournaments/inactive', methods=['GET'])
+def GetInactiveTournaments():
+    connection = GetConnection()
+    tournamentModel = TournamentModel(connection)
+    response = {}
+    statusCode = 200
+
+    tournaments = tournamentModel.GetInactiveTournaments()
+    response = {
+        'success': True,
+        'tournaments': tournaments
+    }
+
+    return jsonify(response), statusCode
+
+
+@tournamentController.route('/tournaments/active', methods=['GET'])
+def GetActiveTournaments():
+    connection = GetConnection()
+    tournamentModel = TournamentModel(connection)
+    response = {}
+    statusCode = 200
+
+    tournaments = tournamentModel.GetActiveTournaments()
     response = {
         'success': True,
         'tournaments': tournaments

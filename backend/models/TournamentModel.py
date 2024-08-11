@@ -1,6 +1,37 @@
 from .BaseModel import BaseModel
 
 class TournamentModel(BaseModel):
+    GET_TOURNAMENTS_TEMPLATE = '''
+        SELECT
+            t.id,
+            CONCAT(YEAR(t.date), '-', LPAD(MONTH(t.date), 2, '0'), '-', LPAD(DAY(t.date), 2, '0')) AS date, 
+            t.format,
+            t.observation,
+            w.name AS winner,
+            p.participants,
+            t.active
+        FROM
+            tournament t
+        INNER JOIN (
+            SELECT
+                tr.tournament,
+                COUNT(tr.id) AS participants
+            FROM
+                tournament_result tr
+            GROUP BY
+                tr.tournament
+        ) p ON t.id = p.tournament
+        INNER JOIN (
+            SELECT
+                tr.tournament,
+                CONCAT(pl.name, ' - ', dc.name) as name
+            FROM
+                tournament_result tr
+            INNER JOIN player pl ON tr.player = pl.id
+            INNER JOIN deck dc ON dc.id = tr.deck
+            WHERE
+                tr.winner = 1
+        ) w ON t.id = w.tournament'''
 
     def CreateTournament(self, tournamentData):
         cursor = self.connection.connection.cursor()
@@ -33,48 +64,87 @@ class TournamentModel(BaseModel):
 
         return result
 
-    def GetTournaments(self):
+    def GetCurrentTournaments(self):
         cursor = self.connection.connection.cursor()
-        sql = '''
-        SELECT
-            t.id,
-            CONCAT(YEAR(t.date), '-', LPAD(MONTH(t.date), 2, '0'), '-', LPAD(DAY(t.date), 2, '0')) AS date, 
-            t.format,
-            t.observation,
-            w.name AS winner,
-            p.participants
-        FROM
-            tournament t
-        INNER JOIN (
-            SELECT
-                tr.tournament,
-                COUNT(tr.id) AS participants
-            FROM
-                tournament_result tr
-            GROUP BY
-                tr.tournament
-        ) p ON t.id = p.tournament
-        INNER JOIN (
-            SELECT
-                tr.tournament,
-                CONCAT(pl.name, ' - ', dc.name) as name
-            FROM
-                tournament_result tr
-            INNER JOIN player pl ON tr.player = pl.id
-            INNER JOIN deck dc ON dc.id = tr.deck
-            WHERE
-                tr.winner = 1
-        ) w ON t.id = w.tournament
+        sql = self.GET_TOURNAMENTS_TEMPLATE + '''
         WHERE
             t.season = (SELECT id FROM season WHERE active = 1) AND
             t.active = 1
-        '''
+        '''        
 
         try:
             cursor.execute(sql)
             result = cursor.fetchall()
         except:
             result = False
+        
+        return result
+    
+    def GetTournamentsOfSeason(self, seasonId):
+        cursor = self.connection.connection.cursor()
+        sql = self.GET_TOURNAMENTS_TEMPLATE + '''
+        WHERE
+            t.season = %s AND
+            t.active = 1
+        '''  
+
+        args = (seasonId,)
+
+        try:
+            cursor.execute(sql, args)
+            result = cursor.fetchall()
+            if result == tuple():
+                result = []
+        except:
+            result = None
+        
+        return result
+    
+    def GetInactiveTournaments(self):
+        cursor = self.connection.connection.cursor()
+        sql = self.GET_TOURNAMENTS_TEMPLATE + '''
+        WHERE
+            t.active = 0
+        '''  
+
+        try:
+            cursor.execute(sql)
+            result = cursor.fetchall()
+            if result == tuple():
+                result = []
+        except:
+            result = None
+        
+        return result
+    
+    def GetActiveTournaments(self):
+        cursor = self.connection.connection.cursor()
+        sql = self.GET_TOURNAMENTS_TEMPLATE + '''
+        WHERE
+            t.active = 1
+        '''  
+
+        try:
+            cursor.execute(sql)
+            result = cursor.fetchall()
+            if result == tuple():
+                result = []
+        except:
+            result = None
+        
+        return result
+    
+    def GetAllTournaments(self):
+        cursor = self.connection.connection.cursor()
+        sql = self.GET_TOURNAMENTS_TEMPLATE
+
+        try:
+            cursor.execute(sql)
+            result = cursor.fetchall()
+            if result == tuple():
+                result = []
+        except:
+            result = None
         
         return result
     
@@ -145,7 +215,19 @@ class TournamentModel(BaseModel):
     
     def GetTournamentById(self, tournamentId):
         cursor = self.connection.connection.cursor()
-        sql = "SELECT * FROM tournament WHERE id = %s"
+        sql = '''
+            SELECT
+            id,
+            CONCAT(YEAR(date), '-', LPAD(MONTH(date), 2, '0'), '-', LPAD(DAY(date), 2, '0')) AS date, 
+            format,
+            observation,
+            season,
+            active
+            FROM
+            tournament
+            WHERE
+            id = %s
+        '''
         args = (tournamentId,)
         result = True
 
@@ -466,31 +548,9 @@ class TournamentModel(BaseModel):
             result = None
         
         return result
-
-    def GetTournamentsOfSeason(self, seasonId):
-        cursor = self.connection.connection.cursor()
-
-        sql = '''SELECT 
-        tournament.id
-        FROM 
-        tournament
-        INNER JOIN tournament_result ON tournament_result.tournament = tournament.id
-        WHERE
-        tournament.season = %s AND
-        tournament.active = 1'''
-        args = (seasonId,)
-
-        try:
-            cursor.execute(sql, args)
-            result = cursor.fetchall()
-            if result == tuple():
-                result = []
-        except:
-            result = None
-        
-        return result
-    
+ 
     def CreateTournamentResults(self, tournamentId, participants):
+        print(participants)
         cursor = self.connection.connection.cursor()
         result = True
 
@@ -498,7 +558,7 @@ class TournamentModel(BaseModel):
         sql = "INSERT INTO tournament_result (tournament, player, deck, wins, winner) VALUES "
         for participant in participants:
             sql += "(%s, %s, %s, %s, %s),"
-            listArgs += [tournamentId, participant['player'], participant['deck'], participant['wins'], participant['winner']]
+            listArgs += [tournamentId, participant['player'], participant['deck'], float(participant['wins']), participant['winner']]
 
         args = tuple(listArgs)
         sql = sql[0:-1]

@@ -34,7 +34,7 @@ onMounted(async ()  => {
       <template v-if="sessionStore.authenticated">
         <AddButtonGadget
         v-if = "sessionStore.userData.permissons.includes('Jugadores')"
-        :url = "''"
+        :url = "'add_player'"
         :title = "'Registrar nuevo jugador'"
         />
       </template>

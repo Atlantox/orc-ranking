@@ -34,7 +34,7 @@ onMounted(async ()  => {
       <template v-if="sessionStore.authenticated">
         <AddButtonGadget
         v-if = "sessionStore.userData.permissons.includes('Mazos')"
-        :url = "''"
+        :url = "'add_decks'"
         :title = "'Registrar nuevo mazo'"
         />
       </template>
