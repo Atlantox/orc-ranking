@@ -21,7 +21,7 @@ onMounted(async ()  => {
 </script>
 
 <template>
-  <div class="row w-100 m-0 p-0 px-5">
+  <div class="row w-100 m-0 p-0 px-5 mt-5 pt-5">
     <div class="row m-0 p-0 justify-content-center justify-content-lg-start">
       <div class="col-4 col-lg-2 col-xl-1 ps-0 ps-lg-5">
         <BackButtonGadget :back_to="'dashboard'"/>
@@ -30,7 +30,7 @@ onMounted(async ()  => {
     <PageTitleView
     :title="'Listado de los usuarios'"
     />
-    <div class="row m-0 p-0 col-12 py-4 shadowed-l rounded lb-bg-terciary-ul justify-content-center">
+    <div class="row m-0 p-0 col-12 py-4 shadowed-l rounded bg-dark-grey justify-content-center">
       <AddButtonGadget
       v-if = "sessionStore.userData.permissons.includes('Editor') || sessionStore.userData.permissons.includes('Admin')"
       :url = "'add_user'"

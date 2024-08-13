@@ -13,7 +13,7 @@ import OnAppearAnimation from '@/utils/ElegantDisplayer';
 
 const articleStyle = 'col-12 my-4 rounded bg-dark-grey shadowed-l'
 const articleWrappedStyle = 'row col-12 m-0 p-0 justify-content-start shadowed p-2 px-4'
-const h4Style = 'h4 col-12 border-bottom fw-bold text-green'
+const h4Style = 'h4 col-12 border-bottom text-green'
 const linkContainersStyle = 'd-flex col-12 flex-wrap mt-2'
 const linkElementStyle = 'col-12 col-lg-4 my-1'
 const routerLinkStyle = 'w-100 justify-content-start align-items-center p-1'

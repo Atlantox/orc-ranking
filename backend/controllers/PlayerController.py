@@ -62,7 +62,7 @@ def CreatePlayer():
             statusCode = 500
         else:
             action = 'Creó al jugador {0}'.format(cleanData['name'])
-            playerModel.CreateBinnacle(targetUser['id'],action, request.remote_addr)
+            playerModel.CreateBinnacle(targetUser['id'], action, request.remote_addr)
             message = 'Jugador creado correctamente'
 
     if error != '':
@@ -84,6 +84,29 @@ def GetPlayers():
         'success': True,
         'players': players
     }
+
+    return jsonify(response), statusCode
+
+
+@playerController.route('/players/statistics/<int:playerId>', defaults={'seasonId': None}, methods=['GET'])
+@playerController.route('/players/statistics/<int:playerId>/<int:seasonId>', methods=['GET'])
+def GetPlayerStatistics(playerId, seasonId):
+    connection = GetConnection()
+    playerModel = PlayerModel(connection)
+    response = {}
+    statusCode = 200
+
+    statistics = playerModel.GetPlayerStatistics(playerId, seasonId)
+    if statistics is False:
+        response = {
+            'success': False,
+            'message': statistics
+        }
+    else:
+        response = {
+            'success': True,
+            'statistics': statistics
+        }
 
     return jsonify(response), statusCode
 

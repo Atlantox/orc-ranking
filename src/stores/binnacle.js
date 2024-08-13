@@ -15,6 +15,7 @@ const useBinnacleStore = defineStore('binnacle', {
     },
     actions:{
         async FetchBinnacle(){
+            this.binnacle = undefined
             const sessionStore = useSessionStore()
             const utilsStore = useUtilsStore()
             try{

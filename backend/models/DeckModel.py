@@ -8,18 +8,21 @@ class DeckModel(BaseModel):
             SELECT
             deck.id,
             deck.name,
-            SUM(CASE WHEN tournament_result.winner = 1 THEN 1 ELSE 0 END) as wins,
-            COUNT(tournament_result.id) as participations
+            SUM(CASE WHEN t_result.winner = 1 THEN 1 ELSE 0 END) as wins,
+            COUNT(t_result.id) as participations
             FROM 
             deck 
-            LEFT JOIN tournament_result ON tournament_result.deck = deck.id
-            LEFT JOIN tournament ON tournament.id = tournament_result.tournament
-            WHERE
-            tournament.id IS NULL OR
-            (
-            tournament.season = (SELECT id FROM season WHERE active = 1) AND
-            tournament.active = 1
-            )
+            LEFT JOIN (
+                SELECT 
+                tournament_result.id,
+                tournament_result.winner,
+                tournament_result.deck
+                FROM
+                tournament_result
+                INNER JOIN tournament ON tournament.id = tournament_result.tournament
+                WHERE
+                tournament.season = (SELECT id FROM season WHERE active = 1)
+            ) t_result ON t_result.deck = deck.id
             GROUP BY
             deck.id
             ORDER BY

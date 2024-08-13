@@ -124,14 +124,18 @@ def GetCurrentTournaments():
     return jsonify(response), statusCode
 
 
-@tournamentController.route('/tournaments/all', methods=['GET'])
-def GetAllTournaments():
+@tournamentController.route('/tournaments/all', defaults={'seasonId': None}, methods=['GET'])
+@tournamentController.route('/tournaments/all/<int:seasonId>', methods=['GET'])
+def GetAllTournaments(seasonId):
     connection = GetConnection()
     tournamentModel = TournamentModel(connection)
     response = {}
     statusCode = 200
 
-    tournaments = tournamentModel.GetAllTournaments()
+    if seasonId is None:
+        tournaments = tournamentModel.GetAllTournaments()
+    else:
+        tournaments = tournamentModel.GetAllTournamentsOfSeason(seasonId)
     response = {
         'success': True,
         'tournaments': tournaments
@@ -140,14 +144,38 @@ def GetAllTournaments():
     return jsonify(response), statusCode
 
 
-@tournamentController.route('/tournaments/inactive', methods=['GET'])
-def GetInactiveTournaments():
+@tournamentController.route('/tournaments/inactive', defaults={'seasonId': None}, methods=['GET'])
+@tournamentController.route('/tournaments/inactive/<int:seasonId>', methods=['GET'])
+def GetInactiveTournaments(seasonId):
     connection = GetConnection()
     tournamentModel = TournamentModel(connection)
     response = {}
     statusCode = 200
 
-    tournaments = tournamentModel.GetInactiveTournaments()
+    if seasonId is None:
+        tournaments = tournamentModel.GetInactiveTournaments()
+    else:
+        tournaments = tournamentModel.GetInactiveTournamentsOfSeason(seasonId)
+
+    response = {
+        'success': True,
+        'tournaments': tournaments
+    }
+
+    return jsonify(response), statusCode
+
+
+@tournamentController.route('/tournaments/player/<int:playerId>', defaults={'seasonId': None}, methods=['GET'])
+@tournamentController.route('/tournaments/player/<int:playerId>/<int:seasonId>', methods=['GET'])
+def GetActiveTournamentsOfPlayer(playerId, seasonId):
+    connection = GetConnection()
+    tournamentModel = TournamentModel(connection)
+    response = {}
+    statusCode = 200
+
+    
+    tournaments = tournamentModel.GetActiveTournamentsOfPlayer(playerId, seasonId)
+
     response = {
         'success': True,
         'tournaments': tournaments

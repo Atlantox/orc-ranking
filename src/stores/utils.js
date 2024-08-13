@@ -42,6 +42,7 @@ const useUtilsStore = defineStore('utils', {
         'select2',
         'players',
         'decks',
+        'format',
         'tournaments',
       ]
 

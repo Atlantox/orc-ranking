@@ -14,12 +14,23 @@ $terciary-ul: #dcf2ff;
 $my-green: rgb(87, 211, 97);
 
 @font-face {
+    font-family: teutonic;
+    src: url('Teutonic.ttf');
+}
+
+@font-face {
     font-family: seagram;
-    src: url('Seagram\ tfb.ttf');
+    src: url('Seagram tfb.ttf');
 }
 
 *{
+    font-family: teutonic;
+    letter-spacing: 1px;
+}
+
+h1, h2, h3, h4, h5, h6, th, thead, .orc-font, .dt-column-title{
     font-family: seagram;
+    font-weight: normal;
 }
 
 /* lb = Library abreviation */
@@ -350,7 +361,7 @@ $my-green: rgb(87, 211, 97);
 }
 
 .hover-spacing:hover{
-    letter-spacing: 1px;    
+    letter-spacing: 2px;    
 }
 
 .hover-bigger{
@@ -499,7 +510,7 @@ input[type="file"] {
 }
 
 .select2-selection__rendered{    
-    padding:2px !important;
+    padding:0px !important;
     font-size:24px;
     font-weight: normal;
     background-color: white;

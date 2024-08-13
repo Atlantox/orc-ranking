@@ -1,9 +1,10 @@
 <script setup>
-import { onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 
 import useTournamentStore from '@/stores/tournaments.js'
 import useSessionStore from '@/stores/session'
+import useSeasonStore from '@/stores/seasons'
 
 import LoadingGadget from '@/components/myGadgets/LoadingGadget.vue'
 import BackButtonGadget from '@/components/myGadgets/BackButtonGadget.vue'
@@ -14,6 +15,7 @@ import PageTitleView from '@/components/PageTitle.vue';
 
 const tournamentStore = useTournamentStore()
 const sessionStore = useSessionStore()
+const seasonStore = useSeasonStore()
 const route = useRoute()
 
 const filterTranslator = {
@@ -23,7 +25,10 @@ const filterTranslator = {
   'all': '(todos)'
 }
 
+const selectedSeason = ref('')
+
 onMounted(async ()  => {
+  await seasonStore.FetchSeasons()
   await tournamentStore.FetchCurrentTournaments()
 
   const filter = route.params.filter
@@ -40,6 +45,15 @@ onMounted(async ()  => {
 
 })
 
+const FetchTournamentsOfSeason = (async () => {
+  const filter = route.params.filter
+  if(filter === 'inactive')
+    await tournamentStore.FetchInactiveTournamentsOfSeason(selectedSeason.value)  
+  else if(filter === 'all')
+    await tournamentStore.FetchAllTournamentsOfSeason(selectedSeason.value)
+  else
+    await tournamentStore.FetchTournamentsOfSeason(selectedSeason.value)
+})
 </script>
 
 <template>
@@ -61,12 +75,34 @@ onMounted(async ()  => {
         />
       </template>
 
+
+      <template
+      v-if="seasonStore.seasons === undefined">
+        <LoadingGadget/>
+      </template>
+      <div v-else class="row w-100 m-0 p-0 fs-5 p-3">
+        <h3 class="w-100 text-white">
+          Filtrar por temporada
+        </h3>
+        <div class="col-6 col-lg-2 fs-6 px-5">
+          <select class="myInput px-2 w-100 fs-4 text-center" id="season-select" @change="FetchTournamentsOfSeason" v-model="selectedSeason">
+            <option 
+            v-for="season in seasonStore.seasons"
+            :key="season.id"
+            :value="season.id"
+            class="align-middle text-center"
+            >
+              Season {{ season.name }}
+            </option>
+          </select>
+        </div>
+      </div>
+
       <template
       v-if="tournamentStore.tournaments === undefined">
         <LoadingGadget/>
       </template>
-      <template v-else>
-        
+      <template v-else>        
         <div class="w-100 m-0 p-3 px-5 table-container text-green">
           <TournamentTable
             :tournaments="tournamentStore.tournaments"/>

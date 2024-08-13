@@ -5,9 +5,8 @@ const sessionStore = useSessionStore()
 const router = useRouter()
 
 const CloseSession = (() => {
-  alert('AAAA')
-    sessionStore.DestroySession()
-    router.push({name: 'home'})
+  sessionStore.DestroySession()
+  router.push({name: 'home'})
 })
 
 </script>
@@ -98,10 +97,7 @@ const CloseSession = (() => {
 }
 
 .my-nav-link:hover{
-  border-bottom: 2px rgb(49, 49, 49) solid;
+  border-bottom: 1px rgb(87, 211, 97) solid;
 }
 
-.dropdown-menu{
-  
-}
 </style>

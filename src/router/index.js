@@ -7,12 +7,6 @@ import DashboardView from '../views/DashboardView.vue'
 import AboutView from '@/views/AboutView.vue'
 
 import LoginFormView from '../views/forms/LoginFormView.vue'
-import BookFormView from '../views/forms/BookFormView.vue'
-import BooksByExcelView from '../views/forms/BooksByExcelView.vue'
-import LoanFormView from '../views/forms/LoanFormView.vue'
-import ReaderFormView from '../views/forms/ReaderFormView.vue'
-import CategoryFormView from '@/views/forms/CategoryFormView.vue'
-import EditorialFormView from '../views/forms/EditorialFormView.vue'
 import PlayerFormView from '@/views/forms/PlayerFormView.vue'
 import UserFormView from '@/views/forms/UserFormView.vue'
 import MyAccountFormView from '@/views/forms/MyAccountFormView.vue'
@@ -20,20 +14,14 @@ import FormatFormView from '@/views/forms/FormatFormView.vue'
 import DeckFormView from '@/views/forms/DeckFormView.vue'
 import TournamentFormView from '@/views/forms/TournamentFormView.vue'
 
-import SearchBooksView from '../views/tables/SearchBooksView.vue'
-import SearchLoanView from '../views/tables/SearchLoanView.vue'
-import SearchReadersView from '../views/tables/SearchReadersView.vue'
-import SearchCategoryView from '@/views/tables/SearchCategoryView.vue'
 import SearchPlayersView from '@/views/tables/SearchPlayersView.vue'
 import SearchDecksView from '@/views/tables/SearchDecksView.vue'
 import SearchTournamentsView from '@/views/tables/SearchTournamentsView.vue'
-import SearchEditorialsView from '@/views/tables/SearchEditorialsView.vue'
 import SearchUsersView from '@/views/tables/SearchUsersView.vue'
 import SearchBinnacleView from '@/views/tables/SearchBinnacleView.vue'
 import SearchFormatsView from '@/views/tables/SearchFormatsView.vue'
 
-import WatchBookView from '../views/watchers/WatchBookView.vue'
-import WatchStatisticsView from '../views/watchers/WatchStatisticsView.vue'
+import WatchPlayerView from '@/views/watchers/WatchPlayerView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -61,44 +49,6 @@ const router = createRouter({
       meta:{ requireAuth: true }
     },
 
-    // BOOKS
-    {
-      path: '/add_book/:id?',
-      name: 'add_book',
-      component: BookFormView,
-      meta:{ requireAuth: true, bookPermisson: true }
-    },
-    {
-      path: '/add_book_excel',
-      name: 'add_book_excel',
-      component: BooksByExcelView,
-      meta:{ requireAuth: true, bookPermisson: true }
-    },
-    {
-      path: '/search_books',
-      name: 'books',
-      component: SearchBooksView
-    },
-    {
-      path: '/books/:id',
-      name: 'see_book',
-      component: WatchBookView
-    },
-
-    // EDITORIALS
-    {
-      path: '/add_editorial/:id?',
-      name: 'add_editorial',
-      component: EditorialFormView,
-      meta:{ requireAuth: true, editorialPermisson: true }
-    },
-    {
-      path: '/search_editorials',
-      name: 'editorials',
-      component: SearchEditorialsView,
-      meta:{ requireAuth: true, editorialPermisson: true }
-    },
-
     // PLAYERS
     {
       path: '/search_players',
@@ -110,6 +60,11 @@ const router = createRouter({
       name: 'add_player',
       component: PlayerFormView,
       meta:{ requireAuth: true, playerPermisson: true }
+    },
+    {
+      path: '/see_player/:id',
+      name: 'see_player',
+      component: WatchPlayerView,
     },
 
     // DECKS
@@ -151,48 +106,6 @@ const router = createRouter({
       meta:{ requireAuth: true, formatPermisson: true }
     },
 
-    // CATEGORIES
-    {
-      path: '/add_category/:id?',
-      name: 'add_category',
-      component: CategoryFormView,
-      meta:{ requireAuth: true, categoryPermisson: true }
-    },
-    {
-      path: '/search_categories',
-      name: 'categories',
-      component: SearchCategoryView,
-      meta:{ requireAuth: true, categoryPermisson: true }
-    },
-    
-    // LOANS
-    {
-      path: '/add_loan/:id?',
-      name: 'add_loan',
-      component: LoanFormView,
-      meta:{ requireAuth: true, loanPermisson: true }
-    },
-    {
-      path: '/search_loans/:filter?',
-      name: 'loans',
-      component: SearchLoanView,
-      meta:{ requireAuth: true, loanPermisson: true }
-    },
-
-    // READERS
-    {
-      path: '/add_reader/:id?',
-      name: 'add_reader',
-      component: ReaderFormView,
-      meta:{ requireAuth: true, readerPermisson: true }
-    },
-    {
-      path: '/search_readers',
-      name: 'readers',
-      component: SearchReadersView,
-      meta:{ requireAuth: true, readerPermisson: true }
-    },
-
     // USERS
     {
       path: '/add_user/:id?',
@@ -211,14 +124,6 @@ const router = createRouter({
       name: 'account',
       component: MyAccountFormView,
       meta:{ requireAuth: true }
-    },
-
-    // STATISTICS
-    {
-      path: '/see_statistics',
-      name: 'statistics',
-      component: WatchStatisticsView,
-      meta:{ requireAuth: true, statisticsPermisson: true }
     },
 
     // BINNACLE

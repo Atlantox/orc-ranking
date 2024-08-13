@@ -7,11 +7,14 @@ class TournamentModel(BaseModel):
             CONCAT(YEAR(t.date), '-', LPAD(MONTH(t.date), 2, '0'), '-', LPAD(DAY(t.date), 2, '0')) AS date, 
             t.format,
             t.observation,
+            s.name as season,
             w.name AS winner,
             p.participants,
             t.active
         FROM
             tournament t
+        INNER JOIN season s ON s.id = t.season
+        INNER JOIN tournament_result tr ON tr.tournament = t.id
         INNER JOIN (
             SELECT
                 tr.tournament,
@@ -117,6 +120,24 @@ class TournamentModel(BaseModel):
         
         return result
     
+    def GetInactiveTournamentsOfSeason(self, seasonId):
+        cursor = self.connection.connection.cursor()
+        sql = self.GET_TOURNAMENTS_TEMPLATE + '''
+        WHERE
+            t.active = 0 AND
+            t.season = %s
+        '''  
+
+        try:
+            cursor.execute(sql, (seasonId,))
+            result = cursor.fetchall()
+            if result == tuple():
+                result = []
+        except:
+            result = None
+        
+        return result
+    
     def GetActiveTournaments(self):
         cursor = self.connection.connection.cursor()
         sql = self.GET_TOURNAMENTS_TEMPLATE + '''
@@ -140,6 +161,52 @@ class TournamentModel(BaseModel):
 
         try:
             cursor.execute(sql)
+            result = cursor.fetchall()
+            if result == tuple():
+                result = []
+        except:
+            result = None
+        
+        return result
+    
+    def GetAllTournamentsOfSeason(self, seasonId):
+        cursor = self.connection.connection.cursor()
+        sql = self.GET_TOURNAMENTS_TEMPLATE + ' WHERE t.season = %s '
+
+        try:
+            cursor.execute(sql, (seasonId,))
+            result = cursor.fetchall()
+            if result == tuple():
+                result = []
+        except:
+            result = None
+        
+        return result
+    
+    def GetAllTournamentsOfSeason(self, seasonId):
+        cursor = self.connection.connection.cursor()
+        sql = self.GET_TOURNAMENTS_TEMPLATE + ' WHERE t.season = %s '
+
+        try:
+            cursor.execute(sql, (seasonId,))
+            result = cursor.fetchall()
+            if result == tuple():
+                result = []
+        except:
+            result = None
+        
+        return result
+    
+    def GetActiveTournamentsOfPlayer(self, playerId, seasonId):
+        cursor = self.connection.connection.cursor()
+        sql = self.GET_TOURNAMENTS_TEMPLATE + ' WHERE t.active = 1 AND tr.player = %s '
+        args = [playerId]
+        if seasonId is not None:
+            sql += 'AND s.id = %s'
+            args.append(seasonId)
+
+        try:
+            cursor.execute(sql, tuple(args))
             result = cursor.fetchall()
             if result == tuple():
                 result = []
@@ -375,24 +442,12 @@ class TournamentModel(BaseModel):
     def GetTournamentsRankingOfSeason(self, seasonId):
         cursor = self.connection.connection.cursor()
         error = ''
-        # Getting the total points in tournaments of the season
-        sql = '''
-            SELECT
-            SUM(tournament_result.wins) as total_wins
-            FROM
-            tournament_result
-            INNER JOIN tournament ON tournament.id = tournament_result.tournament
-            WHERE
-            tournament.season = %s
-        '''
-        args = (seasonId,)
 
-        try:
-            cursor.execute(sql, args)
-            totalWins = cursor.fetchone()['total_wins']
-        except:
-            error = 'Ocurrió un error al traer la suma total de puntos'
+        totalWins = self.GetTotalPointsOfSeason(seasonId)
+        if type(totalWins) is str():
+            error = totalWins
 
+        # Getting the points by player
         if error == '':
             sql = '''
             SELECT
@@ -417,6 +472,7 @@ class TournamentModel(BaseModel):
         except:
             error = 'Ocurrió un error al traer los puntos de cada jugador'
 
+        # Getting the points by deck
         if error == '':
             sql = '''
             SELECT
@@ -442,6 +498,7 @@ class TournamentModel(BaseModel):
             error = 'Ocurrió un error al traer los puntos de cada mazo'
 
 
+        # Getting the points by color
         if error == '':
             sql = '''
             SELECT
@@ -478,6 +535,35 @@ class TournamentModel(BaseModel):
             result = error
 
         return result    
+
+    def GetTotalPointsOfSeason(self, seasonId):
+        cursor = self.connection.connection.cursor()
+        sql = '''
+            SELECT
+            SUM(tournament_result.wins) as total_wins
+            FROM
+            tournament_result
+            INNER JOIN tournament ON tournament.id = tournament_result.tournament
+        '''
+
+        if seasonId is not None:
+            sql += ' WHERE tournament.season = %s '
+
+        try:
+            if seasonId is not None:
+                args = (seasonId,)
+                cursor.execute(sql, args)
+            else:
+                cursor.execute(sql)
+
+            totalWins = cursor.fetchone()['total_wins']
+
+            if totalWins is None:
+                totalWins = 'Ocurrió un error al traer la suma total de los puntos.'
+        except:
+            totalWins = 'Ocurrió un error al traer la suma total de puntos' 
+
+        return totalWins
 
     def GetTournamentsOfDeck(self, deckId):
         cursor = self.connection.connection.cursor()

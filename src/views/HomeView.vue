@@ -32,6 +32,9 @@ onMounted( async () => {
           // If the element is visible
           if (entry.isIntersecting) {
               // Change the number value
+              if(tournamentsNumber.classList.contains('numbers-displayed'))
+                return
+
               var realTournaments = tournamentsCounts.value.tournaments
               tournamentsCounts.value.tournaments = -1
               for(let i = 0; i <= realTournaments; i++){
@@ -39,6 +42,7 @@ onMounted( async () => {
                 tournamentsCounts.value.tournaments = i
                 await new Promise(r => setTimeout(r, 50 + (i * 50)));
               }
+              tournamentsNumber.classList.add('numbers-displayed')
           }
       });
   })
@@ -47,20 +51,24 @@ onMounted( async () => {
       entries.forEach(async entry => {
           // If the element is visible
           if (entry.isIntersecting) {
-              // Change the number value
-              var realParticipants = tournamentsCounts.value.participants
-              tournamentsCounts.value.participants = -1
-              for(let i = 0; i <= realParticipants; i++){
-                tournamentsCounts.value.participants = i
-                await new Promise(r => setTimeout(r, 50 + (i * 50)));
-              }
+            if(participantsNumber.classList.contains('numbers-displayed'))
+              return
+
+            // Change the number value
+            var realParticipants = tournamentsCounts.value.participants
+            tournamentsCounts.value.participants = -1
+            for(let i = 0; i <= realParticipants; i++){
+              tournamentsCounts.value.participants = i
+              await new Promise(r => setTimeout(r, 50 + (i * 50)));
+            }
+            participantsNumber.classList.add('numbers-displayed')
           }
       });
   })
 
 
   tournamentNumberObserver.observe(tournamentsNumber);
-  participantNumberObserver.observe(tournamentsNumber);
+  participantNumberObserver.observe(participantsNumber);
 })
 
 const FetchSeasonDependantData = ( async(seasonId) => {
@@ -100,6 +108,7 @@ const FetchSeasonDependantData = ( async(seasonId) => {
                 :key="season.id"
                 :value="season.id"
                 :selected="season.active === 1"
+                class="align-middle"
                 >
                   Season {{ season.name }}
                 </option>
@@ -121,8 +130,8 @@ const FetchSeasonDependantData = ( async(seasonId) => {
                 v-for="player, index in tournamentsRanking.players"
                 :key="index"
                 >
-                  <span class="col-4 text-end">{{ player.name }}</span>
-                  <span class="col-8 text-start">
+                  <span class="col-6 text-end">{{ player.name }}</span>
+                  <span class="col-6 text-start">
                     <div class="percent" :style="'width:' + player.percent + '%'">
                       {{ player.percent }}%
                     </div>

@@ -182,7 +182,7 @@ async function ValidateForm() {
 }
 
 
-const AddPartcipant = (() => {
+const AddPartcipant = (async () => {
     const newParticipant = {
         id: participantsIds.value,
         player: ref(''),
@@ -192,10 +192,28 @@ const AddPartcipant = (() => {
     }
     participantsIds.value++
     tournamentParticipants.value.push(newParticipant)
+
+    await new Promise(r => setTimeout(r, 50));
+    const playerId = 'player-' + newParticipant.id
+    const deckId = 'deck-' + newParticipant.id
+    $('#' + playerId).select2() 
+    $('#' + deckId).select2() 
+
+
+    $('#' + playerId).on('select2:select', function (e) { 
+        newParticipant.player.value = e.target.value;
+        document.getElementById('select2-' + playerId + '-container').classList.remove('border-red') 
+
+    });
+
+    $('#' + deckId).on('select2:select', function (e) { 
+        newParticipant.deck.value = e.target.value;
+        document.getElementById('select2-' + deckId + '-container').classList.remove('border-red') 
+
+    });
 })
 
 const DeleteParticipant = ((id) =>{
-    alert(id)
     var index = 0
 
     for(let i = 0; i < tournamentParticipants.value.length; i++){
@@ -314,6 +332,7 @@ const DeactivateTournament = (async () => {
                     </div>
 
                     <div v-if="Object.keys(props.targetTournament).length === 0" :class="formRowStyle">
+                        {{ tournamentParticipants }}
                         <table  class="col-12 col-lg-10 text-white mt-5">
                             <thead class="text-center">
                                 <tr>
@@ -321,11 +340,11 @@ const DeactivateTournament = (async () => {
                                     :colspan="Object.keys(props.targetTournament).length === 0 ? 5 : 4">Participantes</th>
                                 </tr>
                                 <tr>
-                                    <th class="p-1 border-green bg-dark-grey">Jugador</th>
-                                    <th class="p-1 border-green bg-dark-grey">Deck</th>
-                                    <th class="p-1 border-green bg-dark-grey">Puntos/Victorias</th>
-                                    <th class="p-1 border-green bg-dark-grey">Ganador</th>
-                                    <th v-if="Object.keys(props.targetTournament).length === 0" class="p-1 border-green bg-dark-grey">
+                                    <th class="p-1 border-green bg-dark-grey fw-normal" style="width:25%">Jugador</th>
+                                    <th class="p-1 border-green bg-dark-grey fw-normal" style="width:45%">Deck</th>
+                                    <th class="p-1 border-green bg-dark-grey fw-normal" style="width:10%">Puntos/Victorias</th>
+                                    <th class="p-1 border-green bg-dark-grey fw-normal" style="width:10%">Ganador</th>
+                                    <th v-if="Object.keys(props.targetTournament).length === 0" class="p-1 border-green bg-dark-grey" style="width:10%">
                                         Borrar
                                     </th>
                                     
@@ -338,7 +357,7 @@ const DeactivateTournament = (async () => {
                                 >
                                     <td class="p-1 border-green">
                                         <div class="w-100 px-2">
-                                            <select class="w-100" v-model="participant.player">
+                                            <select class="select2" :id="'player-' + participant.id" v-model="participant.player">
                                                 <option value=""></option>
                                                 <option 
                                                 v-for="player in playerStore.players"
@@ -353,7 +372,7 @@ const DeactivateTournament = (async () => {
                                     </td>
                                     <td class="p-1 border-green">
                                         <div class="w-100 px-2">
-                                            <select class="w-100" v-model="participant.deck">
+                                            <select class="w-100 select2" :id="'deck-' + participant.id" v-model="participant.deck">
                                                 <option value=""></option>
                                                 <option 
                                                 v-for="deck in deckStore.decks"

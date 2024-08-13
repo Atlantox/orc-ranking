@@ -29,7 +29,7 @@ onMounted(() => {
                     <th class="text-center fw-normal bg-black border-green">Ver</th>
                 </tr>
                 </thead>
-            <tbody class="fs-5">
+            <tbody class="fs-4">
                 <tr 
                 class="text-white"
                 v-for="format in props.formats"

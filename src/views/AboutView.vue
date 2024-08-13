@@ -49,8 +49,33 @@ onMounted( async() => {
         <figure class="col-12 col-lg-4">
           <img src="@/assets/images/grand_coliseum.jpg" alt="grand coliseum" class="w-100 hide-up animated-1 shadowed-l">
         </figure>
-        <div class="col-12 col-lg-6">
-          Coliseo es un formato netamente local nacido en el año XXXX, basado en la regla 0, mucho texto acerca del formato
+        <div class="col-12 col-lg-7">
+          <p class="my-3">
+            Coliseo es un formato de Commander Multi que nace en Barquisimeto - Venezuela a mediados del año 2020, surge de la 
+            necesidad de integrar nuevos jugadores a la comunidad y de incluirlos de forma armoniosa a los torneos locales que se venían realizando.
+          </p>
+          <p class="my-3">
+            Parte de los objetivos del formato son: 
+          </p>
+          <ol class="my-3">
+            <li>Promover la realización de torneos en los que tanto los jugadores novatos como los experimentados tengan la oportunidad de competir en un ambiente de transparencia y equidad, donde la inversión económica no represente una ventaja abrumadora.</li>
+            <li>Promover la viabilidad de la mayoría de arquetipos posibles en el juego con posibilidades reales de ganar.</li>
+            <li>Velar por la integración de todos los jugadores de comander en la comunidad fomentando espacios seguros y respetuosos.</li>
+          </ol>
+
+          <p class="my-3">
+            Coliseo cuenta con su propia lista de baneo estudiada y analizada minuciosamente por un comité electo por los mismos miembros 
+            de la comunidad y toma como base la lista de baneo de EDH.
+          </p>
+
+          <p class="my-3">
+            Otra particularidad del formato es que se rige por un sistema de puntos o "logros" que determinan al 
+            ganador en torneos en mesas de 4 jugadores que funciona de la siguiente manera:
+            <br>
+            Eliminar a un jugador de la mesa +1 punto.
+            <br>
+            Ganar la mesa +2 puntos.
+          </p>
         </div>
       </div>
      </div>

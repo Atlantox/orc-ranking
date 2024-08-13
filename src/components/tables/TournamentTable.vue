@@ -30,19 +30,25 @@ onMounted(() => {
                     <th class="text-center fw-normal bg-black border-green">Observación</th>
                     <th class="text-center fw-normal bg-black border-green">Participantes</th>
                     <th class="text-center fw-normal bg-black border-green">Ganador</th>
+                    <th class="text-center fw-normal bg-black border-green">Temporada</th>
+                    <th v-if="sessionStore.authenticated" class="text-center fw-normal bg-black border-green">Activo</th>
                     <th class="text-center fw-normal bg-black border-green">Ver</th>
                 </tr>
                 </thead>
-            <tbody class="fs-5">
+            <tbody class="fs-4">
                 <tr 
                 class="text-white"
                 v-for="tournament in props.tournaments"
                 :key="tournament.id">
                     <td class="border-green text-center">{{ tournament.date }}</td>
                     <td class="border-green text-center">{{ tournament.format }}</td>
-                    <td class="border-green text-center">{{ tournament.observation }}</td>
+                    <td class="border-green text-center">{{ tournament.observation === '' ? 'Ninguna' : tournament.observation }}</td>
                     <td class="border-green text-center">{{ tournament.participants }}</td>
                     <td class="border-green text-center">{{ tournament.winner }}</td>
+                    <td class="border-green text-center">{{ tournament.season }}</td>
+                    <td v-if="sessionStore.authenticated" class="border-green text-center">
+                        <i :class="'fa fa-circle text-' + (tournament.active === 0 ? 'danger' : 'green')"></i>
+                    </td>
                     <td class="border-green">
                         <div class="row m-0 p-0 text-center justify-content-center">
                             <div class="row col-6 m-0 p-1 col-3 fs-2">

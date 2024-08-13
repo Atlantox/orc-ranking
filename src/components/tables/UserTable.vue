@@ -22,23 +22,23 @@ onMounted(() => {
         <table class="w-100 h6 m-0" id="normal-dt">
             <thead>
                 <tr class="text-white">
-                    <th class="text-center lb-bg-terciary border-1 border-white fs-4">Nickname</th>
-                    <th class="text-center lb-bg-terciary border-1 border-white fs-4">Tipo</th>
-                    <th class="text-center lb-bg-terciary border-1 border-white fs-4">Fecha de registro</th>
-                    <th class="text-center lb-bg-terciary border-1 border-white fs-4">Activo</th>
-                    <th class="text-center lb-bg-terciary border-1 border-white fs-4">Acción</th>
+                    <th class="text-center bg-black border-green fs-4">Nickname</th>
+                    <th class="text-center bg-black border-green fs-4">Tipo</th>
+                    <th class="text-center bg-black border-green fs-4">Fecha de registro</th>
+                    <th class="text-center bg-black border-green fs-4">Activo</th>
+                    <th class="text-center bg-black border-green fs-4">Acción</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="fs-4">
                 <tr 
                 v-for="user in props.users"
                 :key="user.id"
-                class="fs-5 text-center"
+                class="text-center text-white"
                 >
-                    <td class="border-1"> {{ user.nickname }} </td>
-                    <td class="border-1">{{ user.level }}</td>
-                    <td class="border-1 text-center">{{ user.created_at }}</td>
-                    <td class="border-1">
+                    <td class="border-green"> {{ user.nickname }} </td>
+                    <td class="border-green">{{ user.level }}</td>
+                    <td class="border-green text-center">{{ user.created_at }}</td>
+                    <td class="border-green">
                         <div class="row m-0 p-0 text-center justify-content-center">
                             <div class="row col-12 m-0 p-1 col-3 fs-2">
                                 <div class="w-100 hover-bigger text-center m-0 p-0">
@@ -47,7 +47,7 @@ onMounted(() => {
                             </div>
                         </div>
                     </td>
-                    <td class="border-1">
+                    <td class="border-green">
                         <div class="row m-0 p-0 text-center justify-content-center">
                             <div class="row col-12 m-0 p-1 col-3 fs-2">
                                 <div class="w-100 hover-bigger text-center m-0 p-0">
