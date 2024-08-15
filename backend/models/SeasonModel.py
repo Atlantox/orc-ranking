@@ -4,7 +4,20 @@ class SeasonModel(BaseModel):
     def GetSeasons(self):
         cursor = self.connection.connection.cursor()
         result = []
-        sql = "SELECT * FROM season ORDER BY id"
+        sql = '''
+            SELECT
+            season.id,
+            season.name,
+            CONCAT(YEAR(season.date), '-', LPAD(MONTH(season.date), 2, '0'), '-', LPAD(DAY(season.date), 2, '0')) AS date, 
+            COUNT(tournament.id) as tournaments
+            FROM
+            season
+            LEFT JOIN tournament ON tournament.season = season.id AND tournament.active = 1            
+            GROUP BY
+            season.id
+            ORDER BY 
+            season.id DESC            
+        '''
 
         try:
             cursor.execute(sql)

@@ -278,6 +278,8 @@ class TournamentModel(BaseModel):
         try:
             cursor.execute(sql)
             lastTournament = cursor.fetchone()
+            if lastTournament is None:
+                result = []
         except:
             result = 'Hubo un error al obtener el último torneo'
 
@@ -732,7 +734,6 @@ class TournamentModel(BaseModel):
         return result
  
     def CreateTournamentResults(self, tournamentId, participants):
-        print(participants)
         cursor = self.connection.connection.cursor()
         result = True
 

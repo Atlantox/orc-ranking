@@ -29,43 +29,42 @@ onMounted( async () => {
 
   const tournamentNumberObserver = new IntersectionObserver(entries => {
       entries.forEach(async entry => {
-          // If the element is visible
-          if (entry.isIntersecting) {
-              // Change the number value
-              if(tournamentsNumber.classList.contains('numbers-displayed'))
-                return
+        // If the element is visible
+        if (entry.isIntersecting) {
+            // Change the number value
+            if(tournamentsNumber.classList.contains('numbers-displayed'))
+              return
 
-              var realTournaments = tournamentsCounts.value.tournaments
-              tournamentsCounts.value.tournaments = -1
-              for(let i = 0; i <= realTournaments; i++){
-                console.log(i)
-                tournamentsCounts.value.tournaments = i
-                await new Promise(r => setTimeout(r, 50 + (i * 50)));
-              }
-              tournamentsNumber.classList.add('numbers-displayed')
-          }
+            var realTournaments = tournamentsCounts.value.tournaments
+            tournamentsCounts.value.tournaments = -1
+            for(let i = 0; i <= realTournaments; i++){
+              console.log(i)
+              tournamentsCounts.value.tournaments = i
+              await new Promise(r => setTimeout(r, 50 + (i * 50)));
+            }
+            tournamentsNumber.classList.add('numbers-displayed')
+        }
       });
   })
 
   const participantNumberObserver = new IntersectionObserver(entries => {
       entries.forEach(async entry => {
-          // If the element is visible
-          if (entry.isIntersecting) {
-            if(participantsNumber.classList.contains('numbers-displayed'))
-              return
+        // If the element is visible
+        if (entry.isIntersecting) {
+          if(participantsNumber.classList.contains('numbers-displayed'))
+            return
 
-            // Change the number value
-            var realParticipants = tournamentsCounts.value.participants
-            tournamentsCounts.value.participants = -1
-            for(let i = 0; i <= realParticipants; i++){
-              tournamentsCounts.value.participants = i
-              await new Promise(r => setTimeout(r, 50 + (i * 50)));
-            }
-            participantsNumber.classList.add('numbers-displayed')
+          // Change the number value
+          var realParticipants = tournamentsCounts.value.participants
+          tournamentsCounts.value.participants = -1
+          for(let i = 0; i <= realParticipants; i++){
+            tournamentsCounts.value.participants = i
+            await new Promise(r => setTimeout(r, 50 + (i * 50)));
           }
+          participantsNumber.classList.add('numbers-displayed')
+        }
       });
   })
-
 
   tournamentNumberObserver.observe(tournamentsNumber);
   participantNumberObserver.observe(participantsNumber);
@@ -210,74 +209,79 @@ const FetchSeasonDependantData = ( async(seasonId) => {
 
     <section class="row col-12 m-0 p-0 py-4 justify-content-center align-items-start my-5 bg-dark-grey text-green">
       <div class="col-12 text-center my-3">
-        <h2 class="h1 text-green">Último torneo</h2>  
+        <h2 class="h1 text-green">Último torneo </h2>  
+        
       </div>
 
       <template v-if="lastTournament === undefined">
         <LoadingGadget />
       </template>
-      <template v-else>
-        <div class="row m-0 p-0 col-12 text-center justify-content-center align-items-start px-4 hide-up animated-1">
+      <div v-else class="row m-0 p-0 col-12 text-center justify-content-center align-items-start px-4 hide-up animated-1">
+        <template v-if="Object.keys(lastTournament).length === 0">
+            <h2 class="text-center w-100 text-green">
+              No hay torneos registrados esta temporada (aún)
+            </h2>
+        </template>
+        <div v-else  class="row col-12 m-0 p-0 justify-content-center">
           <div class="row m-0 p-0 col-12 col-lg-5 text-center justify-content-center px-4">
-            <table class="col-10 text-white fs-4">
-              <tr>
-                <td class="p-1 border-green">Fecha</td>
-                <td class="p-1 border-green">{{ lastTournament.data.date }}</td>
-              </tr>
-              <tr>
-                <td class="p-1 border-green">Formato</td>
-                <td class="p-1 border-green">{{ lastTournament.data.format }}</td>
-              </tr>
-              <tr>
-                <td class="p-1 border-green">Participantes</td>
-                <td class="p-1 border-green">{{ lastTournament.results.length }}</td>
-              </tr>
-              <tr>
-                <td class="p-1 border-green">Ganador</td>
-                <td class="p-1 border-green">{{ lastTournament.data.winner }}</td>
-              </tr>
-              <tr>
-                <td class="p-1 border-green">Presencia de colores</td>
-                <td class="p-1 border-green">
-                  <ul class="w-100 list-unstyled m-0 p-0">
-                    <li 
-                    v-for="color in lastTournament.colors"
-                    :key="color.name"
-                    class=""
-                    >
-                      <i :class="'fa fa-circle text-' + color.color"></i>&nbsp;{{ color.percent }}% ({{ color.quantity }})
-                    </li>
-                  </ul>
-                </td>
-              </tr>
-            </table>
-          </div>
-    
-          <div class="row col-12 m-0 p-0 col-lg-7 text-center justify-content-center">
-            <table class="col-10">
-              <thead class="fs-4 text-white">
-                <tr>
-                  <th class="border-green p-1 fw-normal">Posición</th>
-                  <th class="border-green p-1 fw-normal">Jugador</th>
-                  <th class="border-green p-1 fw-normal">Deck</th>
-                  <th class="border-green p-1 fw-normal">Puntos/Victorias</th>
-                </tr>
-              </thead>
-              <tbody class="fs-5 text-white">
-                <tr v-for="participant, index in lastTournament.results"
-                :key="index"
-                >
-                  <td class="border-green p-1 py-2">{{ index + 1 }}</td>
-                  <td class="border-green p-1">{{ participant.player }}</td>
-                  <td class="border-green p-1">{{ participant.deck }}</td>
-                  <td class="border-green p-1">{{ participant.wins }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          <table class="col-10 text-white fs-4">
+            <tr>
+              <td class="p-1 border-green">Fecha</td>
+              <td class="p-1 border-green">{{ lastTournament.data.date }}</td>
+            </tr>
+            <tr>
+              <td class="p-1 border-green">Formato</td>
+              <td class="p-1 border-green">{{ lastTournament.data.format }}</td>
+            </tr>
+            <tr>
+              <td class="p-1 border-green">Participantes</td>
+              <td class="p-1 border-green">{{ lastTournament.results.length }}</td>
+            </tr>
+            <tr>
+              <td class="p-1 border-green">Ganador</td>
+              <td class="p-1 border-green">{{ lastTournament.data.winner }}</td>
+            </tr>
+            <tr>
+              <td class="p-1 border-green">Presencia de colores</td>
+              <td class="p-1 border-green">
+                <ul class="w-100 list-unstyled m-0 p-0">
+                  <li 
+                  v-for="color in lastTournament.colors"
+                  :key="color.name"
+                  class=""
+                  >
+                    <i :class="'fa fa-circle text-' + color.color"></i>&nbsp;{{ color.percent }}% ({{ color.quantity }})
+                  </li>
+                </ul>
+              </td>
+            </tr>
+          </table>
         </div>
-
-      </template>
+  
+        <div class="row col-12 m-0 p-0 col-lg-7 text-center justify-content-center">
+          <table class="col-10">
+            <thead class="fs-4 text-white">
+              <tr>
+                <th class="border-green p-1 fw-normal">Posición</th>
+                <th class="border-green p-1 fw-normal">Jugador</th>
+                <th class="border-green p-1 fw-normal">Deck</th>
+                <th class="border-green p-1 fw-normal">Puntos/Victorias</th>
+              </tr>
+            </thead>
+            <tbody class="fs-5 text-white">
+              <tr v-for="participant, index in lastTournament.results"
+              :key="index"
+              >
+                <td class="border-green p-1 py-2">{{ index + 1 }}</td>
+                <td class="border-green p-1">{{ participant.player }}</td>
+                <td class="border-green p-1">{{ participant.deck }}</td>
+                <td class="border-green p-1">{{ participant.wins }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        </div>      
+      </div>
     </section>
   </main>
 </template>

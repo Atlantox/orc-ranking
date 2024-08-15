@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 
 import FormValidator from '@/utils/FormValidator'
 
@@ -18,6 +19,7 @@ const utilsStore = useUtilsStore()
 const userStore = useUserStore()
 const sessionStore = useSessionStore()
 const binnacleStore = useBinnacleStore()
+const router = useRouter()
 
 const mounted = ref(false)
 const binnacleFetched = ref(false)
@@ -45,6 +47,13 @@ const emits = defineEmits(['formOk'])
 onMounted(async () => {
     OnAppearAnimation('hide-up')
     if(Object.keys(props.targetUser).length !== 0){
+
+        if(props.targetUser.id !== sessionStore.userData.id){
+            // If the user don't have permissons of the targetUser level, return it to dashboard
+            if(!sessionStore.userData.permissons.includes(targetUser.level))
+            router.push({name: 'dashboard'})
+        }
+
         await binnacleStore.FetchBinnacleOfUser(props.targetUser.id)
         selfUser.value = props.targetUser.id === sessionStore.userData.id
         userNickname.value = props.targetUser.nickname
@@ -212,7 +221,7 @@ const ResetBinnacle = (async () => {
         </template>
         <template v-else>
             <div class="col-12 row p-4 pt-5 fs-4 justify-content-around hide-up animated-1">
-                <div class="col-12 col-lg-8 p-2 row myForm shadowed-l rounded lb-bg-terciary-ul justify-content-center">   
+                <div class="col-12 col-lg-8 p-2 row myForm shadowed-l rounded bg-dark-grey justify-content-center text-white">   
                     
                     <template v-if="Object.keys(props.targetUser).length !== 0">
                         <div :class="formRowStyle">
@@ -221,7 +230,7 @@ const ResetBinnacle = (async () => {
                             </div>
                             <div :class="inputContainerStyle">
                                 <div class="row col-12 col-lg-8">
-                                    <input type="date" class="myInput" minlength="4" id="created_at" :value="props.targetUser.created_at" disabled>
+                                    {{ props.targetUser.created_at }}
                                 </div>
                             </div>
                         </div>
@@ -291,8 +300,7 @@ const ResetBinnacle = (async () => {
                                 <label :class="labelStyle" for="gender"><strong>Tipo</strong></label>
                             </div>
                             <div :class="inputContainerStyle">
-                                <div class="row col-12">
-    
+                                <div class="row col-12">    
                                     <div 
                                     v-if="sessionStore.userData.permissons.includes('Editor')"
                                     class="row col-12 col-lg-5 m-0 p-0 my-1"

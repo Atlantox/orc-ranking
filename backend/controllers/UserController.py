@@ -51,12 +51,17 @@ def GetAllUsers():
             statusCode = 400
 
     if error == '':
-        if currentUser['level'] not in ['Admin', 'Super']:
+        if currentUser['level'] not in ['Admin', 'Super', 'Editor']:
             error = 'Tipo de usuario inválido'
             statusCode = 400
 
     if error == '':
-        users = userModel.GetUsersPublicData()
+        if currentUser['level'] == 'Editor':
+            error = 'Acceso denegado'
+            statusCode = 401
+
+    if error == '':
+        users = userModel.GetUsersPublicData(currentUser['level'])
         if users is not None:
             response = {'success': True, 'users': users}
         else:
@@ -311,7 +316,7 @@ def UpdateUser(userId):
     if error == '':
         updated = userModel.UpdateUser(userId, cleanData)
         if updated is False:
-            error = 'Hubo un error al intentar actualizar al lector'
+            error = 'Hubo un error al intentar actualizar al usuario'
             statusCode = 500
         else:
             alteredColumns = ''
@@ -321,7 +326,7 @@ def UpdateUser(userId):
 
             action = 'Editó los campos {0} del usuario de id {1}'.format(alteredColumns, userId)
             userModel.CreateBinnacle(targetUser['id'],action, request.remote_addr)
-            message = 'Lector actualizado correctamente'
+            message = 'Usuario actualizado correctamente'
 
     if error != '':
         message = error

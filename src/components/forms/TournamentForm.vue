@@ -62,8 +62,8 @@ onMounted(async () => {
         if(day < 10) day = '0' + day
         today.value = year + '-' + month + '-' + day
 
-        const deliverDateInput = document.getElementById('date')
-        deliverDateInput.max = today.value
+        const tournamentDateInput = document.getElementById('date')
+        tournamentDateInput.max = today.value
     }
     
     mounted.value = true    

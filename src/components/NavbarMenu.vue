@@ -51,7 +51,7 @@ const CloseSession = (() => {
                 {{ sessionStore.userData.nickname }}
               </a>
               <ul class="dropdown-menu bg-dark-grey" aria-labelledby="navbarDropdownMenuLink">
-                <li><router-link class="dropdown-item text-green hover-spacing" :to="{name: 'home'}">Mi cuenta</router-link></li>
+                <li><router-link class="dropdown-item text-green hover-spacing" :to="{name: 'add_user', params:{id: sessionStore.userData.id}}">Mi cuenta</router-link></li>
                 <li class="dropdown-item text-green cursor-pointer hover-spacing" @click.prevent="CloseSession">Cerrar sesión</li>
               </ul>
             </li>

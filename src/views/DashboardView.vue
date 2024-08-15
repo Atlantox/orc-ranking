@@ -202,7 +202,7 @@ onMounted( async () => {
                 </h4>
                 <div :class="linkContainersStyle">
                   <div :class="linkElementStyle">
-                    <router-link :class="routerLinkStyle" :to="{name: 'home'}">
+                    <router-link :class="routerLinkStyle" :to="{name: 'add_season'}">
                       <i :class="iconStyle + ' fa fa-plus text-green '" ></i>
                       <span :class="linkTextStyle">
                         Nueva temporada
@@ -210,7 +210,7 @@ onMounted( async () => {
                     </router-link>
                   </div>
                   <div :class="linkElementStyle">
-                    <router-link :class="routerLinkStyle" :to="{name: 'home'}">
+                    <router-link :class="routerLinkStyle" :to="{name: 'seasons'}">
                       <i :class="iconStyle + ' fa fa-map'" ></i>
                       <span :class="linkTextStyle">
                         Ver temporadas

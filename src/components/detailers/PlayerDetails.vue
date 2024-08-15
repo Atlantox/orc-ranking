@@ -61,7 +61,7 @@ const FetchTournamentsOfPlayerOfSeason = (async () => {
             </tr>
             <tr>
               <td :class="labelStyle">Winrate:</td>
-              <td>{{ playerStatistics.wins === '0' ? 0 : playerStatistics.tournaments / playerStatistics.wins }}%</td>
+              <td>{{ (playerStatistics.wins === '0' || playerStatistics.wins === null) ? 0 : (playerStatistics.wins * 100) / playerStatistics.tournaments }}%</td>
             </tr>
             <tr>
               <td :class="labelStyle">Puntos:</td>

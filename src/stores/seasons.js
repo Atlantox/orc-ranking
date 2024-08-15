@@ -183,6 +183,36 @@ const useSeasonStore = defineStore('seasons', {
 
             return seasonCount
         },
+
+        async RenameSeason(seasonId, seasonData){
+            const sessionStore = useSessionStore()
+            let result = {}
+            try{
+                let url = apiConfig.base_url + '/seasons/' + seasonId
+                var fetchHeaders = {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                }
+
+                if (sessionStore.authenticated === true)
+                    fetchHeaders['Authorization'] = 'Bearer ' + sessionStore.token
+
+                let fetchConfig = {
+                    method: 'PUT',
+                    headers: fetchHeaders,
+                    body: JSON.stringify(seasonData)
+                }
+
+                let response = await fetch(url, fetchConfig)
+                let json = await response.json()
+                result = await json                
+            }
+            catch(error){
+                result = {success: false, message: 'Ocurrió un error inesperado al renombrar la temporada: ' + error.message}
+            }
+
+            return result
+        }
     }
 })
 

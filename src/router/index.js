@@ -13,6 +13,7 @@ import MyAccountFormView from '@/views/forms/MyAccountFormView.vue'
 import FormatFormView from '@/views/forms/FormatFormView.vue'
 import DeckFormView from '@/views/forms/DeckFormView.vue'
 import TournamentFormView from '@/views/forms/TournamentFormView.vue'
+import SeasonFormView from '@/views/forms/SeasonFormView.vue'
 
 import SearchPlayersView from '@/views/tables/SearchPlayersView.vue'
 import SearchDecksView from '@/views/tables/SearchDecksView.vue'
@@ -20,6 +21,7 @@ import SearchTournamentsView from '@/views/tables/SearchTournamentsView.vue'
 import SearchUsersView from '@/views/tables/SearchUsersView.vue'
 import SearchBinnacleView from '@/views/tables/SearchBinnacleView.vue'
 import SearchFormatsView from '@/views/tables/SearchFormatsView.vue'
+import SearchSeasonsView from '@/views/tables/SearchSeasonsView.vue'
 
 import WatchPlayerView from '@/views/watchers/WatchPlayerView.vue'
 import WatchTournamentView from '@/views/watchers/WatchTournamentView.vue'
@@ -116,6 +118,20 @@ const router = createRouter({
       name: 'add_format',
       component: FormatFormView,
       meta:{ requireAuth: true, formatPermisson: true }
+    },
+
+    // SEASONS
+    {
+      path: '/seasons/',
+      name:'seasons',
+      component: SearchSeasonsView,
+      meta:{ requireAuth: true, seasonPermisson: true }
+    },
+    {
+      path: '/add_season/:id?',
+      name: 'add_season',
+      component: SeasonFormView,
+      meta:{ requireAuth: true, seasonPermisson: true }
     },
 
     // USERS

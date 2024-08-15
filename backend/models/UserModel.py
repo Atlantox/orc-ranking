@@ -76,7 +76,7 @@ class UserModel(BaseModel):
 
         return tentativeToken
     
-    def GetUsersPublicData(self):
+    def GetUsersPublicData(self, currentUserLevel):
         cursor = self.connection.connection.cursor()
         sql = '''
             SELECT 
@@ -87,6 +87,9 @@ class UserModel(BaseModel):
             active 
             FROM 
             user'''
+        
+        if currentUserLevel == 'Admin':
+            sql += " WHERE user.level = 'Editor' "
         
         cursor.execute(sql,)
         users = cursor.fetchall()
