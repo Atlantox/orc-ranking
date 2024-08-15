@@ -146,6 +146,45 @@ const useDeckStore = defineStore('decks', {
             }
         },
 
+        async GetDeckStatistics(deckId, seasonId = null){
+            var statistics = false
+            const sessionStore = useSessionStore()
+            const utilsStore = useUtilsStore()
+            try{
+                let url = apiConfig.base_url + '/decks/statistics/' + deckId
+                if (seasonId !== null) 
+                    url += '/' + seasonId
+
+                var fetchHeaders = {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                }
+
+                if (sessionStore.authenticated === true)
+                    fetchHeaders['Authorization'] = 'Bearer ' + sessionStore.token
+
+                let fetchConfig = {
+                    method: 'GET',
+                    headers: fetchHeaders
+                }
+
+                let response = await fetch(url, fetchConfig)
+                let json = await response.json()
+                let result = await json
+                
+                if(result.success){
+                    statistics = result.statistics                    
+                }
+                else
+                    utilsStore.ShowModal('Error', result.message, 'error')
+            }
+            catch(error){
+                utilsStore.ShowModal('Error', 'Ocurrió un error inesperado al cargar las estadísticas del deck: ' + error.message, 'error')
+            }
+
+            return statistics
+        },
+
         async GetDeckCount(){
             var deckCount = false
             const sessionStore = useSessionStore()

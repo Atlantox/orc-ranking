@@ -265,7 +265,7 @@ const DeactivateTournament = (async () => {
                                     value="" 
                                     v-model="tournamentDate" 
                                     >
-                                    <span v-else class="text-white">
+                                    <span v-else class="text-center text-lg-start text-white">
                                         {{ props.targetTournament.data.date }}
                                     </span>
                                 </div>
@@ -293,7 +293,7 @@ const DeactivateTournament = (async () => {
                                         </option>                                    
                                     </template>
                                 </select>
-                                <span v-else class="text-white">
+                                <span v-else class="text-center text-lg-start text-white">
                                     {{ props.targetTournament.data.format }}
                                 </span>
                             </div>
@@ -315,7 +315,7 @@ const DeactivateTournament = (async () => {
                                 id="observation"  
                                 v-model="tournamentObservation" 
                                 ></textarea> 
-                                <span v-else class="text-white">
+                                <span v-else class="text-center text-lg-start text-white">
                                     {{ props.targetTournament.data.observation === '' ? 'Ninguna' : props.targetTournament.data.observation }}
                                 </span>
                             </div>
@@ -327,12 +327,11 @@ const DeactivateTournament = (async () => {
                             <label :class="labelStyle" for="observation">Ativo</label>
                         </div>
                         <div :class="inputContainerStyle">
-                            <i :class="'fa fa-circle text-' + (props.targetTournament.data.active === 0 ? 'danger' : 'green')"></i>
+                            <i :class="'text-center text-lg-start fa fa-circle text-' + (props.targetTournament.data.active === 0 ? 'danger' : 'green')"></i>
                         </div>
                     </div>
 
                     <div v-if="Object.keys(props.targetTournament).length === 0" :class="formRowStyle">
-                        {{ tournamentParticipants }}
                         <table  class="col-12 col-lg-10 text-white mt-5">
                             <thead class="text-center">
                                 <tr>

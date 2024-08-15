@@ -1,4 +1,5 @@
 from .BaseModel import BaseModel
+from .TournamentModel import TournamentModel
 
 class DeckModel(BaseModel):
     def GetDecks(self):
@@ -124,6 +125,48 @@ class DeckModel(BaseModel):
         except:
             result = 'Ocurrió un error al asignar los colores al deck'
 
+        return result
+    
+    def GetDeckStatistics(self, deckId, seasonId = None):
+        tournamentModel = TournamentModel(self.connection)
+
+        totalPoints = tournamentModel.GetTotalPointsOfSeason(seasonId)
+        if type(totalPoints) is str():
+            return totalPoints
+        
+        cursor = self.connection.connection.cursor()
+        sql = '''
+            SELECT
+            COUNT(tournament_result.id) as tournaments,
+            SUM(tournament_result.winner) as wins,
+            SUM(tournament_result.wins) as points,
+            ROUND((SUM(tournament_result.wins) * 100) / %s, 2) as points_percent
+            FROM
+            tournament_result
+            INNER JOIN tournament ON tournament.id = tournament_result.tournament
+            WHERE
+            tournament_result.deck = %s AND 
+            tournament.active = 1
+        '''
+        args = [totalPoints, deckId]
+
+        if seasonId is not None:
+            sql += ' AND tournament.season = %s '
+            args.append(seasonId)            
+
+        try:
+            cursor.execute(sql, tuple(args))
+            result = cursor.fetchone()
+        except:
+            result = 'Ocurrió un error al obtener las estadísticas del deck solicitado'
+
+        if result is None: 
+            result = {
+                'tournaments': 0,
+                'wins': 0,
+                'points': 0,
+                'points_percent': 0
+            }
         return result
     
     def DeleteColorsOfDeck(self, deckId):

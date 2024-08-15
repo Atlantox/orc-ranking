@@ -304,6 +304,44 @@ def GetTournamentsRankingOfSeason(seasonId):
     return jsonify(response), statusCode
 
 
+@tournamentController.route('/results/player/<int:playerId>', defaults={'seasonId': None}, methods=['GET'])
+@tournamentController.route('/results/player/<int:playerId>/<int:seasonId>', methods=['GET'])
+def GetTournamentResultsOfPlayer(playerId, seasonId):
+    connection = GetConnection()
+    tournamentModel = TournamentModel(connection)
+    response = {}
+    statusCode = 200
+
+    results = tournamentModel.GetTournamentResultsOfPlayer(playerId, seasonId)
+    response['success'] = results != False
+
+    if results is False:
+        response['message'] = 'Ocurrió un error al consultar los resultados de torneos del jugador solicitado'
+    else:
+        response['results'] = results
+
+    return jsonify(response), statusCode
+
+
+@tournamentController.route('/results/deck/<int:deckId>', defaults={'seasonId': None}, methods=['GET'])
+@tournamentController.route('/results/deck/<int:deckId>/<int:seasonId>', methods=['GET'])
+def GetTournamentResultsOfDeck(deckId, seasonId):
+    connection = GetConnection()
+    tournamentModel = TournamentModel(connection)
+    response = {}
+    statusCode = 200
+
+    results = tournamentModel.GetTournamentResultsOfDeck(deckId, seasonId)
+    response['success'] = results != False
+
+    if results is False:
+        response['message'] = 'Ocurrió un error al consultar los resultados de torneos del deck solicitado'
+    else:
+        response['results'] = results
+
+    return jsonify(response), statusCode
+
+
 @tournamentController.route('/tournaments/<int:tournamentId>', methods=['DELETE'])
 def DeactivateTournament(tournamentId):
     connection = GetConnection()

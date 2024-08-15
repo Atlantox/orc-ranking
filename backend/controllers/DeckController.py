@@ -200,6 +200,24 @@ def UpdateDeck(deckId):
     success = error == ''
     return jsonify({'success': success, 'message': message}), statusCode
 
+@deckController.route('/decks/statistics/<int:deckId>', defaults={'seasonId': None}, methods=['GET'])
+@deckController.route('/decks/statistics/<int:deckId>/<int:seasonId>', methods=['GET'])
+def GetPlayerStatistics(deckId, seasonId):
+    connection = GetConnection()
+    deckModel = DeckModel(connection)
+    response = {}
+    statusCode = 200
+
+    statistics = deckModel.GetDeckStatistics(deckId, seasonId)
+    response['success'] = statistics != False
+
+    if statistics is False:
+        response['message'] = 'Ocurrió un error al consultar las estadísticas del deck solicitado'
+    else:
+        response['statistics'] = statistics
+
+    return jsonify(response), statusCode
+
 
 @deckController.route('/decks/<int:deckId>', methods=['DELETE'])
 def DeleteDeck(deckId):

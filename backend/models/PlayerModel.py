@@ -125,8 +125,6 @@ class PlayerModel(BaseModel):
             sql += ' AND tournament.season = %s '
             args.append(seasonId)            
 
-        sql += ' GROUP BY tournament.id '
-
         try:
             cursor.execute(sql, tuple(args))
             result = cursor.fetchone()
@@ -141,8 +139,7 @@ class PlayerModel(BaseModel):
                 'points_percent': 0
             }
         return result
-
-    
+   
     def UpdatePlayer(self, playerId, playerData):
         newName = playerData['name']
         cursor = self.connection.connection.cursor()

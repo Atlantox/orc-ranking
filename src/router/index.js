@@ -22,6 +22,8 @@ import SearchBinnacleView from '@/views/tables/SearchBinnacleView.vue'
 import SearchFormatsView from '@/views/tables/SearchFormatsView.vue'
 
 import WatchPlayerView from '@/views/watchers/WatchPlayerView.vue'
+import WatchTournamentView from '@/views/watchers/WatchTournamentView.vue'
+import WatchDeckView from '@/views/watchers/WatchDeckView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -79,6 +81,11 @@ const router = createRouter({
       component: DeckFormView,
       meta:{ requireAuth: true, deckPermisson: true }
     },
+    {
+      path: '/see_deck/:id',
+      name: 'see_deck',
+      component: WatchDeckView,
+    },
 
     // TOURNAMENTS
     {
@@ -91,7 +98,12 @@ const router = createRouter({
       name: 'add_tournament',
       component: TournamentFormView,
       meta:{ requireAuth: true, tournamentPermisson: true }
-    },    
+    },  
+    {
+      path: '/see_tournament/:id',
+      name: 'see_tournament',
+      component: WatchTournamentView,
+    },   
 
     // FORMATS
     {

@@ -71,8 +71,12 @@ class TournamentModel(BaseModel):
         cursor = self.connection.connection.cursor()
         sql = self.GET_TOURNAMENTS_TEMPLATE + '''
         WHERE
-            t.season = (SELECT id FROM season WHERE active = 1) AND
-            t.active = 1
+        t.season = (SELECT id FROM season WHERE active = 1) AND
+        t.active = 1
+        GROUP BY
+        t.id
+        ORDER BY 
+        t.date DESC
         '''        
 
         try:
@@ -87,8 +91,12 @@ class TournamentModel(BaseModel):
         cursor = self.connection.connection.cursor()
         sql = self.GET_TOURNAMENTS_TEMPLATE + '''
         WHERE
-            t.season = %s AND
-            t.active = 1
+        t.season = %s AND
+        t.active = 1
+        GROUP BY
+        t.id
+        ORDER BY 
+        t.date DESC
         '''  
 
         args = (seasonId,)
@@ -107,7 +115,11 @@ class TournamentModel(BaseModel):
         cursor = self.connection.connection.cursor()
         sql = self.GET_TOURNAMENTS_TEMPLATE + '''
         WHERE
-            t.active = 0
+        t.active = 0
+        GROUP BY
+        t.id
+        ORDER BY 
+        t.date DESC
         '''  
 
         try:
@@ -124,8 +136,12 @@ class TournamentModel(BaseModel):
         cursor = self.connection.connection.cursor()
         sql = self.GET_TOURNAMENTS_TEMPLATE + '''
         WHERE
-            t.active = 0 AND
-            t.season = %s
+        t.active = 0 AND
+        t.season = %s
+        GROUP BY
+        t.id
+        ORDER BY 
+        t.date DESC
         '''  
 
         try:
@@ -142,7 +158,11 @@ class TournamentModel(BaseModel):
         cursor = self.connection.connection.cursor()
         sql = self.GET_TOURNAMENTS_TEMPLATE + '''
         WHERE
-            t.active = 1
+        t.active = 1
+        GROUP BY
+        t.id
+        ORDER BY 
+        t.date DESC
         '''  
 
         try:
@@ -157,7 +177,7 @@ class TournamentModel(BaseModel):
     
     def GetAllTournaments(self):
         cursor = self.connection.connection.cursor()
-        sql = self.GET_TOURNAMENTS_TEMPLATE
+        sql = self.GET_TOURNAMENTS_TEMPLATE + ' GROUP BY t.id ORDER BY t.date DESC'
 
         try:
             cursor.execute(sql)
@@ -171,7 +191,7 @@ class TournamentModel(BaseModel):
     
     def GetAllTournamentsOfSeason(self, seasonId):
         cursor = self.connection.connection.cursor()
-        sql = self.GET_TOURNAMENTS_TEMPLATE + ' WHERE t.season = %s '
+        sql = self.GET_TOURNAMENTS_TEMPLATE + ' WHERE t.season = %s GROUP BY t.id ORDER BY t.date DESC'
 
         try:
             cursor.execute(sql, (seasonId,))
@@ -185,7 +205,7 @@ class TournamentModel(BaseModel):
     
     def GetAllTournamentsOfSeason(self, seasonId):
         cursor = self.connection.connection.cursor()
-        sql = self.GET_TOURNAMENTS_TEMPLATE + ' WHERE t.season = %s '
+        sql = self.GET_TOURNAMENTS_TEMPLATE + ' WHERE t.season = %s GROUP BY t.id ORDER BY t.date DESC'
 
         try:
             cursor.execute(sql, (seasonId,))
@@ -199,7 +219,7 @@ class TournamentModel(BaseModel):
     
     def GetActiveTournamentsOfPlayer(self, playerId, seasonId):
         cursor = self.connection.connection.cursor()
-        sql = self.GET_TOURNAMENTS_TEMPLATE + ' WHERE t.active = 1 AND tr.player = %s '
+        sql = self.GET_TOURNAMENTS_TEMPLATE + ' WHERE t.active = 1 AND tr.player = %s GROUP BY t.id ORDER BY t.date DESC'
         args = [playerId]
         if seasonId is not None:
             sql += 'AND s.id = %s'
@@ -354,6 +374,82 @@ class TournamentModel(BaseModel):
 
         return result  
 
+    def GetTournamentResultsOfPlayer(self, playerId, seasonId = None):
+        cursor = self.connection.connection.cursor()
+        sql = '''
+            SELECT
+            tournament.id,
+            CONCAT(YEAR(tournament.date), '-', LPAD(MONTH(tournament.date), 2, '0'), '-', LPAD(DAY(tournament.date), 2, '0')) AS date, 
+            tournament.format,
+            tournament.season,
+            tournament.active,
+            tournament.observation,
+            player.name as player,
+            deck.name as deck,
+            tournament_result.wins,
+            tournament_result.winner
+            FROM 
+            tournament
+            INNER JOIN tournament_result ON tournament_result.tournament = tournament.id
+            INNER JOIN player ON player.id = tournament_result.player
+            INNER JOIN deck ON deck.id = tournament_result.deck
+            WHERE
+            tournament_result.player = %s AND
+            tournament.active = 1
+        '''
+
+        args = [playerId]
+
+        if seasonId is not None:
+            sql += ' AND tournament.season = %s'
+            args.append(seasonId)
+
+        try:
+            cursor.execute(sql, tuple(args))
+            results = cursor.fetchall()
+        except:
+            results = False
+
+        return results
+    
+    def GetTournamentResultsOfDeck(self, deckId, seasonId = None):
+        cursor = self.connection.connection.cursor()
+        sql = '''
+            SELECT
+            tournament.id,
+            CONCAT(YEAR(tournament.date), '-', LPAD(MONTH(tournament.date), 2, '0'), '-', LPAD(DAY(tournament.date), 2, '0')) AS date, 
+            tournament.format,
+            tournament.season,
+            tournament.active,
+            tournament.observation,
+            player.name as player,
+            deck.name as deck,
+            tournament_result.wins,
+            tournament_result.winner
+            FROM 
+            tournament
+            INNER JOIN tournament_result ON tournament_result.tournament = tournament.id
+            INNER JOIN player ON player.id = tournament_result.player
+            INNER JOIN deck ON deck.id = tournament_result.deck
+            WHERE
+            tournament_result.deck = %s AND
+            tournament.active = 1
+        '''
+
+        args = [deckId]
+
+        if seasonId is not None:
+            sql += ' AND tournament.season = %s'
+            args.append(seasonId)
+
+        try:
+            cursor.execute(sql, tuple(args))
+            results = cursor.fetchall()
+        except:
+            results = False
+
+        return results
+    
     def GetTournamentsColorPresence(self, tournamentId):
         cursor = self.connection.connection.cursor()
         result = []

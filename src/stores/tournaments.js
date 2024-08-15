@@ -10,6 +10,7 @@ const useTournamentStore = defineStore('tournaments', {
     state: () => {
         return {
             tournaments: undefined,
+            results: undefined
         }
     },
     actions:{
@@ -379,6 +380,78 @@ const useTournamentStore = defineStore('tournaments', {
             }
             catch(error){
                 utilsStore.ShowModal('Error', 'Ocurrió un error inesperado al cargar los torneos del jugador solicitado: ' + error.message, 'error')
+            }
+        },
+
+        async FetchTournamentsResultsOfPlayer(playerId, seasonId){
+            this.results = undefined
+            const sessionStore = useSessionStore()
+            const utilsStore = useUtilsStore()
+            try{
+                let url = apiConfig.base_url + '/results/player/' + playerId
+                if (seasonId !== null) url += '/' + seasonId
+                
+                var fetchHeaders = {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                }
+
+                if (sessionStore.authenticated === true)
+                    fetchHeaders['Authorization'] = 'Bearer ' + sessionStore.token
+
+                let fetchConfig = {
+                    method: 'GET',
+                    headers: fetchHeaders
+                }
+
+                let response = await fetch(url, fetchConfig)
+                let json = await response.json()
+                let result = await json
+                
+                if(result.success){
+                    this.results = result.results                   
+                }
+                else
+                    utilsStore.ShowModal('Error', result.message, 'error')
+            }
+            catch(error){
+                utilsStore.ShowModal('Error', 'Ocurrió un error inesperado al cargar los resultados de torneos del jugador solicitado: ' + error.message, 'error')
+            }
+        },
+
+        async FetchTournamentsResultsOfDeck(deckId, seasonId){
+            this.results = undefined
+            const sessionStore = useSessionStore()
+            const utilsStore = useUtilsStore()
+            try{
+                let url = apiConfig.base_url + '/results/deck/' + deckId
+                if (seasonId !== null) url += '/' + seasonId
+                
+                var fetchHeaders = {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                }
+
+                if (sessionStore.authenticated === true)
+                    fetchHeaders['Authorization'] = 'Bearer ' + sessionStore.token
+
+                let fetchConfig = {
+                    method: 'GET',
+                    headers: fetchHeaders
+                }
+
+                let response = await fetch(url, fetchConfig)
+                let json = await response.json()
+                let result = await json
+                
+                if(result.success){
+                    this.results = result.results                   
+                }
+                else
+                    utilsStore.ShowModal('Error', result.message, 'error')
+            }
+            catch(error){
+                utilsStore.ShowModal('Error', 'Ocurrió un error inesperado al cargar los resultados de torneos del deck solicitado: ' + error.message, 'error')
             }
         },
 
