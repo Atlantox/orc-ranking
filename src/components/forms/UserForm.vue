@@ -364,7 +364,7 @@ const ResetBinnacle = (async () => {
 
                     <div class="row m-0 p-0 justify-content-center my-2 mt-5">
                         <div class="row m-0 p-0 col-12 justify-content-center">
-                            <button class="col-6 col-lg-3 myBtn terciary-btn shadowed-l h3">
+                            <button class="col-6 col-lg-3 myBtn green-btn shadowed-l h3">
                                 {{ Object.keys(props.targetUser).length === 0 ? 'Registrar ' : 'Modificar ' }}
                             </button>
                         </div>
@@ -385,9 +385,9 @@ const ResetBinnacle = (async () => {
 
                 <template v-if="Object.keys(props.targetUser).length !== 0">
                     <template v-if="sessionStore.userData.permissons.includes('Bitácora')">
-                        <div class="col-10 mt-5 p-2 row myForm shadowed-l rounded lb-bg-terciary-ul justify-content-center">
+                        <div class="col-10 mt-5 p-2 row myForm shadowed-l rounded bg-dark-grey text-white justify-content-center">
     
-                            <h2 class="w-100 text-center h1 my-3 fw-bold">
+                            <h2 class="w-100 text-center h1 my-3 text-white fw-bold">
                                 Historial de acciones de {{ props.targetUser.nickname }}
                             </h2>
                             <template v-if="binnacleFetched === false">

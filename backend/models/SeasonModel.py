@@ -16,7 +16,7 @@ class SeasonModel(BaseModel):
             GROUP BY
             season.id
             ORDER BY 
-            season.id DESC            
+            season.id            
         '''
 
         try:

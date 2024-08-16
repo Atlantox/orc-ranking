@@ -102,7 +102,7 @@ class PlayerModel(BaseModel):
         tournamentModel = TournamentModel(self.connection)
 
         totalPoints = tournamentModel.GetTotalPointsOfSeason(seasonId)
-        if type(totalPoints) is str():
+        if type(totalPoints) is str:
             return totalPoints
         
         cursor = self.connection.connection.cursor()
@@ -138,6 +138,7 @@ class PlayerModel(BaseModel):
                 'points': 0,
                 'points_percent': 0
             }
+
         return result
    
     def UpdatePlayer(self, playerId, playerData):

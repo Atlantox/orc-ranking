@@ -209,10 +209,10 @@ def GetPlayerStatistics(deckId, seasonId):
     statusCode = 200
 
     statistics = deckModel.GetDeckStatistics(deckId, seasonId)
-    response['success'] = statistics != False
+    response['success'] = not type(statistics) is str
 
-    if statistics is False:
-        response['message'] = 'Ocurrió un error al consultar las estadísticas del deck solicitado'
+    if type(statistics) is str:
+        response['message'] = statistics
     else:
         response['statistics'] = statistics
 

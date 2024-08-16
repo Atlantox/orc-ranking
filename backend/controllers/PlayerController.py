@@ -95,19 +95,16 @@ def GetPlayerStatistics(playerId, seasonId):
     playerModel = PlayerModel(connection)
     response = {}
     statusCode = 200
-
+    
     statistics = playerModel.GetPlayerStatistics(playerId, seasonId)
-    if statistics is False:
-        response = {
-            'success': False,
-            'message': statistics
-        }
-    else:
-        response = {
-            'success': True,
-            'statistics': statistics
-        }
 
+    response['success'] = not type(statistics) is str
+
+    if type(statistics) is str:
+        response['message'] = statistics
+    else:
+        response['statistics'] = statistics
+    
     return jsonify(response), statusCode
 
 

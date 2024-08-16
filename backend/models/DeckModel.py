@@ -131,7 +131,7 @@ class DeckModel(BaseModel):
         tournamentModel = TournamentModel(self.connection)
 
         totalPoints = tournamentModel.GetTotalPointsOfSeason(seasonId)
-        if type(totalPoints) is str():
+        if type(totalPoints) is str:
             return totalPoints
         
         cursor = self.connection.connection.cursor()

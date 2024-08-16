@@ -542,7 +542,7 @@ class TournamentModel(BaseModel):
         error = ''
 
         totalWins = self.GetTotalPointsOfSeason(seasonId)
-        if type(totalWins) is str():
+        if type(totalWins) is str:
             error = totalWins
 
         # Getting the points by player
@@ -657,7 +657,7 @@ class TournamentModel(BaseModel):
             totalWins = cursor.fetchone()['total_wins']
 
             if totalWins is None:
-                totalWins = 'Ocurrió un error al traer la suma total de los puntos.'
+                totalWins = 0
         except:
             totalWins = 'Ocurrió un error al traer la suma total de puntos' 
 

@@ -11,7 +11,10 @@ import useSeasonStore from '@/stores/seasons';
 import usePlayerStore from '@/stores/players';
 import usetournamentStore from '@/stores/tournaments';
 
-const labelStyle = 'fw-bold text-end p-2 w-50 w-lg-auto text-green'
+const formRowStyle = 'row m-0 p-0 justify-content-center my-2'
+const labelContainerStyle = 'row m-0 p-0 col-12 col-md-7'
+const labelStyle = 'text-center text-green text-md-end'
+const inputContainerStyle = 'row m-0 p-0 col-12 col-md-5 justify-content-center justify-content-md-start'
 
 const seasonStore = useSeasonStore()
 const playerStore = usePlayerStore()
@@ -50,24 +53,57 @@ const FetchTournamentsOfPlayerOfSeason = (async () => {
           <LoadingGadget/>
         </template>
         <div v-else class="row m-0 p-0 col-12 h3 text-white">
-          <table >
-            <tr>
-              <td :class="labelStyle">Torneos participados:</td>
-              <td>{{ playerStatistics.tournaments }}</td>
-            </tr>
-            <tr>
-              <td :class="labelStyle">Victorias:</td>
-              <td>{{ playerStatistics.wins }}</td>
-            </tr>
-            <tr>
-              <td :class="labelStyle">Winrate:</td>
-              <td>{{ (playerStatistics.wins === '0' || playerStatistics.wins === null) ? 0 : (playerStatistics.wins * 100) / playerStatistics.tournaments }}%</td>
-            </tr>
-            <tr>
-              <td :class="labelStyle">Puntos:</td>
-              <td>{{ playerStatistics.points }} ({{ playerStatistics.points_percent }}%)</td>
-            </tr>
-          </table>
+          <div :class="formRowStyle">
+              <div :class="labelContainerStyle">
+                  <label :class="labelStyle">Torneos participados</label>
+              </div>
+              <div :class="inputContainerStyle">
+                <div class="row col-12">
+                  <div class="row col-12 m-0 p-0 my-1">
+                    {{ playerStatistics.tournaments }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div :class="formRowStyle">
+              <div :class="labelContainerStyle">
+                  <label :class="labelStyle">Victorias</label>
+              </div>
+              <div :class="inputContainerStyle">
+                <div class="row col-12">
+                  <div class="row col-12 m-0 p-0 my-1">
+                    {{ playerStatistics.wins == null ? 0 : playerStatistics.wins }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div :class="formRowStyle">
+              <div :class="labelContainerStyle">
+                  <label :class="labelStyle">Winrate</label>
+              </div>
+              <div :class="inputContainerStyle">
+                <div class="row col-12">
+                  <div class="row col-12 m-0 p-0 my-1">
+                    {{ (playerStatistics.wins === '0' || playerStatistics.wins === null) ? 0 : (playerStatistics.wins * 100) / playerStatistics.tournaments }}%
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div :class="formRowStyle">
+              <div :class="labelContainerStyle">
+                  <label :class="labelStyle">Puntos totales</label>
+              </div>
+              <div :class="inputContainerStyle">
+                <div class="row col-12">
+                  <div class="row col-12 m-0 p-0 my-1">
+                    {{ (playerStatistics.points === null ? 0 : playerStatistics.points) + ' (' + (playerStatistics.points_percent === null ? 0 : playerStatistics.points_percent) + '%)' }}
+                  </div>
+                </div>
+              </div>
+            </div>
         </div>
       </div>
     </div>

@@ -11,7 +11,10 @@ import useSeasonStore from '@/stores/seasons';
 import useDeckStore from '@/stores/decks';
 import usetournamentStore from '@/stores/tournaments';
 
-const labelStyle = 'fw-bold text-end p-2 w-50 w-lg-auto text-green'
+const formRowStyle = 'row m-0 p-0 justify-content-center my-2'
+const labelContainerStyle = 'row m-0 p-0 col-12 col-md-7'
+const labelStyle = 'text-center text-green text-md-end'
+const inputContainerStyle = 'row m-0 p-0 col-12 col-md-5 justify-content-center justify-content-md-start'
 
 const seasonStore = useSeasonStore()
 const deckStore = useDeckStore()
@@ -45,29 +48,79 @@ const FetchTournamentsOfPlayerOfSeason = (async () => {
 <template>
   <div class="hide-up animated-1 row w-100 m-0 p-0 justify-content-center align-items-start p-1 p-lg-4">
     <div class="row m-0 p-0 col-11 col-lg-8 shadowed-l rounded bg-dark-grey justify-content-around my-4">      
-      <div class="row m-0 p-0 col-12 col-lg-6 p-3 text-white">
+      <div class="row m-0 p-0 col-12 p-3 text-white">
         <template v-if="deckStatistics === undefined">
           <LoadingGadget/>
         </template>
         <div v-else class="row m-0 p-0 col-12 h3 text-white">
-          <table >
-            <tr>
-              <td :class="labelStyle">Torneos participados:</td>
-              <td>{{ deckStatistics.tournaments }}</td>
-            </tr>
-            <tr>
-              <td :class="labelStyle">Victorias:</td>
-              <td>{{ deckStatistics.wins }}</td>
-            </tr>
-            <tr>
-              <td :class="labelStyle">Winrate:</td>
-              <td>{{ (deckStatistics.wins === '0' || deckStatistics.wins === null) ? 0 : (deckStatistics.wins * 100) / deckStatistics.tournaments }}%</td>
-            </tr>
-            <tr>
-              <td :class="labelStyle">Puntos:</td>
-              <td>{{ deckStatistics.points }} ({{ deckStatistics.points_percent }}%)</td>
-            </tr>
-          </table>
+          <div class="col-12 col-lg-7">
+
+            <div :class="formRowStyle">
+              <div :class="labelContainerStyle">
+                  <label :class="labelStyle">Torneos participados</label>
+              </div>
+              <div :class="inputContainerStyle">
+                <div class="row col-12">
+                  <div class="row col-12 m-0 p-0 my-1">
+                    {{ deckStatistics.tournaments }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div :class="formRowStyle">
+              <div :class="labelContainerStyle">
+                  <label :class="labelStyle">Victorias</label>
+              </div>
+              <div :class="inputContainerStyle">
+                <div class="row col-12">
+                  <div class="row col-12 m-0 p-0 my-1">
+                    {{ deckStatistics.wins == null ? 0 : deckStatistics.wins }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div :class="formRowStyle">
+              <div :class="labelContainerStyle">
+                  <label :class="labelStyle">Winrate</label>
+              </div>
+              <div :class="inputContainerStyle">
+                <div class="row col-12">
+                  <div class="row col-12 m-0 p-0 my-1">
+                    {{ (deckStatistics.wins === '0' || deckStatistics.wins === null) ? 0 : (deckStatistics.wins * 100) / deckStatistics.tournaments }}%
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div :class="formRowStyle">
+              <div :class="labelContainerStyle">
+                  <label :class="labelStyle">Puntos totales</label>
+              </div>
+              <div :class="inputContainerStyle">
+                <div class="row col-12">
+                  <div class="row col-12 m-0 p-0 my-1">
+                    {{ (deckStatistics.points === null ? 0 : deckStatistics.points) + ' (' + (deckStatistics.points_percent === null ? 0 : deckStatistics.points_percent) + '%)' }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div> 
+
+          <div class="col-12 col-lg-5">
+            <h3 class="text-center w-100 text-green">Colores</h3>
+            <div class="row justify-content-center fs-1 text-center">
+              <article 
+              v-for="color in props.targetDeck['colors']"
+              :key="color"
+              class="col-3 p-2"
+              >
+                <i :class="'fa fa-circle text-' + color"></i>
+              </article>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -242,6 +242,10 @@ const FetchSeasonDependantData = ( async(seasonId) => {
               <td class="p-1 border-green">{{ lastTournament.data.winner }}</td>
             </tr>
             <tr>
+              <td class="p-1 border-green">Observación</td>
+              <td class="p-1 border-green">{{ lastTournament.data.observation === undefined ? 'Ninguna' : lastTournament.data.observation }}</td>
+            </tr>
+            <tr>
               <td class="p-1 border-green">Presencia de colores</td>
               <td class="p-1 border-green">
                 <ul class="w-100 list-unstyled m-0 p-0">

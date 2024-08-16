@@ -350,13 +350,6 @@ onMounted( async () => {
               </article>
             </div>
 
-            <div class="row col-12 m-0 p-0 justify-content-center hide-up animated-1">
-              <h2 class="w-100 text-center">
-                <router-link :to="{name: 'home'}">
-                  Ver torneo más reciente
-                </router-link>
-              </h2>
-            </div>
           </div>
         </template>
       </div>

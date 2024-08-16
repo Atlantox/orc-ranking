@@ -34,7 +34,7 @@ onMounted( async() => {
           Cabe destacar que, todos los jugadores registrados (actualmente {{ playerCount }}) en esta página forman parte de la comunidad local y 
           están unidos por la férrea pasión del Magic.
           <br><br>
-          Puedes descubrir más sobre la comunidad en el canal de Youtube <a href="https://www.youtube.com/@ComandMancos" target="_blank">ComandMancos</a> y en [Inserte más redes sociales]
+          Puedes descubrir más sobre la comunidad en el canal de Youtube <a href="https://www.youtube.com/@ComandMancos" target="_blank">ComandMancos</a>
         </p>
       </div>
     </section>

@@ -28,7 +28,7 @@ onMounted( async () => {
   if(recievedId !== undefined && recievedId !== ''){
     targetUser.value = await userStore.FetchUserById(recievedId)
     // TODO: problemas con el manejo de usuario propio
-    if(targetUser.id !== sessionStore.userData.id){
+    if(targetUser.value.id !== sessionStore.userData.id){
       // If the user don't have permissons of the targetUser level, return it to dashboard
       if(!sessionStore.userData.permissons.includes(targetUser.level))
         router.push({name: 'dashboard'})
