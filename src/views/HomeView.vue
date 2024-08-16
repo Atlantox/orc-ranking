@@ -38,7 +38,6 @@ onMounted( async () => {
             var realTournaments = tournamentsCounts.value.tournaments
             tournamentsCounts.value.tournaments = -1
             for(let i = 0; i <= realTournaments; i++){
-              console.log(i)
               tournamentsCounts.value.tournaments = i
               await new Promise(r => setTimeout(r, 50 + (i * 50)));
             }
