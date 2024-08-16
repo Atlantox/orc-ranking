@@ -1,4 +1,11 @@
 <script setup>
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const DisplayLogin = (() => {
+  router.push({name: 'admin_login'})
+})
 </script>
 
 <template>
@@ -11,7 +18,7 @@
                 <img style="width:40px;" src="@/assets/icons/atlantox-icon.png" alt="">
             </a>
         </div>
-        <span class="text-black text-center">
+        <span class="text-black text-center" @dblclick="DisplayLogin">
             AZUL HASTA LA MUERTE
         </span>
     </div>
