@@ -633,6 +633,42 @@ class TournamentModel(BaseModel):
             result = error
 
         return result    
+    
+    def GetTournamentsIndividualPlayersOfSeason(self, seasonId):
+        cursor = self.connection.connection.cursor()
+        sql = '''
+            SELECT DISTINCT
+            player.id
+            FROM
+            player
+            INNER JOIN tournament_result ON tournament_result.player = player.id
+            INNER JOIN tournament ON tournament.id = tournament_result.tournament     
+            WHERE
+            tournament.active = 1     
+        '''
+
+        if seasonId is not None:
+            sql += ' AND tournament.season = %s '
+
+
+        try:
+            if seasonId is not None:
+                args = (seasonId,)
+                cursor.execute(sql, args)
+            else:
+                cursor.execute(sql)
+
+            players = cursor.fetchall()
+
+            if players is None:
+                players = 0
+            else:
+                players = len(players)
+                
+        except:
+            players = 'Ocurrió un error al traer el número de jugadores individuales' 
+
+        return players
 
     def GetTotalPointsOfSeason(self, seasonId):
         cursor = self.connection.connection.cursor()

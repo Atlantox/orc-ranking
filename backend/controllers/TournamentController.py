@@ -304,6 +304,36 @@ def GetTournamentsRankingOfSeason(seasonId):
     return jsonify(response), statusCode
 
 
+@tournamentController.route('/tournaments/individual_players/<int:seasonId>', methods=['GET'])
+def GetIndividualPlayersOfSeason(seasonId):
+    connection = GetConnection()
+    tournamentModel = TournamentModel(connection)
+    response = {}
+    statusCode = 200
+    error = ''
+
+    seasonModel = SeasonModel(connection)
+    targetSeason = seasonModel.GetSeasonById(seasonId)
+    if targetSeason is None:
+        error = 'Temporada no encontrada'
+        statusCode = 404
+
+    if error == '':
+        players = tournamentModel.GetTournamentsIndividualPlayersOfSeason(seasonId)
+        if type(players) is str:
+            error = players
+            statusCode = 500
+
+    response['success'] = error == ''
+
+    if error == '':
+        response['count'] = players
+    else:
+        response['message'] = error
+
+    return jsonify(response), statusCode
+
+
 @tournamentController.route('/results/player/<int:playerId>', defaults={'seasonId': None}, methods=['GET'])
 @tournamentController.route('/results/player/<int:playerId>/<int:seasonId>', methods=['GET'])
 def GetTournamentResultsOfPlayer(playerId, seasonId):

@@ -528,6 +528,42 @@ const useTournamentStore = defineStore('tournaments', {
             return ranking
         },
 
+        async GetIndividualPlayersOfSeason(season){
+            var playerCount = false
+            const sessionStore = useSessionStore()
+            const utilsStore = useUtilsStore()
+            try{
+                let url = apiConfig.base_url + '/tournaments/individual_players/' + season
+                var fetchHeaders = {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                }
+
+                if (sessionStore.authenticated === true)
+                    fetchHeaders['Authorization'] = 'Bearer ' + sessionStore.token
+
+                let fetchConfig = {
+                    method: 'GET',
+                    headers: fetchHeaders
+                }
+
+                let response = await fetch(url, fetchConfig)
+                let json = await response.json()
+                let result = await json
+                
+                if(result.success){
+                    playerCount = result.count                    
+                }
+                else
+                    utilsStore.ShowModal('Error', result.message, 'error')
+            }
+            catch(error){
+                utilsStore.ShowModal('Error', 'Ocurrió un error inesperado al cargar el contador de jugadores individuales de la temporada: ' + error.message, 'error')
+            }
+
+            return playerCount
+        },
+
         async FetchTournamentsCountsOfSeason(season){
             var tournamentsCount = false
             const sessionStore = useSessionStore()

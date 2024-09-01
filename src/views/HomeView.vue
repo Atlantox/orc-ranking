@@ -13,6 +13,7 @@ const fetchReady = ref(false)
 const currentSeason = ref(undefined)
 const lastTournament = ref(undefined)
 const tournamentsCounts = ref(undefined)
+const individualPlayersCount = ref(undefined)
 const tournamentsRanking = ref(undefined)
 
 onMounted( async () => {
@@ -26,6 +27,7 @@ onMounted( async () => {
 
   const tournamentsNumber = document.getElementById('tournaments-number')
   const participantsNumber = document.getElementById('participants-number')
+  const individualPlayersNumber = document.getElementById('individual-players-number')
 
   const tournamentNumberObserver = new IntersectionObserver(entries => {
       entries.forEach(async entry => {
@@ -39,7 +41,7 @@ onMounted( async () => {
             tournamentsCounts.value.tournaments = -1
             for(let i = 0; i <= realTournaments; i++){
               tournamentsCounts.value.tournaments = i
-              await new Promise(r => setTimeout(r, 50 + (i * 50)));
+              await new Promise(r => setTimeout(r, 50 + (i * 15)));
             }
             tournamentsNumber.classList.add('numbers-displayed')
         }
@@ -58,15 +60,35 @@ onMounted( async () => {
           tournamentsCounts.value.participants = -1
           for(let i = 0; i <= realParticipants; i++){
             tournamentsCounts.value.participants = i
-            await new Promise(r => setTimeout(r, 50 + (i * 50)));
+            await new Promise(r => setTimeout(r, 50 + (i * 1)));
           }
           participantsNumber.classList.add('numbers-displayed')
         }
       });
   })
 
+  const individualPlayersNumberObserver = new IntersectionObserver(entries => {
+      entries.forEach(async entry => {
+        // If the element is visible
+        if (entry.isIntersecting) {
+          if(individualPlayersNumber.classList.contains('individual-players-number'))
+            return
+
+          // Change the number value
+          var realPlayers = individualPlayersCount.value
+          individualPlayersCount.value = -1
+          for(let i = 0; i <= realPlayers; i++){
+            individualPlayersCount.value = i
+            await new Promise(r => setTimeout(r, 50 + (i * 1)));
+          }
+          individualPlayersNumber.classList.add('individual-players-number')
+        }
+      });
+  })
+
   tournamentNumberObserver.observe(tournamentsNumber);
   participantNumberObserver.observe(participantsNumber);
+  individualPlayersNumberObserver.observe(individualPlayersNumber)
 })
 
 const FetchSeasonDependantData = ( async(seasonId) => {
@@ -77,6 +99,7 @@ const FetchSeasonDependantData = ( async(seasonId) => {
     
   tournamentsCounts.value = await tournamentStore.GetTournamentCount(mySeasonId)
   tournamentsRanking.value = await tournamentStore.GetTournamentsRankingOfSeason(mySeasonId)
+  individualPlayersCount.value = await tournamentStore.GetIndividualPlayersOfSeason(mySeasonId)
 })
 
 </script>
@@ -129,7 +152,7 @@ const FetchSeasonDependantData = ( async(seasonId) => {
                 :key="index"
                 >
                   <span class="col-6 text-end">{{ player.name }}</span>
-                  <span class="col-6 text-start">
+                  <span class="col-6 text-start my-auto">
                     <div class="percent" :style="'width:' + player.percent + '%'">
                       {{ player.percent }}%
                     </div>
@@ -147,7 +170,7 @@ const FetchSeasonDependantData = ( async(seasonId) => {
                 :key="index"
                 >
                   <span class="col-6 text-end">{{ deck.name }}</span>
-                  <span class="col-6 text-start">
+                  <span class="col-6 text-start my-auto">
                     <div class="percent" :style="'width:' + deck.percent + '%'">
                       {{ deck.percent }}%
                     </div>
@@ -165,7 +188,7 @@ const FetchSeasonDependantData = ( async(seasonId) => {
                 :key="index"
                 >
                   <span class="col-4 text-end">{{ color.color }}</span>
-                  <span class="col-8 text-start">
+                  <span class="col-8 text-start my-auto">
                     <div class="percent" :style="'width:' + color.percent + '%'">
                       {{ color.percent }}%
                     </div>
@@ -184,30 +207,39 @@ const FetchSeasonDependantData = ( async(seasonId) => {
       </template>
       <template v-else>
         <div class="row col-12 col-lg-7 m-0 p-0 d-flex justify-content-center text-white py-4  hide-up animated-1">
-          <div class="row m-0 p-0 col-6 justify-content-center">
+          <div class="row m-0 p-0 col-12 col-lg-4 justify-content-center my-2">
             <p class="h3 col-12 text-green text-center">
               Torneos totales
             </p>
-            <figure class="col-5 text-center">
+            <figure class="col-6 text-center">
               <img class="col-6" src="@/assets/icons/sitemap.png" alt="bitemap">
             </figure>
             <p class="col-12 h1 text-green text-center" id="tournaments-number">{{ tournamentsCounts.tournaments }}</p>
           </div>
-          <div class="row m-0 p-0 col-6 justify-content-center">
+          <div class="row m-0 p-0 col-12 col-lg-4 justify-content-center my-2">
             <p class="h3 col-12 text-green text-center">
               Participantes
             </p>
-            <figure class="col-5 text-center">
+            <figure class="col-6 text-center">
               <img class="col-6" src="@/assets/icons/user.png" alt="bitemap">
             </figure>
             <p class="col-12 h1 text-green text-center" id="participants-number">{{ tournamentsCounts.participants }}</p>
+          </div>
+          <div class="row m-0 p-0 col-12 col-lg-4 justify-content-center my-2">
+            <p class="h3 col-12 text-green text-center">
+              Jugadores individuales
+            </p>
+            <figure class="col-6 text-center">
+              <img class="col-6" src="@/assets/icons/individual_user.png" alt="bitemap">
+            </figure>
+            <p class="col-12 h1 text-green text-center" id="individual-players-number">{{ individualPlayersCount }}</p>
           </div>
         </div>
       </template>
     </section>
 
     <section class="row col-12 m-0 p-0 py-4 justify-content-center align-items-start my-5 bg-dark-grey text-green">
-      <div class="col-12 text-center my-3">
+      <div class="col-12 text-center my-3 p-0">
         <h2 class="h1 text-green">Último torneo </h2>  
         
       </div>
@@ -215,14 +247,14 @@ const FetchSeasonDependantData = ( async(seasonId) => {
       <template v-if="lastTournament === undefined">
         <LoadingGadget />
       </template>
-      <div v-else class="row m-0 p-0 col-12 text-center justify-content-center align-items-start px-4 hide-up animated-1">
+      <div v-else class="row m-0 p-0 col-12 text-center justify-content-center align-items-start p-0 px-4 hide-up animated-1">
         <template v-if="Object.keys(lastTournament).length === 0">
             <h2 class="text-center w-100 text-green">
               No hay torneos registrados esta temporada (aún)
             </h2>
         </template>
         <div v-else  class="row col-12 m-0 p-0 justify-content-center">
-          <div class="row m-0 p-0 col-12 col-lg-5 text-center justify-content-center px-4">
+          <div class="row m-0 p-0 col-12 col-lg-5 text-center justify-content-center px-4 my-2">
           <table class="col-10 text-white fs-4">
             <tr>
               <td class="p-1 border-green">Fecha</td>
@@ -261,7 +293,7 @@ const FetchSeasonDependantData = ( async(seasonId) => {
           </table>
         </div>
   
-        <div class="row col-12 m-0 p-0 col-lg-7 text-center justify-content-center">
+        <div class="row col-12 m-0 p-0 col-lg-7 text-center justify-content-center my-2">
           <table class="col-10">
             <thead class="fs-4 text-white">
               <tr>
