@@ -274,8 +274,8 @@ def GetTournamentById(tournamentId):
     return jsonify(response), statusCode
 
 
-@tournamentController.route('/tournaments/ranking/<int:seasonId>', methods=['GET'])
-def GetTournamentsRankingOfSeason(seasonId):
+@tournamentController.route('/tournaments/ranking/<int:seasonId>/<int:formatId>', methods=['GET'])
+def GetTournamentsRankingOfSeason(seasonId, formatId):
     connection = GetConnection()
     tournamentModel = TournamentModel(connection)
     response = {}
@@ -289,7 +289,14 @@ def GetTournamentsRankingOfSeason(seasonId):
         statusCode = 404
 
     if error == '':
-        ranking = tournamentModel.GetTournamentsRankingOfSeason(seasonId)
+        formatModel = GameFormatModel(connection)
+        targetFormat = formatModel.GetFormatById(formatId)
+        if targetFormat is None:
+            error = 'Formato no encontrado'
+            statusCode = 404
+
+    if error == '':
+        ranking = tournamentModel.GetTournamentsRankingOfSeasonAndFormat(seasonId, targetFormat)
         if type(ranking) is str:
             error = ranking
             statusCode = 500
@@ -298,6 +305,36 @@ def GetTournamentsRankingOfSeason(seasonId):
 
     if error == '':
         response['ranking'] = ranking
+    else:
+        response['message'] = error
+
+    return jsonify(response), statusCode
+
+
+@tournamentController.route('/tournaments/statistics/<int:seasonId>', methods=['GET'])
+def GetSeasonStatistics(seasonId):
+    connection = GetConnection()
+    tournamentModel = TournamentModel(connection)
+    response = {}
+    statusCode = 200
+    error = ''
+
+    seasonModel = SeasonModel(connection)
+    targetSeason = seasonModel.GetSeasonById(seasonId)
+    if targetSeason is None:
+        error = 'Temporada no encontrada'
+        statusCode = 404
+
+    if error == '':
+        statistics = tournamentModel.GetSeasonStatistics(seasonId)
+        if type(statistics) is str:
+            error = statistics
+            statusCode = 500
+
+    response['success'] = error == ''
+
+    if error == '':
+        response['statistics'] = statistics
     else:
         response['message'] = error
 

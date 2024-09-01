@@ -455,13 +455,14 @@ const useTournamentStore = defineStore('tournaments', {
             }
         },
 
-        async GetTournamentCount(seasonId){
+        async GetTournamentCount(seasonId, formatName){
             var tournamentsCount = false
             const sessionStore = useSessionStore()
             const utilsStore = useUtilsStore()
             try{
                 let url = apiConfig.base_url + '/tournaments/count'
                 if (seasonId !== null) url += '/' + seasonId
+
                 var fetchHeaders = {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
@@ -492,12 +493,12 @@ const useTournamentStore = defineStore('tournaments', {
             return tournamentsCount
         },
 
-        async GetTournamentsRankingOfSeason(season){
+        async GetTournamentsRankingOfSeasonAndFormat(season, gameFormat){
             var ranking = false
             const sessionStore = useSessionStore()
             const utilsStore = useUtilsStore()
             try{
-                let url = apiConfig.base_url + '/tournaments/ranking/' + season
+                let url = apiConfig.base_url + '/tournaments/ranking/' + season + '/' + gameFormat
                 var fetchHeaders = {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
@@ -526,6 +527,42 @@ const useTournamentStore = defineStore('tournaments', {
             }
 
             return ranking
+        },
+
+        async GetSeasonStatistics(season){
+            var statistics = false
+            const sessionStore = useSessionStore()
+            const utilsStore = useUtilsStore()
+            try{
+                let url = apiConfig.base_url + '/tournaments/statistics/' + season
+                var fetchHeaders = {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                }
+
+                if (sessionStore.authenticated === true)
+                    fetchHeaders['Authorization'] = 'Bearer ' + sessionStore.token
+
+                let fetchConfig = {
+                    method: 'GET',
+                    headers: fetchHeaders
+                }
+
+                let response = await fetch(url, fetchConfig)
+                let json = await response.json()
+                let result = await json
+                
+                if(result.success){
+                    statistics = result.statistics                    
+                }
+                else
+                    utilsStore.ShowModal('Error', result.message, 'error')
+            }
+            catch(error){
+                utilsStore.ShowModal('Error', 'Ocurrió un error inesperado al cargar las estadísticas de la temporada: ' + error.message, 'error')
+            }
+
+            return statistics
         },
 
         async GetIndividualPlayersOfSeason(season){

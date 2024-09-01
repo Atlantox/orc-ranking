@@ -13,6 +13,42 @@ class GameFormatModel(BaseModel):
             result = False
         
         return result
+    
+    def GetFormatsPlayedInSeason(self, seasonId):
+        cursor = self.connection.connection.cursor()
+        sql = '''
+            SELECT DISTINCT
+            game_format.id,
+            game_format.name
+            from
+            game_format  
+            INNER JOIN tournament ON tournament.format = game_format.name
+            WHERE
+            tournament.active = 1
+        '''
+
+        if seasonId is not None:
+            sql += ' AND tournament.season = %s '
+
+        sql +=  " ORDER BY game_format.name "
+        try:
+            if seasonId is not None:
+                args = (seasonId,)
+                cursor.execute(sql, args)
+            else:
+                cursor.execute(sql)
+
+            formats = cursor.fetchall()
+
+            if formats == tuple():
+                formats = []
+                
+        except:
+            formats = 'Ocurrió un error al traer los formatos jugados' 
+
+        
+
+        return formats
 
     def CreateFormat(self, formatData):
         name = formatData['name']

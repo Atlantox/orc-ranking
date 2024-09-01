@@ -3,103 +3,68 @@ import { ref, onMounted } from 'vue'
 
 import OnAppearAnimation from '@/utils/ElegantDisplayer';
 import LoadingGadget from '@/components/myGadgets/LoadingGadget.vue';
+
 import useTournamentStore from '@/stores/tournaments';
 import useSeasonStore from '@/stores/seasons';
+import useFormatStore from '@/stores/formats';
 
 const tournamentStore = useTournamentStore()
 const seasonStore = useSeasonStore()
+const formatStore = useFormatStore()
 
 const fetchReady = ref(false)
 const currentSeason = ref(undefined)
 const lastTournament = ref(undefined)
-const tournamentsCounts = ref(undefined)
-const individualPlayersCount = ref(undefined)
 const tournamentsRanking = ref(undefined)
+const playedFormats = ref(undefined)
+const seasonStatistics = ref(undefined)
 
 onMounted( async () => {
   currentSeason.value = await seasonStore.GetCurrentSeason()
   await seasonStore.FetchSeasons()
-  await FetchSeasonDependantData(currentSeason.value['id'])
-
+  playedFormats.value = await formatStore.GetPlayedFormatsInSeason(currentSeason.value['id'])
   lastTournament.value = await tournamentStore.GetLastTournament()
+
+  await FetchRanking()
+
   fetchReady.value = await true
-  OnAppearAnimation('hide-up')
-
-  const tournamentsNumber = document.getElementById('tournaments-number')
-  const participantsNumber = document.getElementById('participants-number')
-  const individualPlayersNumber = document.getElementById('individual-players-number')
-
-  const tournamentNumberObserver = new IntersectionObserver(entries => {
-      entries.forEach(async entry => {
-        // If the element is visible
-        if (entry.isIntersecting) {
-            // Change the number value
-            if(tournamentsNumber.classList.contains('numbers-displayed'))
-              return
-
-            var realTournaments = tournamentsCounts.value.tournaments
-            tournamentsCounts.value.tournaments = -1
-            for(let i = 0; i <= realTournaments; i++){
-              tournamentsCounts.value.tournaments = i
-              await new Promise(r => setTimeout(r, 50 + (i * 15)));
-            }
-            tournamentsNumber.classList.add('numbers-displayed')
-        }
-      });
-  })
-
-  const participantNumberObserver = new IntersectionObserver(entries => {
-      entries.forEach(async entry => {
-        // If the element is visible
-        if (entry.isIntersecting) {
-          if(participantsNumber.classList.contains('numbers-displayed'))
-            return
-
-          // Change the number value
-          var realParticipants = tournamentsCounts.value.participants
-          tournamentsCounts.value.participants = -1
-          for(let i = 0; i <= realParticipants; i++){
-            tournamentsCounts.value.participants = i
-            await new Promise(r => setTimeout(r, 50 + (i * 1)));
-          }
-          participantsNumber.classList.add('numbers-displayed')
-        }
-      });
-  })
-
-  const individualPlayersNumberObserver = new IntersectionObserver(entries => {
-      entries.forEach(async entry => {
-        // If the element is visible
-        if (entry.isIntersecting) {
-          if(individualPlayersNumber.classList.contains('individual-players-number'))
-            return
-
-          // Change the number value
-          var realPlayers = individualPlayersCount.value
-          individualPlayersCount.value = -1
-          for(let i = 0; i <= realPlayers; i++){
-            individualPlayersCount.value = i
-            await new Promise(r => setTimeout(r, 50 + (i * 1)));
-          }
-          individualPlayersNumber.classList.add('individual-players-number')
-        }
-      });
-  })
-
-  tournamentNumberObserver.observe(tournamentsNumber);
-  participantNumberObserver.observe(participantsNumber);
-  individualPlayersNumberObserver.observe(individualPlayersNumber)
 })
 
-const FetchSeasonDependantData = ( async(seasonId) => {
-  if(typeof seasonId !== 'number')
-    var mySeasonId = seasonId.target.value
-  else
-    var mySeasonId = seasonId
-    
-  tournamentsCounts.value = await tournamentStore.GetTournamentCount(mySeasonId)
-  tournamentsRanking.value = await tournamentStore.GetTournamentsRankingOfSeason(mySeasonId)
-  individualPlayersCount.value = await tournamentStore.GetIndividualPlayersOfSeason(mySeasonId)
+const FetchRanking = ( async() => {
+  tournamentsRanking.value = undefined
+  let targetSeasonId = currentSeason.value['id']
+  let targetGameFormat = null
+  if(fetchReady.value === true){
+    targetSeasonId = document.getElementById('season-select').value
+    targetGameFormat = document.getElementById('format-select').value
+  }
+  else{
+    // If the only played format is one, take that format
+    if(playedFormats.value.length === 1)
+      targetGameFormat = playedFormats.value[0]['id']
+    else if(playedFormats.value.length > 1){
+      // If are more than 1 played format, priorize Coliseo, otherwise take the first in the array
+      for(let i = 0; i < playedFormats.value.length; i++){
+        if(playedFormats.value[i]['name'] === 'Coliseo'){
+          targetGameFormat = playedFormats.value[i]['id']
+          break;
+        }
+      }
+
+      if (targetGameFormat === null)
+        targetGameFormat = playedFormats.value[0]['id']
+    }
+  }
+
+  tournamentsRanking.value = await tournamentStore.GetTournamentsRankingOfSeasonAndFormat(targetSeasonId, targetGameFormat)
+  seasonStatistics.value = await tournamentStore.GetSeasonStatistics(targetSeasonId)
+
+  fetchReady.value = await true
+  OnAppearAnimation('hide-up')
+})
+
+const FetchSeasonStatistics = ((seasonId) => {
+  alert(seasonId.target)
 })
 
 </script>
@@ -122,8 +87,8 @@ const FetchSeasonDependantData = ( async(seasonId) => {
             <LoadingGadget />
           </template>
           <template v-else>
-            <div class="col-12 text-center py-4 fs-3 hide-up animated-1">
-              <select class="myInput px-4" id="season-select" @change="FetchSeasonDependantData">
+            <div class="col-12 text-center py-4 fs-3 hide-up animated-1 d-flex justify-content-center">
+              <select class="myInput px-4 mx-3" id="season-select" @change="FetchRanking(); FetchSeasonStatistics();">
                 <option 
                 v-for="season in seasonStore.seasons"
                 :key="season.id"
@@ -132,6 +97,18 @@ const FetchSeasonDependantData = ( async(seasonId) => {
                 class="align-middle"
                 >
                   Season {{ season.name }}
+                </option>
+              </select>
+
+              <select class="myInput px-4 mx-3" id="format-select" @change="FetchRanking()">
+                <option 
+                v-for="format in playedFormats"
+                :key="format.id"
+                :value="format.id"
+                :selected="format.name === 'Coliseo'"
+                class="align-middle"
+                >
+                  {{ format.name }}
                 </option>
               </select>
             </div>
@@ -202,38 +179,71 @@ const FetchSeasonDependantData = ( async(seasonId) => {
 
 
     <section class="row col-12 m-0 p-0 mt-5 justify-content-center align-items-center flex-column flex-lg-row shadowed-n services-section">
-      <template v-if="tournamentsCounts === undefined">
+      <template v-if="seasonStatistics === undefined">
         <LoadingGadget />
       </template>
       <template v-else>
         <div class="row col-12 col-lg-7 m-0 p-0 d-flex justify-content-center text-white py-4  hide-up animated-1">
-          <div class="row m-0 p-0 col-12 col-lg-4 justify-content-center my-2">
-            <p class="h3 col-12 text-green text-center">
-              Torneos totales
-            </p>
-            <figure class="col-6 text-center">
-              <img class="col-6" src="@/assets/icons/sitemap.png" alt="bitemap">
-            </figure>
-            <p class="col-12 h1 text-green text-center" id="tournaments-number">{{ tournamentsCounts.tournaments }}</p>
+          <div class="row m-0 p-0 col-12 col-lg-4 justify-content-center my-3">
+            <table class="col-10 text-white fs-4">
+              <thead class="text-center bg-grey">
+                <tr>
+                  <th class="p-1 border-green fs-1 py-2" colspan="2">Torneos</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                v-for="tournament, index in seasonStatistics.tournaments"
+                :key="index"
+                class="text-center"
+                >
+                  <td class="p-1 border-green">{{ tournament['format'] }}</td>
+                  <td class="p-1 border-green">{{ tournament['count'] }}</td>
+                </tr>            
+              </tbody>
+            </table>
           </div>
-          <div class="row m-0 p-0 col-12 col-lg-4 justify-content-center my-2">
-            <p class="h3 col-12 text-green text-center">
-              Participantes
-            </p>
-            <figure class="col-6 text-center">
-              <img class="col-6" src="@/assets/icons/user.png" alt="bitemap">
-            </figure>
-            <p class="col-12 h1 text-green text-center" id="participants-number">{{ tournamentsCounts.participants }}</p>
+
+          <div class="row m-0 p-0 col-12 col-lg-4 justify-content-center my-3">
+            <table class="col-10 text-white fs-4">
+              <thead class="text-center bg-grey">
+                <tr>
+                  <th class="p-1 border-green fs-1 py-2" colspan="2">Participantes</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                v-for="participant, index in seasonStatistics.participants"
+                :key="index"
+                class="text-center"
+                >
+                  <td class="p-1 border-green">{{ participant['format'] }}</td>
+                  <td class="p-1 border-green">{{ participant['count'] }}</td>
+                </tr>            
+              </tbody>
+            </table>
           </div>
-          <div class="row m-0 p-0 col-12 col-lg-4 justify-content-center my-2">
-            <p class="h3 col-12 text-green text-center">
-              Jugadores individuales
-            </p>
-            <figure class="col-6 text-center">
-              <img class="col-6" src="@/assets/icons/individual_user.png" alt="bitemap">
-            </figure>
-            <p class="col-12 h1 text-green text-center" id="individual-players-number">{{ individualPlayersCount }}</p>
+
+          <div class="row m-0 p-0 col-12 col-lg-4 justify-content-center my-3">
+            <table class="col-10 text-white fs-4">
+              <thead class="text-center bg-grey">
+                <tr>
+                  <th class="p-1 border-green fs-1 py-2" colspan="2">Personas</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                v-for="person, index in seasonStatistics.persons"
+                :key="index"
+                class="text-center"
+                >
+                  <td class="p-1 border-green">{{ person['format'] }}</td>
+                  <td class="p-1 border-green">{{ person['count'] }}</td>
+                </tr>            
+              </tbody>
+            </table>
           </div>
+
         </div>
       </template>
     </section>
@@ -257,27 +267,27 @@ const FetchSeasonDependantData = ( async(seasonId) => {
           <div class="row m-0 p-0 col-12 col-lg-5 text-center justify-content-center px-4 my-2">
           <table class="col-10 text-white fs-4">
             <tr>
-              <td class="p-1 border-green">Fecha</td>
+              <td class="p-1 border-green bg-grey orc-font py-2">Fecha</td>
               <td class="p-1 border-green">{{ lastTournament.data.date }}</td>
             </tr>
             <tr>
-              <td class="p-1 border-green">Formato</td>
+              <td class="p-1 border-green bg-grey orc-font py-2">Formato</td>
               <td class="p-1 border-green">{{ lastTournament.data.format }}</td>
             </tr>
             <tr>
-              <td class="p-1 border-green">Participantes</td>
+              <td class="p-1 border-green bg-grey orc-font py-2">Participantes</td>
               <td class="p-1 border-green">{{ lastTournament.results.length }}</td>
             </tr>
             <tr>
-              <td class="p-1 border-green">Ganador</td>
+              <td class="p-1 border-green bg-grey orc-font py-2">Ganador</td>
               <td class="p-1 border-green">{{ lastTournament.data.winner }}</td>
             </tr>
             <tr>
-              <td class="p-1 border-green">Observación</td>
+              <td class="p-1 border-green bg-grey orc-font py-2">Observación</td>
               <td class="p-1 border-green">{{ lastTournament.data.observation === undefined ? 'Ninguna' : lastTournament.data.observation }}</td>
             </tr>
             <tr>
-              <td class="p-1 border-green">Presencia de colores</td>
+              <td class="p-1 border-green bg-grey orc-font py-2">Presencia de colores</td>
               <td class="p-1 border-green">
                 <ul class="w-100 list-unstyled m-0 p-0">
                   <li 
@@ -297,10 +307,10 @@ const FetchSeasonDependantData = ( async(seasonId) => {
           <table class="col-10">
             <thead class="fs-4 text-white">
               <tr>
-                <th class="border-green p-1 fw-normal">Posición</th>
-                <th class="border-green p-1 fw-normal">Jugador</th>
-                <th class="border-green p-1 fw-normal">Deck</th>
-                <th class="border-green p-1 fw-normal">Puntos/Victorias</th>
+                <th class="border-green p-1 py-3 fw-normal bg-grey">Posición</th>
+                <th class="border-green p-1 fw-normal bg-grey">Jugador</th>
+                <th class="border-green p-1 fw-normal bg-grey">Deck</th>
+                <th class="border-green p-1 fw-normal bg-grey">Puntos/Victorias</th>
               </tr>
             </thead>
             <tbody class="fs-5 text-white">

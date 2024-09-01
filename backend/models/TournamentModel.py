@@ -537,16 +537,18 @@ class TournamentModel(BaseModel):
         
         return result
     
-    def GetTournamentsRankingOfSeason(self, seasonId):
+    def GetTournamentsRankingOfSeasonAndFormat(self, seasonId, targetFormat):
         cursor = self.connection.connection.cursor()
         error = ''
 
-        totalWins = self.GetTotalPointsOfSeason(seasonId)
+        totalWins = self.GetTotalPointsOfSeason(seasonId, targetFormat)
         if type(totalWins) is str:
             error = totalWins
 
+        
         # Getting the points by player
         if error == '':
+            args = (totalWins, seasonId, targetFormat['name'],)
             sql = '''
             SELECT
             player.name,
@@ -556,13 +558,14 @@ class TournamentModel(BaseModel):
             INNER JOIN tournament ON tournament.id = tournament_result.tournament
             INNER JOIN player ON player.id = tournament_result.player
             WHERE
-            tournament.season = %s
+            tournament.active = 1 AND 
+            tournament.season = %s AND
+            tournament.format = %s
             GROUP BY
             tournament_result.player
             ORDER BY 
             percent DESC
             '''
-        args = (totalWins, seasonId,)
 
         try:
             cursor.execute(sql, args)
@@ -581,13 +584,14 @@ class TournamentModel(BaseModel):
             INNER JOIN tournament ON tournament.id = tournament_result.tournament
             INNER JOIN deck ON deck.id = tournament_result.deck
             WHERE
-            tournament.season = %s
+            tournament.active = 1 AND 
+            tournament.season = %s AND
+            tournament.format = %s
             GROUP BY
             tournament_result.deck
             ORDER BY 
             percent DESC
             '''
-        args = (totalWins, seasonId,)
         
         try:
             cursor.execute(sql, args)
@@ -608,19 +612,20 @@ class TournamentModel(BaseModel):
             INNER JOIN deck ON deck.id = tournament_result.deck
             INNER JOIN deck_color ON deck_color.deck = deck.id
             WHERE
-            tournament.season = %s
+            tournament.active = 1 AND 
+            tournament.season = %s AND
+            tournament.format = %s
             GROUP BY
             deck_color.color
             ORDER BY 
             percent DESC
             '''
-        args = (totalWins, seasonId,)
         
         try:
             cursor.execute(sql, args)
             colorPoints = cursor.fetchall()
         except:
-            error = 'Ocurrió un error al traer los puntos de cada mazo'
+            error = 'Ocurrió un error al traer los puntos de cada color'
 
 
         if error == '':
@@ -633,6 +638,91 @@ class TournamentModel(BaseModel):
             result = error
 
         return result    
+    
+    
+    def GetSeasonStatistics(self, seasonId):
+        cursor = self.connection.connection.cursor()
+        args = (seasonId, )
+        error = ''
+        seasonSQL = ' AND tournament.season = %s '
+
+        # Getting tournament counts by format
+        sql = '''
+            SELECT 
+            COUNT(tournament.id) as count,
+            tournament.format
+            FROM
+            tournament
+            WHERE
+            tournament.active = 1
+        ''' + seasonSQL + '''
+            GROUP BY
+            tournament.format            
+        '''
+
+        try:
+            cursor.execute(sql, args)
+            tournamentsByFormat = cursor.fetchall()
+
+        except:
+            error = 'Hubo un error al obtener los torneos por formato'
+
+        if error == '':
+            # Getting participants by format
+            sql = '''
+                SELECT 
+                COUNT(tournament_result.player) as count,
+                tournament.format
+                FROM
+                tournament_result
+                INNER JOIN tournament ON tournament.id = tournament_result.tournament
+                WHERE
+                tournament.active = 1
+            ''' + seasonSQL + '''
+                GROUP BY
+                tournament.format
+            '''
+
+            try:
+                cursor.execute(sql, args)
+                participantsByFormat = cursor.fetchall()
+
+            except:
+                error = 'Hubo un error al obtener los participantes por formato'
+
+
+        if error == '':
+            # Getting persons by format
+            sql = '''
+                SELECT
+                COUNT(DISTINCT tournament_result.player) as count,
+                tournament.format
+                FROM
+                tournament_result
+                INNER JOIN tournament ON tournament.id = tournament_result.tournament
+                WHERE
+                tournament.active = 1
+            ''' + seasonSQL + '''
+                GROUP BY
+                tournament.format
+            '''
+            try:
+                cursor.execute(sql, args)
+                personsByFormat = cursor.fetchall()
+
+            except:
+                error = 'Hubo un error al obtener las personas por formato'
+        
+        if error != '':
+            result = error
+        else:
+            result = {
+                'tournaments': tournamentsByFormat,
+                'participants': participantsByFormat,
+                'persons': personsByFormat
+            }
+
+        return result
     
     def GetTournamentsIndividualPlayersOfSeason(self, seasonId):
         cursor = self.connection.connection.cursor()
@@ -670,7 +760,7 @@ class TournamentModel(BaseModel):
 
         return players
 
-    def GetTotalPointsOfSeason(self, seasonId):
+    def GetTotalPointsOfSeason(self, seasonId, targetFormat = None):
         cursor = self.connection.connection.cursor()
         sql = '''
             SELECT
@@ -678,17 +768,26 @@ class TournamentModel(BaseModel):
             FROM
             tournament_result
             INNER JOIN tournament ON tournament.id = tournament_result.tournament
+            WHERE
+            1 
         '''
 
+        args = []
+        
         if seasonId is not None:
-            sql += ' WHERE tournament.season = %s '
+            sql += ' AND tournament.season = %s '
+            args.append(seasonId)
+
+        if targetFormat is not None:
+            sql += ' AND tournament.format = %s '
+            args.append(targetFormat['name'])
 
         try:
-            if seasonId is not None:
-                args = (seasonId,)
-                cursor.execute(sql, args)
-            else:
+            if [seasonId, targetFormat] == [None, None]:
                 cursor.execute(sql)
+            else:
+                args = tuple(args)
+                cursor.execute(sql, args)
 
             totalWins = cursor.fetchone()['total_wins']
 

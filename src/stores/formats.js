@@ -112,6 +112,44 @@ const useFormatStore = defineStore('formats', {
             }
         },
 
+        async GetPlayedFormatsInSeason(season = null){
+            let playedFormats  = []
+            const sessionStore = useSessionStore()
+            const utilsStore = useUtilsStore()
+            try{
+                let url = apiConfig.base_url + '/formats'
+                if (season !== null)
+                    url += '/season/' + season
+
+                var fetchHeaders = {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                }
+
+                if (sessionStore.authenticated === true)
+                    fetchHeaders['Authorization'] = 'Bearer ' + sessionStore.token
+
+                let fetchConfig = {
+                    method: 'GET',
+                    headers: fetchHeaders
+                }
+
+                let response = await fetch(url, fetchConfig)
+                let json = await response.json()
+                let result = await json
+                if(result.success){
+                    playedFormats = result.formats
+                }
+                else
+                    utilsStore.ShowModal('Error', result.message, 'error')
+            }
+            catch(error){
+                utilsStore.ShowModal('Error', 'Ocurrió un error inesperado al cargar los formatos jugados: ' + error.message, 'error')
+            }
+
+            return playedFormats
+        },
+
         async UpdateFormat(formatId, formatData){
             const sessionStore = useSessionStore()
             let result = {}

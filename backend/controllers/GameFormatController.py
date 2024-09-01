@@ -88,6 +88,31 @@ def GetFormats():
     return jsonify(response), statusCode
 
 
+@gameFormatController.route('/formats/season', defaults={'seasonId': None}, methods=['GET'])
+@gameFormatController.route('/formats/season/<int:seasonId>', methods=['GET'])
+def GetFormatsPlayedInSeason(seasonId):
+    connection = GetConnection()
+    gameFormatModel = GameFormatModel(connection)
+    response = {}
+    statusCode = 200
+    error = ''
+
+    formats = gameFormatModel.GetFormatsPlayedInSeason(seasonId)
+
+    if type(formats) is str:
+        error = formats
+        statusCode = 500
+
+    response['success'] = error == ''
+
+    if error == '':
+        response['formats'] = formats
+    else:
+        response['message'] = error
+
+    return jsonify(response), statusCode
+
+
 @gameFormatController.route('/formats/<int:formatId>', methods=['GET'])
 def GetGameFormatById(formatId):
     connection = GetConnection()
