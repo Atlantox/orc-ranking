@@ -304,26 +304,28 @@ const FetchSeasonStatistics = ((seasonId) => {
         </div>
   
         <div class="row col-12 m-0 p-0 col-lg-7 text-center justify-content-center my-2">
-          <table class="col-10">
-            <thead class="fs-4 text-white">
-              <tr>
-                <th class="border-green p-1 py-3 fw-normal bg-grey">Posición</th>
-                <th class="border-green p-1 fw-normal bg-grey">Jugador</th>
-                <th class="border-green p-1 fw-normal bg-grey">Deck</th>
-                <th class="border-green p-1 fw-normal bg-grey">Puntos/Victorias</th>
-              </tr>
-            </thead>
-            <tbody class="fs-5 text-white">
-              <tr v-for="participant, index in lastTournament.results"
-              :key="index"
-              >
-                <td class="border-green p-1 py-2">{{ index + 1 }}</td>
-                <td class="border-green p-1">{{ participant.player }}</td>
-                <td class="border-green p-1">{{ participant.deck }}</td>
-                <td class="border-green p-1">{{ participant.wins }}</td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="table-responsive">
+            <table class="col-10">
+              <thead class="fs-4 text-white">
+                <tr>
+                  <th class="border-green p-1 py-3 fw-normal bg-grey">Posición</th>
+                  <th class="border-green p-1 fw-normal bg-grey">Jugador</th>
+                  <th class="border-green p-1 fw-normal bg-grey">Deck</th>
+                  <th class="border-green p-1 fw-normal bg-grey">Puntos/Victorias</th>
+                </tr>
+              </thead>
+              <tbody class="fs-5 text-white">
+                <tr v-for="participant, index in lastTournament.results"
+                :key="index"
+                >
+                  <td class="border-green p-1 py-2">{{ index + 1 }}</td>
+                  <td class="border-green p-1">{{ participant.player }}</td>
+                  <td class="border-green p-1">{{ participant.deck }}</td>
+                  <td class="border-green p-1">{{ participant.wins }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
         </div>      
       </div>

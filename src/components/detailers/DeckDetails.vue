@@ -15,6 +15,7 @@ const formRowStyle = 'row m-0 p-0 justify-content-center my-2'
 const labelContainerStyle = 'row m-0 p-0 col-12 col-md-7'
 const labelStyle = 'text-center text-green text-md-end'
 const inputContainerStyle = 'row m-0 p-0 col-12 col-md-5 justify-content-center justify-content-md-start'
+const statisticNumberStyle = 'col-12 m-0 p-0 my-1 text-center text-lg-start'
 
 const seasonStore = useSeasonStore()
 const deckStore = useDeckStore()
@@ -36,7 +37,7 @@ onMounted(async () => {
   OnAppearAnimation('hide-up')
 })
 
-const FetchTournamentsOfPlayerOfSeason = (async () => {
+const FetchTournamentsOfDeckOfSeason = (async () => {
   deckStatistics.value = undefined
   const seasonValue = selectedSeason.value === '' ? null : selectedSeason.value
   await tournamentStore.FetchTournamentsResultsOfDeck(props.targetDeck.id, seasonValue)
@@ -61,7 +62,7 @@ const FetchTournamentsOfPlayerOfSeason = (async () => {
               </div>
               <div :class="inputContainerStyle">
                 <div class="row col-12">
-                  <div class="row col-12 m-0 p-0 my-1">
+                  <div :class="statisticNumberStyle">
                     {{ deckStatistics.tournaments }}
                   </div>
                 </div>
@@ -74,7 +75,7 @@ const FetchTournamentsOfPlayerOfSeason = (async () => {
               </div>
               <div :class="inputContainerStyle">
                 <div class="row col-12">
-                  <div class="row col-12 m-0 p-0 my-1">
+                  <div :class="statisticNumberStyle">
                     {{ deckStatistics.wins == null ? 0 : deckStatistics.wins }}
                   </div>
                 </div>
@@ -87,7 +88,7 @@ const FetchTournamentsOfPlayerOfSeason = (async () => {
               </div>
               <div :class="inputContainerStyle">
                 <div class="row col-12">
-                  <div class="row col-12 m-0 p-0 my-1">
+                  <div :class="statisticNumberStyle">
                     {{ (deckStatistics.wins === '0' || deckStatistics.wins === null) ? 0 : (deckStatistics.wins * 100) / deckStatistics.tournaments }}%
                   </div>
                 </div>
@@ -100,7 +101,7 @@ const FetchTournamentsOfPlayerOfSeason = (async () => {
               </div>
               <div :class="inputContainerStyle">
                 <div class="row col-12">
-                  <div class="row col-12 m-0 p-0 my-1">
+                  <div :class="statisticNumberStyle">
                     {{ (deckStatistics.points === null ? 0 : deckStatistics.points) + ' (' + (deckStatistics.points_percent === null ? 0 : deckStatistics.points_percent) + '%)' }}
                   </div>
                 </div>
@@ -134,12 +135,12 @@ const FetchTournamentsOfPlayerOfSeason = (async () => {
       <template v-if="seasonStore.seasons === undefined">
         <LoadingGadget/>
       </template>
-      <div v-else class="row w-100 m-0 p-0 fs-5 p-3">
-        <h3 class="w-100 text-white">
+      <div v-else class="row col-100 m-0 p-0 fs-5 p-3 justify-content-center justify-content-lg-start">
+        <h3 class="col-100 text-white text-center text-lg-start">
           Filtrar por temporada
         </h3>
-        <div class="col-6 col-lg-2 fs-6 px-5">
-          <select class="myInput px-2 w-100 fs-4 text-center" id="season-select" @change="FetchTournamentsOfPlayerOfSeason" v-model="selectedSeason">
+        <div class="col-6 col-lg-2 fs-6 px-1 px-lg-5">
+          <select class="myInput px-2 w-100 fs-4 text-center" id="season-select" @change="FetchTournamentsOfDeckOfSeason" v-model="selectedSeason">
             <option 
             v-for="season in seasonStore.seasons"
             :key="season.id"

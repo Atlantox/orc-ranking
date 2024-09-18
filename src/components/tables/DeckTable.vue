@@ -38,9 +38,9 @@ onMounted(() => {
                 v-for="deck in props.decks"
                 :key="deck.id">
                     <td class="border-green text-center">{{ deck.name }}</td>
-                    <td class="border-green text-center fs-4">
-                        <span v-for="color, id in deck.colors" :key="id" :class="'text-' + color">
-                            {{ color }} &nbsp;
+                    <td class="border-green text-center fs-4 align-middle">
+                        <span v-for="color, id in deck.colors" :key="id" :class="'my-auto align-middle text-' + color">
+                            {{ color + '  ' }} 
                         </span>
                     </td>
                     <td class="border-green text-center">{{ deck.participations }}</td>

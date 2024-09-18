@@ -57,7 +57,7 @@ const FetchTournamentsOfSeason = (async () => {
 </script>
 
 <template>
-  <div class="row w-100 m-0 p-0 px-5 bg-dark-grey mt-5 pt-5">
+  <div class="row w-100 m-0 p-0 px-3 px-lg-5 bg-dark-grey mt-5 pt-5">
     <div class="row m-0 p-0 justify-content-center justify-content-lg-start">
       <div class="col-4 col-lg-2 col-xl-1 ps-0 ps-lg-5">
         <BackButtonGadget :back_to="sessionStore.authenticated ? 'dashboard' : 'home'"/>
@@ -80,11 +80,11 @@ const FetchTournamentsOfSeason = (async () => {
       v-if="seasonStore.seasons === undefined">
         <LoadingGadget/>
       </template>
-      <div v-else class="row w-100 m-0 p-0 fs-5 p-3">
-        <h3 class="w-100 text-white">
+      <div v-else class="row col-100 m-0 p-0 fs-5 p-3 justify-content-center justify-content-lg-start">
+        <h3 class="col-100 text-white text-center text-lg-start">
           Filtrar por temporada
         </h3>
-        <div class="col-6 col-lg-2 fs-6 px-5">
+        <div class="col-6 col-lg-2 fs-6 px-1 px-lg-5">
           <select class="myInput px-2 w-100 fs-4 text-center" id="season-select" @change="FetchTournamentsOfSeason" v-model="selectedSeason">
             <option 
             v-for="season in seasonStore.seasons"
@@ -103,7 +103,7 @@ const FetchTournamentsOfSeason = (async () => {
         <LoadingGadget/>
       </template>
       <template v-else>        
-        <div class="w-100 m-0 p-3 px-5 table-container text-green">
+        <div class="w-100 m-0 p-3 px-1 px-lg-5 table-container text-green">
           <TournamentTable
             :tournaments="tournamentStore.tournaments"/>
         </div>

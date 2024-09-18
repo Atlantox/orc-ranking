@@ -21,7 +21,7 @@ onMounted(async ()  => {
 </script>
 
 <template>
-  <div class="row w-100 m-0 p-0 px-5 bg-dark-grey mt-5 pt-5">
+  <div class="row w-100 m-0 p-0 px-3 px-lg-5 bg-dark-grey mt-5 pt-5">
     <div class="row m-0 p-0 justify-content-center justify-content-lg-start">
       <div class="col-4 col-lg-2 col-xl-1 ps-0 ps-lg-5">
         <BackButtonGadget :back_to="sessionStore.authenticated ? 'dashboard' : 'home'"/>
@@ -45,7 +45,7 @@ onMounted(async ()  => {
       </template>
       <template v-else>
         
-        <div class="w-100 m-0 p-3 px-5 table-container text-green">
+        <div class="w-100 m-0 p-3 px-1 px-lg-5 table-container text-green">
           <PlayerTable
             :players="playerStore.players"/>
         </div>
