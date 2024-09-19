@@ -96,47 +96,49 @@ onMounted(async () => {
                 </div>                
 
                 <div :class="formRowStyle">
-                    <table  class="col-12 col-lg-10 text-white mt-5">
-                        <thead class="text-center">
-                            <tr>
-                                <th class="p-1 border-green h1 text-white bg-black" colspan="4">Participantes</th>
-                            </tr>
-                            <tr>
-                                <th class="p-1 border-green bg-dark-grey">Jugador</th>
-                                <th class="p-1 border-green bg-dark-grey">Deck</th>
-                                <th class="p-1 border-green bg-dark-grey">Puntos/Victorias</th>
-                                <th class="p-1 border-green bg-dark-grey">Ganador</th>                                    
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr
-                            v-for="participant, index in props.targetTournament.results"
-                            :key="index"
-                            class="text-center"
-                            >
-                                <td class="p-1 border-green">
-                                    <div class="w-100 px-2">
-                                        {{ participant.player }}
-                                    </div>
-                                </td>
-                                <td class="p-1 border-green">
-                                    <div class="w-100 px-2">
-                                        {{ participant.deck }}
-                                    </div>
-                                </td>
-                                <td class="p-1 border-green">
-                                    <div class="w-100 px-2">
-                                        {{ participant.wins }}
-                                    </div>
-                                </td>
-                                <td class="p-1 border-green">
-                                    <div class="w-100 px-2">
-                                        <i :class="'fa fa-circle text-' + (participant.winner === 0 ? 'danger' : 'green')"></i>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table  class="col-12 col-lg-10 mx-auto text-white mt-5">
+                            <thead class="text-center">
+                                <tr>
+                                    <th class="p-1 border-green h1 text-white bg-black" colspan="4">Participantes</th>
+                                </tr>
+                                <tr>
+                                    <th class="p-1 border-green bg-dark-grey">Jugador</th>
+                                    <th class="p-1 border-green bg-dark-grey">Deck</th>
+                                    <th class="p-1 border-green bg-dark-grey">Puntos/Victorias</th>
+                                    <th class="p-1 border-green bg-dark-grey">Ganador</th>                                    
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr
+                                v-for="participant, index in props.targetTournament.results"
+                                :key="index"
+                                class="text-center"
+                                >
+                                    <td class="p-1 border-green">
+                                        <div class="w-100 px-2">
+                                            {{ participant.player }}
+                                        </div>
+                                    </td>
+                                    <td class="p-1 border-green">
+                                        <div class="w-100 px-2">
+                                            {{ participant.deck }}
+                                        </div>
+                                    </td>
+                                    <td class="p-1 border-green">
+                                        <div class="w-100 px-2">
+                                            {{ participant.wins }}
+                                        </div>
+                                    </td>
+                                    <td class="p-1 border-green">
+                                        <div class="w-100 px-2">
+                                            <i :class="'fa fa-circle text-' + (participant.winner === 0 ? 'danger' : 'green')"></i>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
