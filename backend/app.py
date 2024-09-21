@@ -43,4 +43,3 @@ if __name__ == '__main__':
         app.register_blueprint(controller)
 
     app.run()
-    #app.run('172.31.2.248')

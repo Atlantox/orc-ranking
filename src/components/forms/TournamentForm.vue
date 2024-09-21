@@ -31,6 +31,7 @@ const tournamentFormat = ref('')
 const tournamentObservation = ref('')
 const tournamentParticipants = ref([])
 const participantsIds = ref(0)
+const tournamentPot = ref(0)
 
 const formRowStyle = 'row m-0 p-0 justify-content-center my-2'
 const labelContainerStyle = 'row m-0 p-0 col-12 col-md-3'
@@ -84,6 +85,12 @@ async function ValidateForm() {
             'max': 100, 
             'required': true, 
             'value': tournamentFormat.value 
+        },
+        'pot':{
+            'min': 1,
+            'max':12,
+            'required': true,
+            'value': tournamentPot.value
         },
         'observation':{
             'min': 0, 
@@ -161,6 +168,7 @@ async function ValidateForm() {
             const cleanData = {
                 'date': validationStructure['date']['value'],
                 'format': tournamentFormat.value,
+                'pot': validationStructure['pot']['value'],
                 'observation': validationStructure['observation']['value'],
                 'participants': cleanParticipants
             }
@@ -296,6 +304,17 @@ const DeactivateTournament = (async () => {
                                 <span v-else class="text-center text-lg-start text-white">
                                     {{ props.targetTournament.data.format }}
                                 </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div :class="formRowStyle">
+                        <div :class="labelContainerStyle">
+                            <label :class="labelStyle" for="pot"><strong>Pote</strong></label>
+                        </div>
+                        <div :class="inputContainerStyle">
+                            <div class="row col-6 col-lg-4">
+                                <input type="text" class="myInput" maxlength="50" id="pot" autofocus v-model="tournamentPot" onkeypress="return ((event.charCode >= 48 && event.charCode <= 57) || event.charCode === 46)">
                             </div>
                         </div>
                     </div>

@@ -121,6 +121,19 @@ def ValidateDateRange(initialDate, finalDate):
 
     return result
 
+def ValidateFloatNumber(number:str):
+    validation = True
+    potSplits = number.split('.')
+    if len(potSplits) > 2:
+        validation = 'El pote solo puede contener un punto'
+    else:
+        for split in potSplits:
+            if split != '':
+                if [split.isdigit(), split.isnumeric()] != [True, True]:
+                    validation = 'El pote debe ser un número'
+    
+    return validation
+
 def JsonExists(request):
     recievedData = None
     error = ''

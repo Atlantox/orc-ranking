@@ -14,7 +14,7 @@ TOURNAMENT_LENGTH_CONFIG = {
     'observation': {'min': 0, 'max': 200}
 }
 
-REQUIRED_FIELDS = ['date', 'format', 'participants', 'observation']
+REQUIRED_FIELDS = ['date', 'format', 'participants', 'observation', 'pot']
 
 tournamentController = Blueprint('tournament', __name__)
 
@@ -63,6 +63,12 @@ def CreateTournament():
             if tournamentDate >= now:
                 error = 'La fecha de inicio del torneo no puede ser posterior a la fecha actual'
                 statusCode = 400
+
+    if error == '':
+        validation = ValidateFloatNumber(cleanData['pot'])
+        if type(validation) is str:
+            error = validation    
+            statusCode = 400
 
     if error == '':
         gameFormatModel = GameFormatModel(connection)
@@ -335,6 +341,43 @@ def GetSeasonStatistics(seasonId):
 
     if error == '':
         response['statistics'] = statistics
+    else:
+        response['message'] = error
+
+    return jsonify(response), statusCode
+
+
+@tournamentController.route('/tournaments/pot/<int:seasonId>/<int:formatId>', methods=['GET'])
+def GetPotOfSeason(seasonId, formatId):
+    connection = GetConnection()
+    tournamentModel = TournamentModel(connection)
+    response = {}
+    statusCode = 200
+    error = ''
+
+    seasonModel = SeasonModel(connection)
+    targetSeason = seasonModel.GetSeasonById(seasonId)
+    if targetSeason is None:
+        error = 'Temporada no encontrada'
+        statusCode = 404
+
+    if error == '':
+        formatModel = GameFormatModel(connection)
+        targetFormat = formatModel.GetFormatById(formatId)
+        if targetFormat is None:
+            error = 'Formato no encontrado'
+            statusCode = 404
+
+    if error == '':
+        potTotal = tournamentModel.GetTotalPotOfSeason(seasonId, formatId)
+        if type(potTotal) is str:
+            error = potTotal
+            statusCode = 500
+
+    response['success'] = error == ''
+
+    if error == '':
+        response['pot'] = potTotal
     else:
         response['message'] = error
 

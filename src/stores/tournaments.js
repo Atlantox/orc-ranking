@@ -565,6 +565,42 @@ const useTournamentStore = defineStore('tournaments', {
             return statistics
         },
 
+        async GetSeasonPot(season, format){
+            var pot = false
+            const sessionStore = useSessionStore()
+            const utilsStore = useUtilsStore()
+            try{
+                let url = apiConfig.base_url + '/tournaments/pot/' + season + '/' + format
+                var fetchHeaders = {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                }
+
+                if (sessionStore.authenticated === true)
+                    fetchHeaders['Authorization'] = 'Bearer ' + sessionStore.token
+
+                let fetchConfig = {
+                    method: 'GET',
+                    headers: fetchHeaders
+                }
+
+                let response = await fetch(url, fetchConfig)
+                let json = await response.json()
+                let result = await json
+                
+                if(result.success){
+                    pot = result.pot                    
+                }
+                else
+                    utilsStore.ShowModal('Error', result.message, 'error')
+            }
+            catch(error){
+                utilsStore.ShowModal('Error', 'Ocurrió un error inesperado al calcular el pote de la temporada: ' + error.message, 'error')
+            }
+
+            return pot
+        },
+
         async GetIndividualPlayersOfSeason(season){
             var playerCount = false
             const sessionStore = useSessionStore()

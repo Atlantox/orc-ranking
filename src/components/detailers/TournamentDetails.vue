@@ -41,6 +41,7 @@ onMounted(async () => {
                                 </div>
                             </div>
                         </div>
+
                         <div :class="formRowStyle">
                             <div :class="labelContainerStyle">
                                 <label :class="labelStyle" for="format">Formato</label>
@@ -49,6 +50,19 @@ onMounted(async () => {
                                 <div class="row col-12">
                                     <span class="text-center text-lg-start text-white">
                                         {{ props.targetTournament.data.format }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div :class="formRowStyle">
+                            <div :class="labelContainerStyle">
+                                <label :class="labelStyle" for="format">Pote</label>
+                            </div>
+                            <div :class="inputContainerStyle">
+                                <div class="row col-12">
+                                    <span class="text-center text-lg-start text-white">
+                                        {{ props.targetTournament.data.pot }}$
                                     </span>
                                 </div>
                             </div>

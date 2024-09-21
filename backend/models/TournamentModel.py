@@ -7,6 +7,7 @@ class TournamentModel(BaseModel):
             CONCAT(YEAR(t.date), '-', LPAD(MONTH(t.date), 2, '0'), '-', LPAD(DAY(t.date), 2, '0')) AS date, 
             t.format,
             t.observation,
+            t.pot,
             s.name as season,
             w.name AS winner,
             p.participants,
@@ -43,8 +44,10 @@ class TournamentModel(BaseModel):
         targetFormat = tournamentData['format']
         targetSeason = tournamentData['season']
         tournamentObservation = tournamentData['observation']
-        sql= "INSERT INTO tournament (date, format, observation, season) VALUES (%s, %s, %s, %s)"
-        args = (tournamentDate, targetFormat, tournamentObservation, targetSeason)
+        tournamentPot = tournamentData['pot']
+
+        sql= "INSERT INTO tournament (date, format, observation, pot, season) VALUES (%s, %s, %s, %s, %s)"
+        args = (tournamentDate, targetFormat, tournamentObservation, tournamentPot, targetSeason)
 
         try:
             cursor.execute(sql, args)
@@ -237,35 +240,7 @@ class TournamentModel(BaseModel):
     
     def GetLastTournament(self):
         cursor = self.connection.connection.cursor()
-        sql = '''
-        SELECT
-            t.id,
-            CONCAT(YEAR(t.date), '-', LPAD(MONTH(t.date), 2, '0'), '-', LPAD(DAY(t.date), 2, '0')) AS date, 
-            t.format,
-            w.name AS winner,
-            p.participants
-        FROM
-            tournament t
-        INNER JOIN (
-            SELECT
-                tr.tournament,
-                COUNT(tr.id) AS participants
-            FROM
-                tournament_result tr
-            GROUP BY
-                tr.tournament
-        ) p ON t.id = p.tournament
-        INNER JOIN (
-            SELECT
-                tr.tournament,
-                CONCAT(pl.name, ' - ', dc.name) as name
-            FROM
-                tournament_result tr
-            INNER JOIN player pl ON tr.player = pl.id
-            INNER JOIN deck dc ON dc.id = tr.deck
-            WHERE
-                tr.winner = 1
-        ) w ON t.id = w.tournament
+        sql = self.GET_TOURNAMENTS_TEMPLATE + '''
         WHERE
             t.season = (SELECT id FROM season WHERE active = 1) AND
             t.active = 1
@@ -304,18 +279,9 @@ class TournamentModel(BaseModel):
     
     def GetTournamentById(self, tournamentId):
         cursor = self.connection.connection.cursor()
-        sql = '''
-            SELECT
-            id,
-            CONCAT(YEAR(date), '-', LPAD(MONTH(date), 2, '0'), '-', LPAD(DAY(date), 2, '0')) AS date, 
-            format,
-            observation,
-            season,
-            active
-            FROM
-            tournament
+        sql = self.GET_TOURNAMENTS_TEMPLATE +  '''
             WHERE
-            id = %s
+            t.id = %s
         '''
         args = (tournamentId,)
         result = True
@@ -639,7 +605,6 @@ class TournamentModel(BaseModel):
 
         return result    
     
-    
     def GetSeasonStatistics(self, seasonId):
         cursor = self.connection.connection.cursor()
         args = (seasonId, )
@@ -724,6 +689,34 @@ class TournamentModel(BaseModel):
 
         return result
     
+    def GetTotalPotOfSeason(self, seasonId, formatId):
+        cursor = self.connection.connection.cursor()
+        sql = '''
+        SELECT 
+        SUM(tournament.pot) as pot 
+        FROM
+        tournament 
+        INNER JOIN game_format ON game_format.name = tournament.format
+        WHERE 
+        tournament.season = %s AND 
+        game_format.id = %s
+        '''
+
+        args = (seasonId, formatId)
+        try:
+            cursor.execute(sql, args)
+            result = cursor.fetchone()
+
+            if result is None:
+                result = 0        
+            else:
+                result = result['pot']        
+        except:
+            result = 'Ocurrió un error al traer el número de jugadores individuales' 
+
+        return result
+
+
     def GetTournamentsIndividualPlayersOfSeason(self, seasonId):
         cursor = self.connection.connection.cursor()
         sql = '''

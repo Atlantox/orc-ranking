@@ -18,6 +18,19 @@ const lastTournament = ref(undefined)
 const tournamentsRanking = ref(undefined)
 const playedFormats = ref(undefined)
 const seasonStatistics = ref(undefined)
+const seasonPot = ref(undefined)
+
+const inTransition = ref({
+  'players': false,
+  'decks': false,
+  'colors': false
+})
+
+const rankingToggler = ref({
+  'players': [],
+  'decks': [],
+  'colors': []
+})
 
 onMounted( async () => {
   currentSeason.value = await seasonStore.GetCurrentSeason()
@@ -56,15 +69,67 @@ const FetchRanking = ( async() => {
     }
   }
 
-  tournamentsRanking.value = await tournamentStore.GetTournamentsRankingOfSeasonAndFormat(targetSeasonId, targetGameFormat)
+  const ranking = await tournamentStore.GetTournamentsRankingOfSeasonAndFormat(targetSeasonId, targetGameFormat)
+
+  tournamentsRanking.value = {
+    players: [],
+    decks: [],
+    colors: []
+  }
+
+  rankingToggler.value = {
+    'players': ranking.players,
+    'decks': ranking.decks,
+    'colors': ranking.colors,
+  }
+
   seasonStatistics.value = await tournamentStore.GetSeasonStatistics(targetSeasonId)
+  seasonPot.value = await tournamentStore.GetSeasonPot(targetSeasonId, targetGameFormat)
 
   fetchReady.value = await true
   OnAppearAnimation('hide-up')
 })
 
-const FetchSeasonStatistics = ((seasonId) => {
-  alert(seasonId.target)
+
+const ToggleDisplayRanking = (async (rankingType) => {
+  if(inTransition.value[rankingType] === true)
+    return
+  else
+    inTransition.value[rankingType] = true
+
+
+  let target = undefined
+
+  if(rankingType === 'players')
+    target = tournamentsRanking.value.players
+  else if (rankingType === 'decks')
+    target = tournamentsRanking.value.decks
+  else if (rankingType === 'colors')
+    target = tournamentsRanking.value.colors
+
+  const targetSize = target.length
+  let iterations = targetSize
+  if(iterations === 0){
+    // element is empty
+    iterations = rankingToggler.value[rankingType].length 
+  }
+  else{
+    rankingToggler.value[rankingType] = target.map((x) => x) // creating a copy
+  }
+
+  for(let i = 0; i < iterations; i++){
+    if(targetSize === 0)
+      target.push(rankingToggler.value[rankingType][i])
+    else
+      target.pop()
+
+    await new Promise(r => setTimeout(r, 5));
+    OnAppearAnimation('hide-up')
+  }
+
+  console.log(rankingToggler.value[rankingType])
+
+  inTransition.value[rankingType] = false
 })
 
 </script>
@@ -88,7 +153,7 @@ const FetchSeasonStatistics = ((seasonId) => {
           </template>
           <template v-else>
             <div class="col-12 text-center py-4 fs-3 hide-up animated-1 d-flex justify-content-center">
-              <select class="myInput px-4 mx-3" id="season-select" @change="FetchRanking(); FetchSeasonStatistics();">
+              <select class="myInput px-4 mx-3" id="season-select" @change="FetchRanking()">
                 <option 
                 v-for="season in seasonStore.seasons"
                 :key="season.id"
@@ -119,12 +184,27 @@ const FetchSeasonStatistics = ((seasonId) => {
           </template>
           <template v-else>
             <div class="row col-12 m-0 p-0 justify-content-center hide-up animated-1">
+              <div class="col-12 text-center mt-5 mb-2">
+                <h3 class="text-green h2 m-0">
+                  Pote acumulado
+                </h3>
+                <div class="d-flex flex-column justify-content-start align-items-center orc-font fs-2 mx-auto" style="height:175px; width:175px;">
+                  <span class="w-100 d-block">
+                    <i class="fa fa-inbox text-center mx-auto"></i>
+                  </span>
+                  <span class="w-100 fs-2 orc-font d-block">
+                    {{ seasonPot }}$
+                  </span>                
+                </div>
+              </div>
               <div class="col-12 col-md-3 text-center py-4 side-border-green">
-                <h3 class="w-100 text-center text-green">
-                  Jugadores
+                <h3 class="w-100 text-center text-white mb-3">
+                  <span class="cursor-pointer orc-font h2 ranking-displayer" @click="ToggleDisplayRanking('players')">
+                    Jugadores
+                  </span>
                 </h3>
                 <article 
-                class="row m-0 p-0 my-1"
+                class="row m-0 p-0 my-1 hide-up animated-1"
                 v-for="player, index in tournamentsRanking.players"
                 :key="index"
                 >
@@ -138,16 +218,18 @@ const FetchSeasonStatistics = ((seasonId) => {
               </div>
       
               <div class="col-12 col-md-5 text-center py-4 side-border-green ">
-                <h3 class="w-100 text-center text-green">
-                  Decks
+                <h3 class="w-100 text-center text-black mb-3">
+                  <span class="cursor-pointer orc-font h2 ranking-displayer" @click="ToggleDisplayRanking('decks')">
+                    Decks
+                  </span>
                 </h3>
                 <article 
-                class="row m-0 p-0 my-1"
+                class="row m-0 p-0 my-1 hide-up animated-1"
                 v-for="deck, index in tournamentsRanking.decks"
                 :key="index"
                 >
-                  <span class="col-6 text-end">{{ deck.name }}</span>
-                  <span class="col-6 text-start my-auto">
+                  <span class="col-8 col-lg-6 text-end">{{ deck.name }}</span>
+                  <span class="col-4 col-lg-6 text-start my-auto">
                     <div class="percent" :style="'width:' + deck.percent + '%'">
                       {{ deck.percent }}%
                     </div>
@@ -156,11 +238,13 @@ const FetchSeasonStatistics = ((seasonId) => {
               </div>
       
               <div class="col-12 col-md-3 text-center py-4 side-border-green">
-                <h3 class="w-100 text-center text-green">
-                  Colores
+                <h3 class="w-100 text-center text-black mb-3">
+                  <span class="cursor-pointer orc-font h2 ranking-displayer" @click="ToggleDisplayRanking('colors')">
+                    Colores
+                  </span>
                 </h3>
                 <article 
-                class="row m-0 p-0 my-1"
+                class="row m-0 p-0 my-1 hide-up animated-1"
                 v-for="color, index in tournamentsRanking.colors"
                 :key="index"
                 >
@@ -370,6 +454,32 @@ h2{
 
 .percent{
   background-color:rgba(255, 184, 92, 0.322);
+}
+
+.fa-inbox{
+  font-size:85px;
+}
+
+.ranking-displayer{
+  padding-bottom: 8px !important;
+  padding-left: 7px !important;
+  padding-right: 7px !important;
+  border-radius: 10px;
+  background: white;
+  overflow: hidden;
+  clip-path: polygon(
+    0% 0%,
+    100% 0%,
+    100% 80%,
+    65% 80%,
+    50% 100%,
+    35% 80%,
+    0% 80%
+  );
+}
+
+.ranking-displayer:hover{
+  transform: scale(1.1);
 }
 
 </style>
