@@ -5,24 +5,31 @@ class DeckModel(BaseModel):
     def GetDecks(self):
         cursor = self.connection.connection.cursor()
         result = []
+
         sql = '''
             SELECT
             deck.id,
             deck.name,
             SUM(CASE WHEN t_result.winner = 1 THEN 1 ELSE 0 END) as wins,
-            COUNT(t_result.id) as participations
+            COUNT(t_result.id) as participations,
+            (t_result.points / t_result.tournaments) as avg_points
             FROM 
             deck 
             LEFT JOIN (
                 SELECT 
                 tournament_result.id,
                 tournament_result.winner,
-                tournament_result.deck
+                tournament_result.deck,
+                COUNT(tournament_result.tournament) as tournaments,
+                SUM(tournament_result.wins) as points
                 FROM
                 tournament_result
                 INNER JOIN tournament ON tournament.id = tournament_result.tournament
                 WHERE
+                tournament.active = 1 AND
                 tournament.season = (SELECT id FROM season WHERE active = 1)
+                GROUP BY
+                tournament_result.deck
             ) t_result ON t_result.deck = deck.id
             GROUP BY
             deck.id
@@ -49,20 +56,25 @@ class DeckModel(BaseModel):
             deck.id,
             deck.name,
             SUM(CASE WHEN t_result.winner = 1 THEN 1 ELSE 0 END) as wins,
-            COUNT(t_result.id) as participations
+            COUNT(t_result.id) as participations,
+            (t_result.points / t_result.tournaments) as avg_points
             FROM 
             deck 
             LEFT JOIN (
                 SELECT 
                 tournament_result.id,
                 tournament_result.winner,
-                tournament_result.deck
+                tournament_result.deck,
+                COUNT(tournament_result.tournament) as tournaments,
+                SUM(tournament_result.wins) as points
                 FROM
                 tournament_result
                 INNER JOIN tournament ON tournament.id = tournament_result.tournament
                 WHERE
                 tournament.active = 1 AND
                 tournament.season = %s
+                GROUP BY
+                tournament_result.deck
             ) t_result ON t_result.deck = deck.id
             GROUP BY
             deck.id

@@ -28,6 +28,7 @@ onMounted(() => {
                     <th class="text-center fw-normal bg-black border-green">Nombre</th>
                     <th class="text-center fw-normal bg-black border-green">Colores</th>
                     <th class="text-center fw-normal bg-black border-green">Participaciones</th>
+                    <th class="text-center fw-normal bg-black border-green">Promedio de puntos por torneo</th>
                     <th class="text-center fw-normal bg-black border-green">Victorias</th>
                     <th class="text-center fw-normal bg-black border-green">Ver</th>
                 </tr>
@@ -44,6 +45,7 @@ onMounted(() => {
                         </span>
                     </td>
                     <td class="border-green text-center">{{ deck.participations }}</td>
+                    <td class="border-green text-center">{{ deck.avg_points === null ? 0 : Math.round(deck.avg_points * 100) / 100 }}</td>
                     <td class="border-green text-center">{{ deck.wins }}</td>
                     <td class="border-green">
                         <div class="row m-0 p-0 text-center justify-content-center">
