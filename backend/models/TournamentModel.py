@@ -245,6 +245,8 @@ class TournamentModel(BaseModel):
         WHERE
             t.season = (SELECT id FROM season WHERE active = 1) AND
             t.active = 1
+        GROUP BY
+        t.id
         ORDER BY
         t.date DESC
         LIMIT 1
