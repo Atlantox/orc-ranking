@@ -65,6 +65,7 @@ def CreateTournament():
                 statusCode = 400
 
     if error == '':
+        cleanData['pot'] = str(cleanData['pot'])
         validation = ValidateFloatNumber(cleanData['pot'])
         if type(validation) is str:
             error = validation    
@@ -230,6 +231,10 @@ def GetLastTournament():
     statusCode = 200
 
     tournament = tournamentModel.GetLastTournament()
+    
+    if type(tournament) is str:
+        tournament = []
+
     response = {
         'success': True,
         'tournament': tournament
@@ -300,6 +305,8 @@ def GetTournamentsRankingOfSeason(seasonId, formatId):
         if targetFormat is None:
             error = 'Formato no encontrado'
             statusCode = 404
+
+    
 
     if error == '':
         ranking = tournamentModel.GetTournamentsRankingOfSeasonAndFormat(seasonId, targetFormat)

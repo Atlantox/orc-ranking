@@ -39,7 +39,7 @@ onMounted( async () => {
   </template>
   <template v-else>    
     <PageTitle
-      :title="'Torneo Nº ' + targetTournament.data.id"
+      :title="'Torneo  ' + (targetTournament.data.id - 1)"
     />
     <TournamentDetails
     :targetTournament = "targetTournament"

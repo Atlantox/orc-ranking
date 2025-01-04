@@ -40,6 +40,46 @@ class DeckModel(BaseModel):
             result = self.GetDecksWithColors(decks)
     
         return result
+    
+    def GetDecksBySeason(self, seasonId):
+        cursor = self.connection.connection.cursor()
+        result = []
+        sql = '''
+            SELECT
+            deck.id,
+            deck.name,
+            SUM(CASE WHEN t_result.winner = 1 THEN 1 ELSE 0 END) as wins,
+            COUNT(t_result.id) as participations
+            FROM 
+            deck 
+            LEFT JOIN (
+                SELECT 
+                tournament_result.id,
+                tournament_result.winner,
+                tournament_result.deck
+                FROM
+                tournament_result
+                INNER JOIN tournament ON tournament.id = tournament_result.tournament
+                WHERE
+                tournament.active = 1 AND
+                tournament.season = %s
+            ) t_result ON t_result.deck = deck.id
+            GROUP BY
+            deck.id
+            ORDER BY
+            deck.name
+            '''
+        args = (seasonId,)
+        try:
+            cursor.execute(sql, args)
+            decks = cursor.fetchall()
+        except:
+            decks = False
+
+        if decks != False:
+            result = self.GetDecksWithColors(decks)
+    
+        return result
 
     def CreateDeck(self, deckData):
         name = deckData['name']

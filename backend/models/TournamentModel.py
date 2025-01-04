@@ -8,6 +8,7 @@ class TournamentModel(BaseModel):
             t.format,
             t.observation,
             t.pot,
+            SUM(tr.wins) as total_points,
             s.name as season,
             w.name AS winner,
             p.participants,
@@ -253,7 +254,7 @@ class TournamentModel(BaseModel):
         try:
             cursor.execute(sql)
             lastTournament = cursor.fetchone()
-            if lastTournament is None:
+            if lastTournament['id'] is None:
                 result = []
         except:
             result = 'Hubo un error al obtener el último torneo'

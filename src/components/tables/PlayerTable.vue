@@ -28,6 +28,7 @@ onMounted(() => {
                     <th class="text-center fw-normal bg-black border-green">Nombre</th>
                     <th class="text-center fw-normal bg-black border-green">Puntos totales</th>
                     <th class="text-center fw-normal bg-black border-green">Torneos participados</th>
+                    <th class="text-center fw-normal bg-black border-green">Promedio de puntos por torneo</th>
                     <th class="text-center fw-normal bg-black border-green">Victorias</th>
                     <th class="text-center fw-normal bg-black border-green">Ver</th>
                 </tr>
@@ -40,6 +41,7 @@ onMounted(() => {
                     <td class="border-green text-center">{{ player.name }}</td>
                     <td class="border-green text-center">{{ player.points === null ? 0 : player.points }}</td>
                     <td class="border-green text-center">{{ player.tournaments === null ? 0 : player.tournaments }}</td>
+                    <td class="border-green text-center">{{ player.tournaments === null ? 0 : Math.round(player.avg_points * 100) / 100 }}</td>
                     <td class="border-green text-center">{{ player.wins === null ? 0 : player.wins }}</td>
                     <td class="border-green">
                         <div class="row m-0 p-0 text-center justify-content-center">

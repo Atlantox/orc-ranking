@@ -29,6 +29,12 @@ const selectedSeason = ref('')
 
 onMounted(async ()  => {
   await seasonStore.FetchSeasons()
+
+  seasonStore.seasons.forEach((s) => {
+    if(s.active === 1)
+      selectedSeason.value = s.id
+  })
+
   await tournamentStore.FetchCurrentTournaments()
 
   const filter = route.params.filter
@@ -90,6 +96,7 @@ const FetchTournamentsOfSeason = (async () => {
             v-for="season in seasonStore.seasons"
             :key="season.id"
             :value="season.id"
+            :selected="season.active === 1"
             class="align-middle text-center"
             >
               Season {{ season.name }}

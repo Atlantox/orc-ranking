@@ -83,12 +83,23 @@ onMounted(async () => {
         
                         <div :class="formRowStyle">
                             <div :class="labelContainerStyle">
-                                <label :class="labelStyle" for="observation">Ativo</label>
+                                <label :class="labelStyle" for="observation">Activo</label>
                             </div>
                             <div :class="inputContainerStyle">
                                 <i :class="'text-center text-lg-start fa fa-circle text-' + (props.targetTournament.data.active === 0 ? 'danger' : 'green')"></i>
                             </div>
-                        </div>                        
+                        </div>   
+                        
+                        <div :class="formRowStyle">
+                            <div :class="labelContainerStyle">
+                                <label :class="labelStyle" for="observation">Puntos totales</label>
+                            </div>
+                            <div :class="inputContainerStyle">
+                                <span class="text-center text-lg-start text-white">
+                                    {{ props.targetTournament.data.total_points }}
+                                </span>
+                            </div>
+                        </div>  
                     </div>
 
                     <div class="row col-12 col-lg-4 m-0 p-0 justify-content-center">

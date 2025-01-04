@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 
 from models.UserModel import UserModel
 from models.PlayerModel import PlayerModel
+from models.SeasonModel import SeasonModel
 from models.TournamentModel import TournamentModel
 
 from helpers import *
@@ -84,6 +85,36 @@ def GetPlayers():
         'success': True,
         'players': players
     }
+
+    return jsonify(response), statusCode
+
+@playerController.route('/players/season/<int:seasonId>', methods=['GET'])
+def GetDecksBySeason(seasonId):
+    connection = GetConnection()
+    playerModel = PlayerModel(connection)
+    seasonModel = SeasonModel(connection)
+    response = {}
+    error = ''
+    statusCode = 200
+
+    targetSeason = seasonModel.GetSeasonById(seasonId)
+    if targetSeason is None:
+        error = 'Temporada no encontrada'
+        statusCode = 404
+
+    if error == '':
+        decks = playerModel.GetPlayersBySeason(seasonId)
+
+    success = error == ''
+    
+    response = {
+        'success': success,
+    }
+
+    if error == '':
+        response['players'] = decks
+    else:
+        response['message'] = error
 
     return jsonify(response), statusCode
 

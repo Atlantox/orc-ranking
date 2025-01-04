@@ -113,6 +113,39 @@ const useDeckStore = defineStore('decks', {
             }
         },
 
+        async FetchDecksBySeason(seasonId){
+            this.decks = undefined
+            const sessionStore = useSessionStore()
+            const utilsStore = useUtilsStore()
+            try{
+                let url = apiConfig.base_url + '/decks/season/' + seasonId
+                var fetchHeaders = {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                }
+
+                if (sessionStore.authenticated === true)
+                    fetchHeaders['Authorization'] = 'Bearer ' + sessionStore.token
+
+                let fetchConfig = {
+                    method: 'GET',
+                    headers: fetchHeaders
+                }
+
+                let response = await fetch(url, fetchConfig)
+                let json = await response.json()
+                let result = await json
+                if(result.success){
+                    this.decks = result.decks
+                }
+                else
+                    utilsStore.ShowModal('Error', result.message, 'error')
+            }
+            catch(error){
+                utilsStore.ShowModal('Error', 'Ocurrió un error inesperado al cargar los decks de la temporada seleccionada: ' + error.message, 'error')
+            }
+        },
+
         async FetchColors(){
             this.colors = undefined
             const sessionStore = useSessionStore()

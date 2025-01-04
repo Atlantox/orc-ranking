@@ -27,3 +27,12 @@ npm run dev
 ```sh
 npm run build
 ```
+
+
+## Last update changes
+* Tournaments total points are now visible
+* Added average points per tournament played in players table
+* Now you can add more than one participant with a single click in the tournament form
+* Players and Decks now have filters to see it by season
+* Fixed and error that don't allow create tournaments with pot "0"
+* Fixed Last tournament and season-format selects in the home view features where are not tournaments registered

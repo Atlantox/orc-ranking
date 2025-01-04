@@ -32,6 +32,7 @@ const tournamentObservation = ref('')
 const tournamentParticipants = ref([])
 const participantsIds = ref(0)
 const tournamentPot = ref(0)
+const participantAdditionNumber = ref(0)
 
 const formRowStyle = 'row m-0 p-0 justify-content-center my-2'
 const labelContainerStyle = 'row m-0 p-0 col-12 col-md-3'
@@ -141,12 +142,7 @@ async function ValidateForm() {
         else
             participantList.push(participant.player)
 
-        if(deckList.includes(participant.deck)){
-            formErrors.value.push('Algún deck está repetido ' + participant.deck)
-            error = true
-        }
-        else
-            deckList.push(participant.deck)
+        deckList.push(participant.deck)
 
         if(error === false){
             cleanParticipants.push({
@@ -191,34 +187,36 @@ async function ValidateForm() {
 
 
 const AddPartcipant = (async () => {
-    const newParticipant = {
-        id: participantsIds.value,
-        player: ref(''),
-        deck: ref(''),
-        wins: ref(''),
-        winner: ref(false)
+    for(let i = 0; i < participantAdditionNumber.value; i++){
+        const newParticipant = {
+            id: participantsIds.value,
+            player: ref(''),
+            deck: ref(''),
+            wins: ref(''),
+            winner: ref(false)
+        }
+        participantsIds.value++
+        tournamentParticipants.value.push(newParticipant)
+    
+        await new Promise(r => setTimeout(r, 50));
+        const playerId = 'player-' + newParticipant.id
+        const deckId = 'deck-' + newParticipant.id
+        $('#' + playerId).select2() 
+        $('#' + deckId).select2() 
+    
+    
+        $('#' + playerId).on('select2:select', function (e) { 
+            newParticipant.player.value = e.target.value;
+            document.getElementById('select2-' + playerId + '-container').classList.remove('border-red') 
+    
+        });
+    
+        $('#' + deckId).on('select2:select', function (e) { 
+            newParticipant.deck.value = e.target.value;
+            document.getElementById('select2-' + deckId + '-container').classList.remove('border-red') 
+    
+        });
     }
-    participantsIds.value++
-    tournamentParticipants.value.push(newParticipant)
-
-    await new Promise(r => setTimeout(r, 50));
-    const playerId = 'player-' + newParticipant.id
-    const deckId = 'deck-' + newParticipant.id
-    $('#' + playerId).select2() 
-    $('#' + deckId).select2() 
-
-
-    $('#' + playerId).on('select2:select', function (e) { 
-        newParticipant.player.value = e.target.value;
-        document.getElementById('select2-' + playerId + '-container').classList.remove('border-red') 
-
-    });
-
-    $('#' + deckId).on('select2:select', function (e) { 
-        newParticipant.deck.value = e.target.value;
-        document.getElementById('select2-' + deckId + '-container').classList.remove('border-red') 
-
-    });
 })
 
 const DeleteParticipant = ((id) =>{
@@ -231,6 +229,19 @@ const DeleteParticipant = ((id) =>{
     }
     
     tournamentParticipants.value.splice(index, 1)
+})
+
+const RefreshDecksAndPlayers = (async () => {
+    const spinIcon = document.getElementById('spin-icon')
+    if (spinIcon !== null){
+        spinIcon.classList.remove('spin-on')
+        void spinIcon.offsetWidth
+        spinIcon.classList.add('spin-on')
+    }
+
+    await playerStore.FetchPlayers()
+    await formatStore.FetchFormats()
+    await deckStore.FetchDecks()
 })
 
 const DeactivateTournament = (async () => {
@@ -341,9 +352,24 @@ const DeactivateTournament = (async () => {
                         </div>
                     </div>
 
+                    <div :class="formRowStyle" v-if="Object.keys(props.targetTournament).length === 0">
+                        <div :class="labelContainerStyle">
+                            <label :class="labelStyle" for="observation">Refrescar</label>
+                        </div>
+                        <div :class="inputContainerStyle">
+                            <div class="row col-12 col-lg-8">
+                                <button class="col-lg-6 col-md-4 col-lg-2 col-xl-2 myBtn green-btn p-1" @click.prevent="RefreshDecksAndPlayers()">
+                                    <i class="fa fa-rotate-left text-success fs-3 spin-on" id="spin-icon"></i>
+                                </button> 
+                            </div>
+                        </div>
+                    </div>
+
+                     
+
                     <div v-if="Object.keys(props.targetTournament).length !== 0" :class="formRowStyle">
                         <div :class="labelContainerStyle">
-                            <label :class="labelStyle" for="observation">Ativo</label>
+                            <label :class="labelStyle" for="observation">Activo</label>
                         </div>
                         <div :class="inputContainerStyle">
                             <i :class="'text-center text-lg-start fa fa-circle text-' + (props.targetTournament.data.active === 0 ? 'danger' : 'green')"></i>
@@ -351,78 +377,85 @@ const DeactivateTournament = (async () => {
                     </div>
 
                     <div v-if="Object.keys(props.targetTournament).length === 0" :class="formRowStyle">
-                        <table  class="col-12 col-lg-10 text-white mt-5">
-                            <thead class="text-center">
-                                <tr>
-                                    <th class="p-1 border-green h1 text-white bg-black" 
-                                    :colspan="Object.keys(props.targetTournament).length === 0 ? 5 : 4">Participantes</th>
-                                </tr>
-                                <tr>
-                                    <th class="p-1 border-green bg-dark-grey fw-normal" style="width:25%">Jugador</th>
-                                    <th class="p-1 border-green bg-dark-grey fw-normal" style="width:45%">Deck</th>
-                                    <th class="p-1 border-green bg-dark-grey fw-normal" style="width:10%">Puntos/Victorias</th>
-                                    <th class="p-1 border-green bg-dark-grey fw-normal" style="width:10%">Ganador</th>
-                                    <th v-if="Object.keys(props.targetTournament).length === 0" class="p-1 border-green bg-dark-grey" style="width:10%">
-                                        Borrar
-                                    </th>
-                                    
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr
-                                v-for="participant, index in tournamentParticipants"
-                                :key="index"
-                                >
-                                    <td class="p-1 border-green">
-                                        <div class="w-100 px-2">
-                                            <select class="select2" :id="'player-' + participant.id" v-model="participant.player">
-                                                <option value=""></option>
-                                                <option 
-                                                v-for="player in playerStore.players"
-                                                :key="player.id"
-                                                class="fw-normal" 
-                                                :value="player.id" 
-                                                >
-                                                    {{ player.name }}
-                                                </option> 
-                                            </select>
-                                        </div>
-                                    </td>
-                                    <td class="p-1 border-green">
-                                        <div class="w-100 px-2">
-                                            <select class="w-100 select2" :id="'deck-' + participant.id" v-model="participant.deck">
-                                                <option value=""></option>
-                                                <option 
-                                                v-for="deck in deckStore.decks"
-                                                :key="deck.id"
-                                                class="fw-normal" 
-                                                :value="deck.id" 
-                                                >
-                                                    {{ deck.name }}
-                                                </option> 
-                                            </select>
-                                        </div>
-                                    </td>
-                                    <td class="p-1 border-green">
-                                        <div class="w-100 px-2 d-flex justify-content-center">
-                                            <input class="col-6" type="text" onkeypress="return ((event.charCode >= 48 && event.charCode <= 57) || event.charCode === 46)" v-model="participant.wins">
-                                        </div>
-                                    </td>
-                                    <td class="p-1 border-green">
-                                        <input class="mx-auto" type="checkbox" v-model="participant.winner">
-                                    </td>
-                                    <td v-if="Object.keys(props.targetTournament).length === 0" class="p-3 border-green">
-                                        <button class="col-12 myBtn green-btn p-1" @click.prevent="DeleteParticipant(participant.id)">
-                                            <i class="fa fa-trash text-danger fs-3"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div class="table-responsive px-5">
+                            <table class="col-12 text-white mt-5">
+                                <thead class="text-center">
+                                    <tr>
+                                        <th class="p-1 border-green h1 text-white bg-black" 
+                                        :colspan="Object.keys(props.targetTournament).length === 0 ? 5 : 4">Participantes</th>
+                                    </tr>
+                                    <tr>
+                                        <th class="p-1 border-green bg-dark-grey fw-normal" style="width:25%">Jugador</th>
+                                        <th class="p-1 border-green bg-dark-grey fw-normal" style="width:45%">Deck</th>
+                                        <th class="p-1 border-green bg-dark-grey fw-normal" style="width:10%">Puntos/Victorias</th>
+                                        <th class="p-1 border-green bg-dark-grey fw-normal" style="width:10%">Ganador</th>
+                                        <th v-if="Object.keys(props.targetTournament).length === 0" class="p-1 border-green bg-dark-grey" style="width:10%">
+                                            Acción
+                                        </th>                                    
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr
+                                    v-for="participant, index in tournamentParticipants"
+                                    :key="index"
+                                    >
+                                        <td class="p-1 border-green">
+                                            <div class="w-100 px-2">
+                                                <select class="select2 w-auto" :id="'player-' + participant.id" v-model="participant.player">
+                                                    <option value=""></option>
+                                                    <option 
+                                                    v-for="player in playerStore.players"
+                                                    :key="player.id"
+                                                    class="fw-normal" 
+                                                    :value="player.id" 
+                                                    >
+                                                        {{ player.name }}
+                                                    </option> 
+                                                </select>
+                                            </div>
+                                        </td>
+                                        <td class="p-1 border-green">
+                                            <div class="w-100 px-2">
+                                                <select class="select2 w-auto" :id="'deck-' + participant.id" v-model="participant.deck">
+                                                    <option value=""></option>
+                                                    <option 
+                                                    v-for="deck in deckStore.decks"
+                                                    :key="deck.id"
+                                                    class="fw-normal" 
+                                                    :value="deck.id" 
+                                                    >
+                                                        {{ deck.name }}
+                                                    </option> 
+                                                </select>
+                                            </div>
+                                        </td>
+                                        <td class="p-1 border-green">
+                                            <div class="w-100 px-2 d-flex justify-content-center">
+                                                <input class="col-6" type="text" onkeypress="return ((event.charCode >= 48 && event.charCode <= 57) || event.charCode === 46)" v-model="participant.wins">
+                                            </div>
+                                        </td>
+                                        <td class="p-1 border-green">
+                                            <input class="mx-auto" type="checkbox" v-model="participant.winner">
+                                        </td>
+                                        <td v-if="Object.keys(props.targetTournament).length === 0" class="p-3 border-green">
+                                            <div class="row m-0 p-0 justify-content-around">                                        
+                                                <button class="col-12 col-lg-5 myBtn green-btn p-1" @click.prevent="DeleteParticipant(participant.id)">
+                                                    <i class="fa fa-trash text-danger fs-3"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                         
                         <div :colspan="Object.keys(props.targetTournament).length === 0 ? 5 : 4">
-                            <div class="row m-0 p-3 justify-content-center">
-                                <button class="col-8 col-lg-3 myBtn green-btn shadowed-l" @click.prevent="AddPartcipant" title="Agregar participante">
+                            <div class="row m-0 p-3 justify-content-center align-items-center">
+                                <div class="col-6 col-lg-3 col-xl-1">
+                                    <input class="col-6 text-center myInput" v-model="participantAdditionNumber" type="number">
+                                </div>
+
+                                <button class="col-6 col-lg-2 myBtn green-btn shadowed-l" @click.prevent="AddPartcipant" title="Agregar participante">
                                     <i class="fa fa-plus text-green fs-1"></i>
                                 </button>
                             </div>

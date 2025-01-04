@@ -27,9 +27,9 @@ onMounted(() => {
                 <tr class="text-white fs-3">
                     <th class="text-center fw-normal bg-black border-green">Fecha</th>
                     <th class="text-center fw-normal bg-black border-green">Formato</th>
-                    <th class="text-center fw-normal bg-black border-green">Observación</th>
                     <th class="text-center fw-normal bg-black border-green">Participantes</th>
                     <th class="text-center fw-normal bg-black border-green">Ganador</th>
+                    <th class="text-center fw-normal bg-black border-green">Puntos totales</th>
                     <th class="text-center fw-normal bg-black border-green">Temporada</th>
                     <th v-if="sessionStore.authenticated" class="text-center fw-normal bg-black border-green">Activo</th>
                     <th class="text-center fw-normal bg-black border-green">Ver</th>
@@ -42,9 +42,9 @@ onMounted(() => {
                 :key="tournament.id">
                     <td class="border-green text-center">{{ tournament.date }}</td>
                     <td class="border-green text-center">{{ tournament.format }}</td>
-                    <td class="border-green text-center">{{ tournament.observation === '' ? 'Ninguna' : tournament.observation }}</td>
                     <td class="border-green text-center">{{ tournament.participants }}</td>
                     <td class="border-green text-center">{{ tournament.winner }}</td>
+                    <td class="border-green text-center">{{ tournament.total_points }}</td>
                     <td class="border-green text-center">{{ tournament.season }}</td>
                     <td v-if="sessionStore.authenticated" class="border-green text-center">
                         <i :class="'fa fa-circle text-' + (tournament.active === 0 ? 'danger' : 'green')"></i>

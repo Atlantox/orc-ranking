@@ -35,7 +35,7 @@ const rankingToggler = ref({
 onMounted( async () => {
   currentSeason.value = await seasonStore.GetCurrentSeason()
   await seasonStore.FetchSeasons()
-  playedFormats.value = await formatStore.GetPlayedFormatsInSeason(currentSeason.value['id'])
+  playedFormats.value = await formatStore.GetPlayedFormats()
   lastTournament.value = await tournamentStore.GetLastTournament()
 
   await FetchRanking()
@@ -138,7 +138,7 @@ const ToggleDisplayRanking = (async (rankingType) => {
   <main class="row m-0 p-0 justify-content-center bg-black">
     <section class="row col-12 m-0 p-0">
       <figure class="m-0 p-0 my-hero d-flex align-items-center justify-content-center animated-2 shadowed-h" id="my-hero">
-        <img class="w-100 text-center my-hero" src="@/assets/images/progenitus.jpg" alt="">
+        <img class="w-100 text-center my-hero" src="@/assets/images/atraxa.jpg" alt="">
         <h1 class="h1 fw-bold text-center outline-black position-absolute text-green hide-up animated-1">
           The Orc's Ranking
         </h1>
@@ -193,7 +193,7 @@ const ToggleDisplayRanking = (async (rankingType) => {
                     <i class="fa fa-inbox text-center mx-auto"></i>
                   </span>
                   <span class="w-100 fs-2 orc-font d-block">
-                    {{ seasonPot }}$
+                    {{ seasonPot === null ? '0' : seasonPot }}$
                   </span>                
                 </div>
               </div>
@@ -276,14 +276,21 @@ const ToggleDisplayRanking = (async (rankingType) => {
                 </tr>
               </thead>
               <tbody>
-                <tr
-                v-for="tournament, index in seasonStatistics.tournaments"
-                :key="index"
-                class="text-center"
-                >
-                  <td class="p-1 border-green">{{ tournament['format'] }}</td>
-                  <td class="p-1 border-green">{{ tournament['count'] }}</td>
-                </tr>            
+                <template v-if="seasonStatistics.tournaments.length > 0">
+                  <tr
+                  v-for="tournament, index in seasonStatistics.tournaments"
+                  :key="index"
+                  class="text-center"
+                  >
+                    <td class="p-1 border-green">{{ tournament['format'] }}</td>
+                    <td class="p-1 border-green">{{ tournament['count'] }}</td>
+                  </tr>  
+                </template>               
+                <template v-else>
+                  <tr class="text-center">
+                    <td class="p-1 border-green" colspan="2">0</td>
+                  </tr>       
+                </template>          
               </tbody>
             </table>
           </div>
@@ -296,14 +303,22 @@ const ToggleDisplayRanking = (async (rankingType) => {
                 </tr>
               </thead>
               <tbody>
-                <tr
+                <template v-if="seasonStatistics.participants.length > 0">
+                  <tr
                 v-for="participant, index in seasonStatistics.participants"
                 :key="index"
                 class="text-center"
                 >
                   <td class="p-1 border-green">{{ participant['format'] }}</td>
                   <td class="p-1 border-green">{{ participant['count'] }}</td>
-                </tr>            
+                </tr>       
+                </template>
+                <template v-else>
+                  <tr class="text-center">
+                    <td class="p-1 border-green" colspan="2">0</td>
+                  </tr>       
+                </template>
+                     
               </tbody>
             </table>
           </div>
@@ -316,14 +331,21 @@ const ToggleDisplayRanking = (async (rankingType) => {
                 </tr>
               </thead>
               <tbody>
-                <tr
-                v-for="person, index in seasonStatistics.persons"
-                :key="index"
-                class="text-center"
-                >
-                  <td class="p-1 border-green">{{ person['format'] }}</td>
-                  <td class="p-1 border-green">{{ person['count'] }}</td>
-                </tr>            
+                <template v-if="seasonStatistics.persons.length > 0">
+                  <tr
+                  v-for="person, index in seasonStatistics.persons"
+                  :key="index"
+                  class="text-center"
+                  >
+                    <td class="p-1 border-green">{{ person['format'] }}</td>
+                    <td class="p-1 border-green">{{ person['count'] }}</td>
+                  </tr>  
+                </template>                
+                <template v-else>
+                  <tr class="text-center">
+                    <td class="p-1 border-green" colspan="2">0</td>
+                  </tr>       
+                </template>         
               </tbody>
             </table>
           </div>
@@ -334,7 +356,7 @@ const ToggleDisplayRanking = (async (rankingType) => {
 
     <section class="row col-12 m-0 p-0 py-4 justify-content-center align-items-start my-5 bg-dark-grey text-green">
       <div class="col-12 text-center my-3 p-0">
-        <h2 class="h1 text-green">Último torneo </h2>  
+        <h2 class="h1 text-green">Último torneo </h2> 
         
       </div>
 
@@ -343,9 +365,9 @@ const ToggleDisplayRanking = (async (rankingType) => {
       </template>
       <div v-else class="row m-0 p-0 col-12 text-center justify-content-center align-items-start p-0 px-4 hide-up animated-1">
         <template v-if="Object.keys(lastTournament).length === 0">
-            <h2 class="text-center w-100 text-green">
+            <h4 class="text-center w-100 text-green">
               No hay torneos registrados esta temporada (aún)
-            </h2>
+            </h4>
         </template>
         <div v-else  class="row col-12 m-0 p-0 justify-content-center">
           <div class="row m-0 p-0 col-12 col-lg-5 text-center justify-content-center px-4 my-2">

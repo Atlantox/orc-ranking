@@ -112,12 +112,12 @@ const useFormatStore = defineStore('formats', {
             }
         },
 
-        async GetPlayedFormatsInSeason(season = null){
+        async GetPlayedFormats(season = null){
             let playedFormats  = []
             const sessionStore = useSessionStore()
             const utilsStore = useUtilsStore()
             try{
-                let url = apiConfig.base_url + '/formats'
+                let url = apiConfig.base_url + '/formats/played'
                 if (season !== null)
                     url += '/season/' + season
 

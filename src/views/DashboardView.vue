@@ -101,7 +101,7 @@ onMounted( async () => {
                     <router-link :class="routerLinkStyle" :to="{name: 'tournaments', params:{filter: 'active'}}">
                       <i :class="'fa fa-check ' + iconStyle" ></i>
                       <span :class="linkTextStyle">
-                        Ver torneos ativos
+                        Ver torneos activos
                       </span>
                     </router-link>
                   </div>                  

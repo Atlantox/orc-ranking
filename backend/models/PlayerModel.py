@@ -12,7 +12,8 @@ class PlayerModel(BaseModel):
             play.name,
             t_result.tournaments,
             t_result.points,
-            t_result.wins
+            t_result.wins,
+            (t_result.points / t_result.tournaments) as avg_points
             FROM
             player play
             LEFT JOIN(
@@ -36,6 +37,48 @@ class PlayerModel(BaseModel):
 
         try:
             cursor.execute(sql)
+            result = cursor.fetchall()
+        except:
+            result = False
+        
+        return result
+    
+    def GetPlayersBySeason(self, seasonId):
+        cursor = self.connection.connection.cursor()
+        result = []
+
+        sql = '''
+            SELECT
+            play.id,
+            play.name,
+            t_result.tournaments,
+            t_result.points,
+            t_result.wins,
+            (t_result.points / t_result.tournaments) as avg_points
+            FROM
+            player play
+            LEFT JOIN(
+                SELECT
+                tournament_result.player as player,
+                COUNT(tournament_result.tournament) as tournaments,
+                SUM(tournament_result.wins) as points,
+                SUM(CASE WHEN tournament_result.winner = 1 THEN 1 ELSE 0 END) as wins
+                FROM
+                tournament_result
+                INNER JOIN tournament ON tournament.id = tournament_result.tournament
+                WHERE
+                tournament.active = 1 AND
+                tournament.season = %s
+                GROUP BY
+                tournament_result.player
+            ) t_result ON t_result.player = play.id
+            ORDER BY
+            play.name
+        '''
+
+        args = (seasonId,)
+        try:
+            cursor.execute(sql, args)
             result = cursor.fetchall()
         except:
             result = False

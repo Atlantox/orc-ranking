@@ -9,7 +9,8 @@ class SeasonModel(BaseModel):
             season.id,
             season.name,
             CONCAT(YEAR(season.date), '-', LPAD(MONTH(season.date), 2, '0'), '-', LPAD(DAY(season.date), 2, '0')) AS date, 
-            COUNT(tournament.id) as tournaments
+            COUNT(tournament.id) as tournaments,
+            season.active
             FROM
             season
             LEFT JOIN tournament ON tournament.season = season.id AND tournament.active = 1            
