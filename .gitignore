@@ -33,3 +33,5 @@ backend/venv
 backend/__pycache__
 backend/controllers/__pycache__
 backend/models/__pycache__
+
+database_backup.sql

@@ -8,20 +8,20 @@ class DeckModel(BaseModel):
 
         sql = '''
             SELECT
-            deck.id,
-            deck.name,
-            SUM(CASE WHEN t_result.winner = 1 THEN 1 ELSE 0 END) as wins,
-            COUNT(t_result.id) as participations,
-            (t_result.points / t_result.tournaments) as avg_points
+            de.id,
+            de.name,
+            t_result.tournaments,
+            t_result.points,
+            t_result.wins,
+            (t_result.points / t_result.tournaments) as avg_points            
             FROM 
-            deck 
+            deck de
             LEFT JOIN (
                 SELECT 
-                tournament_result.id,
-                tournament_result.winner,
                 tournament_result.deck,
                 COUNT(tournament_result.tournament) as tournaments,
-                SUM(tournament_result.wins) as points
+                SUM(tournament_result.wins) as points,
+                SUM(CASE WHEN tournament_result.winner = 1 THEN 1 ELSE 0 END) as wins
                 FROM
                 tournament_result
                 INNER JOIN tournament ON tournament.id = tournament_result.tournament
@@ -30,11 +30,11 @@ class DeckModel(BaseModel):
                 tournament.season = (SELECT id FROM season WHERE active = 1)
                 GROUP BY
                 tournament_result.deck
-            ) t_result ON t_result.deck = deck.id
+            ) t_result ON t_result.deck = de.id
             GROUP BY
-            deck.id
+            de.id
             ORDER BY
-            deck.name
+            de.name
             '''
 
         try:
@@ -53,20 +53,20 @@ class DeckModel(BaseModel):
         result = []
         sql = '''
             SELECT
-            deck.id,
-            deck.name,
-            SUM(CASE WHEN t_result.winner = 1 THEN 1 ELSE 0 END) as wins,
-            COUNT(t_result.id) as participations,
-            (t_result.points / t_result.tournaments) as avg_points
+            de.id,
+            de.name,
+            t_result.tournaments,
+            t_result.points,
+            t_result.wins,
+            (t_result.points / t_result.tournaments) as avg_points            
             FROM 
-            deck 
+            deck de
             LEFT JOIN (
                 SELECT 
-                tournament_result.id,
-                tournament_result.winner,
                 tournament_result.deck,
                 COUNT(tournament_result.tournament) as tournaments,
-                SUM(tournament_result.wins) as points
+                SUM(tournament_result.wins) as points,
+                SUM(CASE WHEN tournament_result.winner = 1 THEN 1 ELSE 0 END) as wins
                 FROM
                 tournament_result
                 INNER JOIN tournament ON tournament.id = tournament_result.tournament
@@ -75,11 +75,11 @@ class DeckModel(BaseModel):
                 tournament.season = %s
                 GROUP BY
                 tournament_result.deck
-            ) t_result ON t_result.deck = deck.id
+            ) t_result ON t_result.deck = de.id
             GROUP BY
-            deck.id
+            de.id
             ORDER BY
-            deck.name
+            de.name
             '''
         args = (seasonId,)
         try:
@@ -180,45 +180,68 @@ class DeckModel(BaseModel):
         return result
     
     def GetDeckStatistics(self, deckId, seasonId = None):
-        tournamentModel = TournamentModel(self.connection)
-
-        totalPoints = tournamentModel.GetTotalPointsOfSeason(seasonId)
-        if type(totalPoints) is str:
-            return totalPoints
-        
         cursor = self.connection.connection.cursor()
-        sql = '''
-            SELECT
-            COUNT(tournament_result.id) as tournaments,
-            SUM(tournament_result.winner) as wins,
-            SUM(tournament_result.wins) as points,
-            ROUND((SUM(tournament_result.wins) * 100) / %s, 2) as points_percent
+        sql = '''SELECT
+            t_result.format,
+            t_result.tournaments,            
+            t_result.points,
+            t_result.wins,
+            t_result.points / t_result.tournaments as avg_points,
+            (t_result.points * 100) / total_points.total_points as points_percent
             FROM
-            tournament_result
-            INNER JOIN tournament ON tournament.id = tournament_result.tournament
+            deck
+            LEFT JOIN(
+                SELECT
+                tournament_result.deck,
+                tournament.format,
+                COUNT(tournament_result.tournament) as tournaments,
+                SUM(tournament_result.wins) as points,
+                SUM(CASE WHEN tournament_result.winner = 1 THEN 1 ELSE 0 END) as wins
+                FROM
+                tournament_result
+                INNER JOIN tournament ON tournament.id = tournament_result.tournament
+                WHERE
+                tournament.active = 1 AND
+                tournament.season = %s
+                GROUP BY
+                tournament.format,
+                tournament_result.deck
+            ) t_result ON t_result.deck = deck.id
+            LEFT JOIN (
+                SELECT
+                SUM(tournament_result.wins) as total_points,
+                tournament.format
+                FROM
+                tournament_result
+                INNER JOIN tournament ON tournament.id = tournament_result.tournament
+                WHERE
+                tournament.season = %s
+                GROUP BY
+                tournament.format
+            ) total_points ON total_points.format = t_result.format
             WHERE
-            tournament_result.deck = %s AND 
-            tournament.active = 1
-        '''
-        args = [totalPoints, deckId]
+            deck.id = %s
+            GROUP BY
+            t_result.format,
+            deck.id
+            ORDER BY
+            deck.name'''
+        
+        args = [seasonId, seasonId, deckId]          
 
-        if seasonId is not None:
-            sql += ' AND tournament.season = %s '
-            args.append(seasonId)            
+        print(sql)
 
         try:
             cursor.execute(sql, tuple(args))
-            result = cursor.fetchone()
-        except:
-            result = 'Ocurrió un error al obtener las estadísticas del deck solicitado'
+            result = cursor.fetchall()
 
-        if result is None: 
-            result = {
-                'tournaments': 0,
-                'wins': 0,
-                'points': 0,
-                'points_percent': 0
-            }
+            if result[0]['format'] is None: 
+                result = []
+        except:
+            result = 'Ocurrió un error al obtener las estadísticas del mazo solicitado'
+
+        
+
         return result
     
     def DeleteColorsOfDeck(self, deckId):

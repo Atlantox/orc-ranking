@@ -2,7 +2,7 @@ class DevelopmentCondfig:
     DEBUG = True
     MYSQL_HOST = 'localhost'
     MYSQL_USER = 'root'
-    MYSQL_PASSWORD = ''
+    MYSQL_PASSWORD = '0100'
     MYSQL_DB = 'orc_ranking'
     MYSQL_CURSORCLASS = 'DictCursor' 
 

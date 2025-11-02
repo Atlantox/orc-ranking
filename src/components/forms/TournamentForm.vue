@@ -354,7 +354,7 @@ const DeactivateTournament = (async () => {
 
                     <div :class="formRowStyle" v-if="Object.keys(props.targetTournament).length === 0">
                         <div :class="labelContainerStyle">
-                            <label :class="labelStyle" for="observation">Refrescar</label>
+                            <label :class="labelStyle" for="">Refrescar</label>
                         </div>
                         <div :class="inputContainerStyle">
                             <div class="row col-12 col-lg-8">
@@ -369,7 +369,7 @@ const DeactivateTournament = (async () => {
 
                     <div v-if="Object.keys(props.targetTournament).length !== 0" :class="formRowStyle">
                         <div :class="labelContainerStyle">
-                            <label :class="labelStyle" for="observation">Activo</label>
+                            <label :class="labelStyle" for="">Activo</label>
                         </div>
                         <div :class="inputContainerStyle">
                             <i :class="'text-center text-lg-start fa fa-circle text-' + (props.targetTournament.data.active === 0 ? 'danger' : 'green')"></i>

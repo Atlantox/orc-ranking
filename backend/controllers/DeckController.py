@@ -233,7 +233,7 @@ def UpdateDeck(deckId):
 
 @deckController.route('/decks/statistics/<int:deckId>', defaults={'seasonId': None}, methods=['GET'])
 @deckController.route('/decks/statistics/<int:deckId>/<int:seasonId>', methods=['GET'])
-def GetPlayerStatistics(deckId, seasonId):
+def GetDeckStatistics(deckId, seasonId):
     connection = GetConnection()
     deckModel = DeckModel(connection)
     response = {}

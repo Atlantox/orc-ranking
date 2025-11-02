@@ -50,8 +50,8 @@ class PlayerModel(BaseModel):
         sql = '''
             SELECT
             play.id,
-            play.name,
-            t_result.tournaments,
+            play.name,            
+            t_result.tournaments,            
             t_result.points,
             t_result.wins,
             (t_result.points / t_result.tournaments) as avg_points
@@ -59,7 +59,7 @@ class PlayerModel(BaseModel):
             player play
             LEFT JOIN(
                 SELECT
-                tournament_result.player as player,
+                tournament_result.player,
                 COUNT(tournament_result.tournament) as tournaments,
                 SUM(tournament_result.wins) as points,
                 SUM(CASE WHEN tournament_result.winner = 1 THEN 1 ELSE 0 END) as wins
@@ -72,6 +72,8 @@ class PlayerModel(BaseModel):
                 GROUP BY
                 tournament_result.player
             ) t_result ON t_result.player = play.id
+            GROUP BY
+            play.id
             ORDER BY
             play.name
         '''
@@ -141,46 +143,64 @@ class PlayerModel(BaseModel):
 
         return playerCount
     
-    def GetPlayerStatistics(self, playerId, seasonId = None):
-        tournamentModel = TournamentModel(self.connection)
-
-        totalPoints = tournamentModel.GetTotalPointsOfSeason(seasonId)
-        if type(totalPoints) is str:
-            return totalPoints
-        
+    def GetPlayerStatistics(self, playerId, seasonId):        
         cursor = self.connection.connection.cursor()
-        sql = '''
-            SELECT
-            COUNT(tournament_result.id) as tournaments,
-            SUM(tournament_result.winner) as wins,
-            SUM(tournament_result.wins) as points,
-            ROUND((SUM(tournament_result.wins) * 100) / %s, 2) as points_percent
+        sql = '''SELECT
+            t_result.format,
+            t_result.tournaments,            
+            t_result.points,
+            t_result.wins,
+            t_result.points / t_result.tournaments as avg_points,
+            (t_result.points * 100) / total_points.total_points as points_percent
             FROM
-            tournament_result
-            INNER JOIN tournament ON tournament.id = tournament_result.tournament
+            player play
+            LEFT JOIN(
+                SELECT
+                tournament_result.player,
+                tournament.format,
+                COUNT(tournament_result.tournament) as tournaments,
+                SUM(tournament_result.wins) as points,
+                SUM(CASE WHEN tournament_result.winner = 1 THEN 1 ELSE 0 END) as wins
+                FROM
+                tournament_result
+                INNER JOIN tournament ON tournament.id = tournament_result.tournament
+                WHERE
+                tournament.active = 1 AND
+                tournament.season = %s
+                GROUP BY
+                tournament.format,
+                tournament_result.player
+            ) t_result ON t_result.player = play.id
+            LEFT JOIN (
+                SELECT
+                SUM(tournament_result.wins) as total_points,
+                tournament.format
+                FROM
+                tournament_result
+                INNER JOIN tournament ON tournament.id = tournament_result.tournament
+                WHERE
+                tournament.season = %s
+                GROUP BY
+                tournament.format
+            ) total_points ON total_points.format = t_result.format
             WHERE
-            tournament_result.player = %s AND 
-            tournament.active = 1
-        '''
-        args = [totalPoints, playerId]
-
-        if seasonId is not None:
-            sql += ' AND tournament.season = %s '
-            args.append(seasonId)            
+            play.id = %s
+            GROUP BY
+            t_result.format,
+            play.id
+            ORDER BY
+            play.name'''
+        
+        args = [seasonId, seasonId, playerId]          
 
         try:
             cursor.execute(sql, tuple(args))
-            result = cursor.fetchone()
+            result = cursor.fetchall()
+
+            if result[0]['format'] is None: 
+                result = []
         except:
             result = 'Ocurrió un error al obtener las estadísticas del jugador solicitado'
-
-        if result is None: 
-            result = {
-                'tournaments': 0,
-                'wins': 0,
-                'points': 0,
-                'points_percent': 0
-            }
 
         return result
    

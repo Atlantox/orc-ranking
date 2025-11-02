@@ -7,10 +7,13 @@ import LoadingGadget from '@/components/myGadgets/LoadingGadget.vue';
 import useTournamentStore from '@/stores/tournaments';
 import useSeasonStore from '@/stores/seasons';
 import useFormatStore from '@/stores/formats';
+import useWarningStore from '@/stores/warnings';
+import WarningTable from '@/components/tables/WarningTable.vue';
 
 const tournamentStore = useTournamentStore()
 const seasonStore = useSeasonStore()
 const formatStore = useFormatStore()
+const warningStore = useWarningStore()
 
 const fetchReady = ref(false)
 const currentSeason = ref(undefined)
@@ -37,7 +40,7 @@ onMounted( async () => {
   await seasonStore.FetchSeasons()
   playedFormats.value = await formatStore.GetPlayedFormats()
   lastTournament.value = await tournamentStore.GetLastTournament()
-
+  await warningStore.FetchCurrentWarnings()
   await FetchRanking()
 
   fetchReady.value = await true
@@ -85,6 +88,7 @@ const FetchRanking = ( async() => {
 
   seasonStatistics.value = await tournamentStore.GetSeasonStatistics(targetSeasonId)
   seasonPot.value = await tournamentStore.GetSeasonPot(targetSeasonId, targetGameFormat)
+  await warningStore.FetchWarningsBySeason(targetSeasonId)
 
   fetchReady.value = await true
   OnAppearAnimation('hide-up')
@@ -356,8 +360,7 @@ const ToggleDisplayRanking = (async (rankingType) => {
 
     <section class="row col-12 m-0 p-0 py-4 justify-content-center align-items-start my-5 bg-dark-grey text-green">
       <div class="col-12 text-center my-3 p-0">
-        <h2 class="h1 text-green">Último torneo </h2> 
-        
+        <h2 class="h1 text-green">Último torneo </h2>         
       </div>
 
       <template v-if="lastTournament === undefined">
@@ -434,6 +437,29 @@ const ToggleDisplayRanking = (async (rankingType) => {
           </div>
         </div>
         </div>      
+      </div>
+    </section>
+
+    <section class="row col-12 m-0 p-0 py-4 justify-content-center align-items-start bg-black text-green">
+      <div class="col-12 text-center my-3 p-0">
+        <h2 class="h1 text-green">Warnings de la temporada</h2>    
+      </div>
+
+      <template v-if="warningStore.warnings === undefined">
+        <LoadingGadget />
+      </template>
+      <div v-else class="row m-0 p-0 col-12 text-center justify-content-center align-items-start p-0 px-4 hide-up animated-1">
+        <template v-if="warningStore.warnings.length === 0">
+            <h3 class="text-center w-100 text-green">
+              No hay warnings registrados
+            </h3>
+        </template>
+        <div v-else  class="row col-12 m-0 p-0 justify-content-center">
+          <div class="row m-0 p-0 col-11 text-center justify-content-center px-4 my-2">
+            <WarningTable :warnings="warningStore.warnings"/>
+          </div> 
+        </div> 
+        
       </div>
     </section>
   </main>

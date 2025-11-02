@@ -12,6 +12,7 @@ from controllers.DeckController import deckController
 from controllers.PlayerController import playerController
 from controllers.SeasonController import seasonController
 from controllers.GameFormatController import gameFormatController
+from controllers.WarningController import warningController
 
 app = Flask(__name__)
 app.config.from_object(config['development'])
@@ -25,7 +26,8 @@ CONTROLLERS = [
     playerController,
     seasonController,
     gameFormatController,
-    tournamentController
+    tournamentController,
+    warningController
 ]
 
 # Le pasamos la conexión de la base de datos a los blueprints / controladores

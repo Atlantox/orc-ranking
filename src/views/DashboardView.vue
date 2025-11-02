@@ -110,6 +110,42 @@ onMounted( async () => {
             </article>
           </template>
 
+          <template v-if="sessionStore.userData.permissons.includes('Warnings')">
+            <article :class="articleStyle">
+              <div :class="articleWrappedStyle">
+                <h4 :class="h4Style">
+                    Warnings
+                </h4>
+                <div :class="linkContainersStyle">
+                  <div :class="linkElementStyle">
+                    <router-link :class="routerLinkStyle" :to="{name: 'add_warning'}">
+                      <i :class="iconStyle + ' fa fa-plus text-green '" ></i>
+                      <span :class="linkTextStyle">
+                        Nuevo warning
+                      </span>
+                    </router-link>
+                  </div>
+                  <div :class="linkElementStyle">
+                    <router-link :class="routerLinkStyle" :to="{name: 'warnings', params:{filter: 'current'}}">
+                      <i :class="'fa fa-sitemap ' + iconStyle" ></i>
+                      <span :class="linkTextStyle">
+                        Ver warnings actuales
+                      </span>
+                    </router-link>
+                  </div>
+                  <div :class="linkElementStyle">
+                    <router-link :class="routerLinkStyle" :to="{name: 'warnings', params:{filter: 'all'}}">
+                      <i :class="'fa fa-list ' + iconStyle" ></i>
+                      <span :class="linkTextStyle">
+                        Ver todos los warnings
+                      </span>
+                    </router-link>
+                  </div>                                  
+                </div>
+              </div>
+            </article>
+          </template>
+
           <template v-if="sessionStore.userData.permissons.includes('Jugadores')">
             <article :class="articleStyle">
               <div :class="articleWrappedStyle">

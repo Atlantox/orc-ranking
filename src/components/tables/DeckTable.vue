@@ -44,7 +44,7 @@ onMounted(() => {
                             {{ color + '  ' }} 
                         </span>
                     </td>
-                    <td class="border-green text-center">{{ deck.participations }}</td>
+                    <td class="border-green text-center">{{ deck.tournaments }}</td>
                     <td class="border-green text-center">{{ deck.avg_points === null ? 0 : Math.round(deck.avg_points * 100) / 100 }}</td>
                     <td class="border-green text-center">{{ deck.wins }}</td>
                     <td class="border-green">

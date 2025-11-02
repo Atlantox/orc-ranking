@@ -1,6 +1,7 @@
 const field_translator = {
     'name': 'Nombre',
     'player': 'Jugador',
+    'reason': 'Motivo',
     'select2-player-container': 'Jugador',
     'deck': 'Mazo',
     'select2-deck-container': 'Mazo',
