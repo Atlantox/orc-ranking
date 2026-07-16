@@ -89,8 +89,8 @@ onMounted( async() => {
 
       <div class="row col-12 justify-content-center m-0 p-0 mt-3">
         <ul class="col-12 list-unstyled text-center">
-          <li class="my-1"><a href="https://manabox.app/decks/rg-uh4KUSY6EwM4Pp-vwgw " target="_blank">Baneos de coliseo en todas sus formas</a> </li>
-          <li class="my-1"><a href="https://manabox.app/decks/93ZwKsK8SaWY85X27xWeOQ" target="_blank">Baneados como comandante</a></li>
+          <li class="my-1"><a href="https://manabox.app/decks/9Iyhj1atQ5q2ymIuLlC-cg" target="_blank">Prohibidas totalmente</a> </li>
+          <li class="my-1"><a href="https://manabox.app/decks/itAJx3JXS_2bQtUrdl9unA" target="_blank">Prohibidas como comandante</a></li>
         </ul>
       </div>
      </div>

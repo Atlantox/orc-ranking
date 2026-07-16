@@ -11,6 +11,7 @@ import PlayerFormView from '@/views/forms/PlayerFormView.vue'
 import UserFormView from '@/views/forms/UserFormView.vue'
 import MyAccountFormView from '@/views/forms/MyAccountFormView.vue'
 import FormatFormView from '@/views/forms/FormatFormView.vue'
+import WarningFormView from '@/views/forms/WarningFormView.vue'
 import DeckFormView from '@/views/forms/DeckFormView.vue'
 import TournamentFormView from '@/views/forms/TournamentFormView.vue'
 import SeasonFormView from '@/views/forms/SeasonFormView.vue'
@@ -21,11 +22,13 @@ import SearchTournamentsView from '@/views/tables/SearchTournamentsView.vue'
 import SearchUsersView from '@/views/tables/SearchUsersView.vue'
 import SearchBinnacleView from '@/views/tables/SearchBinnacleView.vue'
 import SearchFormatsView from '@/views/tables/SearchFormatsView.vue'
+import SearchWarningsView from '@/views/tables/SearchWarningsView.vue'
 import SearchSeasonsView from '@/views/tables/SearchSeasonsView.vue'
 
 import WatchPlayerView from '@/views/watchers/WatchPlayerView.vue'
 import WatchTournamentView from '@/views/watchers/WatchTournamentView.vue'
 import WatchDeckView from '@/views/watchers/WatchDeckView.vue'
+import WatchWarningView from '@/views/watchers/WatchWarningView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -106,6 +109,25 @@ const router = createRouter({
       name: 'see_tournament',
       component: WatchTournamentView,
     },   
+
+    // WARNINGS
+    {
+      path: '/search_warnings/:filter?',
+      name: 'warnings',
+      component: SearchWarningsView,
+    },
+    {
+      path: '/add_warning',
+      name: 'add_warning',
+      component: WarningFormView,
+      meta:{ requireAuth: true, warningPermisson: true }
+    },
+    {
+      path: '/see_warning/:id',
+      name: 'see_warning',
+      component: WatchWarningView,
+      meta:{ requireAuth: true, warningPermisson: true }
+    },
 
     // FORMATS
     {
@@ -216,6 +238,10 @@ router.beforeEach(async (to, from, next) => {
       }
 
       if(to.meta.formatPermisson && !(sessionStore.userData.permissons.includes('Formatos'))){
+        routeOk = false
+      }
+
+      if(to.meta.warningPermisson && !(sessionStore.userData.permissons.includes('Warnings'))){
         routeOk = false
       }
 
